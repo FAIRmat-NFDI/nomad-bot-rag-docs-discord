@@ -1,7 +1,7 @@
 [project]
-name = "my_project"
+name = "nomad_ragbot"
 version = "0.1.0"
-description = "Add your description here"
+description = "A prototype chatbot built with retrieval-augmented generation (RAG) to assist researchers and developers working with the NOMAD platform."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [

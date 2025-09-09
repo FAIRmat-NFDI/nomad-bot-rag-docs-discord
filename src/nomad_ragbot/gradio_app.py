@@ -10,7 +10,7 @@ Customize themes here: https://www.gradio.app/guides/theming-guide
 
 import gradio as gr
 
-from my_project.llm_client import generate_response
+from nomad_ragbot.llm_client import generate_response
 
 
 def create_gradio_app():
