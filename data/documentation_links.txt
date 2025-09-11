@@ -1,3 +1,4 @@
+https://github.com/FAIRmat-NFDI/nomad-docs
 https://github.com/FAIRmat-NFDI/AreaC-Tutorial10_2023
 https://github.com/FAIRmat-NFDI/AreaC-Tutorial-CECAM-2023
 https://github.com/FAIRmat-NFDI/nomad-tutorial-workflows
