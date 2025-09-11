@@ -21,7 +21,9 @@ uv run python utils/dynamic_chunking.py \
   --api-docs-repo-name nomad-api \
   --api-url https://nomad-lab.eu/prod/v1/api/v1/extensions/docs \
   --owner-default FAIRmat-NFDI \
-  --branch-default main
+  --branch-default main \
+  --md-subdir docs \
+  --html-subdir src
 """
 
 
@@ -176,9 +178,13 @@ def load_manifest(manifest_path: Path) -> Dict[str, str]:
         return {}
 
 
-def list_files(root: Path, modes: List[str]) -> List[Path]:
+def list_files(
+    root: Path, modes: List[str], md_subdir: str, html_subdir: str
+) -> List[Path]:
     """
     Look for files only under <root>/<repo>/<mode>/** with mode in {'md','html'}.
+    For Markdown, restrict to <repo>/md/<md_subdir>/** (default 'docs').
+    For HTML,     restrict to <repo>/html/<html_subdir>/** (default 'src').
     """
     mode_exts = {"md": {".md", ".mdx"}, "html": {".html"}}
     out: List[Path] = []
@@ -187,10 +193,49 @@ def list_files(root: Path, modes: List[str]) -> List[Path]:
             mode_dir = repo_dir / mode
             if not mode_dir.is_dir():
                 continue
-            for f in mode_dir.rglob("*"):
+            if mode == "md":
+                base_dir = mode_dir / md_subdir
+                if not base_dir.is_dir():
+                    continue
+                search_root = base_dir
+            elif mode == "html":
+                base_dir = mode_dir / html_subdir
+                if not base_dir.is_dir():
+                    continue
+                search_root = base_dir
+            else:
+                search_root = mode_dir
+            for f in search_root.rglob("*"):
                 if f.is_file() and f.suffix.lower() in mode_exts.get(mode, set()):
                     out.append(f)
     return sorted(out)
+
+
+def _strip_md_prefixes(path: str, md_subdir: str) -> str:
+    """Strip 'md/<md_subdir>/' if present, else 'md/'."""
+    prefix = f"md/{md_subdir.strip('/')}/"
+    if path.startswith(prefix):
+        return path[len(prefix) :]
+    if path.startswith("md/"):
+        return path[len("md/") :]
+    return path
+
+
+def _drop_md_extension(path: str) -> str:
+    """Remove .md or .mdx extension (only the final extension)."""
+    if path.lower().endswith(".md") or path.lower().endswith(".mdx"):
+        return path.rsplit(".", 1)[0]
+    return path
+
+
+def _strip_html_prefixes(path: str, html_subdir: str) -> str:
+    """Strip 'html/<html_subdir>/' if present, else 'html/'."""
+    prefix = f"html/{html_subdir.strip('/')}/"
+    if path.startswith(prefix):
+        return path[len(prefix) :]
+    if path.startswith("html/"):
+        return path[len("html/") :]
+    return path
 
 
 def build_source_url_for_md(
@@ -200,12 +245,16 @@ def build_source_url_for_md(
     owner_default: str,
     branch_default: str,
     md_url_template: str,
+    md_subdir: str,
 ) -> str:
     owner = (manifest or {}).get("owner") or owner_default
     repo_name = (manifest or {}).get("repo") or repo
+    # 'branch' supported for custom templates; not used by default template
     branch = (manifest or {}).get("branch") or branch_default
-    # strip leading "md/" if present
-    norm = repo_rel_md[3:] if repo_rel_md.startswith("md/") else repo_rel_md
+
+    norm = _strip_md_prefixes(repo_rel_md, md_subdir)
+    norm = _drop_md_extension(norm)
+
     tmpl = md_url_template or "https://{owner}.github.io/{repo}/{path}"
     return tmpl.format(owner=owner, repo=repo_name, branch=branch, path=norm)
 
@@ -216,15 +265,19 @@ def build_source_url_for_html(
     manifest: Optional[Dict[str, str]],
     owner_default: str,
     html_url_template: str,
+    html_subdir: str,
 ) -> str:
-    # Prefer explicit site base URL from manifest (e.g., https://nomad-lab.eu/nomad-lab/)
-    site_base = (manifest or {}).get("site_base_url", "").strip()
-    web_rel = repo_rel_html[5:] if repo_rel_html.startswith("html/") else repo_rel_html
+    # Strip 'html/<html_subdir>/' → site-relative path, then drop 'index.html'
+    web_rel = _strip_html_prefixes(repo_rel_html, html_subdir)
     if web_rel.endswith("index.html"):
         web_rel = web_rel[: -len("index.html")]
+
+    # Prefer explicit site base URL from manifest (e.g., https://nomad-lab.eu/nomad-lab/)
+    site_base = (manifest or {}).get("site_base_url", "").strip()
     if site_base:
         return (site_base.rstrip("/") + "/" + web_rel.lstrip("/")).rstrip("/")
-    # fallback to owner.github.io pattern
+
+    # Fallback to owner.github.io pattern
     owner = (manifest or {}).get("owner") or owner_default
     repo_name = (manifest or {}).get("repo") or repo
     tmpl = html_url_template or "https://{owner}.github.io/{repo}/{path}"
@@ -289,29 +342,28 @@ def run_dynamic_chunking(
     api_url: str = "https://nomad-lab.eu/prod/v1/api/v1/extensions/docs",
     owner_default: str = "FAIRmat-NFDI",
     branch_default: str = "main",
+    md_subdir: str = "docs",
+    html_subdir: str = "src",
 ) -> Dict[str, object]:
     root = Path(input_root).resolve()
     out_file = Path(out_path).resolve()
 
     rows: List[Dict] = []
-    files = list_files(root, modes)
+    files = list_files(root, modes, md_subdir=md_subdir, html_subdir=html_subdir)
 
     for f in files:
-        # <root>/<repo>/<mode>/... → repo_dir = <root>/<repo>
+        # <root>/<repo>/<mode>/... → parse from path relative to root
         rel_from_root = f.relative_to(root)
         parts = rel_from_root.parts
         if len(parts) < 3 or parts[1] not in {"md", "html"}:
-            # Not in the expected <repo>/<mode>/... layout; skip defensively
-            # (or you can raise/log here)
             continue
 
         repo = parts[0]  # <repo>
         mode = parts[1]  # md or html
-        repo_dir = root / repo  # canonical repo dir
-        repo_rel = "/".join(parts[1:])  # includes "md/..." or "html/..."
-        ts = file_mtime_utc_iso(f)
+        repo_dir = root / repo
+        repo_rel = "/".join(parts[1:])  # includes "md/... or html/..."
 
-        # Manifest (if present)
+        ts = file_mtime_utc_iso(f)
         manifest_path = repo_dir / mode / "manifest.json"
         manifest = load_manifest(manifest_path) if manifest_path.exists() else None
 
@@ -326,12 +378,13 @@ def run_dynamic_chunking(
         # Build source URL + normalized path for metadata
         if repo == api_docs_repo_name and mode == "md":
             page_url = build_source_url_for_api(api_url)
-            path_normalized = repo_rel[3:] if repo_rel.startswith("md/") else repo_rel
+            path_normalized = _strip_md_prefixes(repo_rel, md_subdir)
+            path_normalized = _drop_md_extension(path_normalized)
         elif mode == "html":
             page_url = build_source_url_for_html(
-                repo, repo_rel, manifest, owner_default, html_url_template
+                repo, repo_rel, manifest, owner_default, html_url_template, html_subdir
             )
-            path_normalized = repo_rel[5:] if repo_rel.startswith("html/") else repo_rel
+            path_normalized = _strip_html_prefixes(repo_rel, html_subdir)
             if path_normalized.endswith("index.html"):
                 path_normalized = path_normalized[: -len("index.html")]
         else:
@@ -342,8 +395,10 @@ def run_dynamic_chunking(
                 owner_default,
                 branch_default,
                 source_url_template,
+                md_subdir,
             )
-            path_normalized = repo_rel[3:] if repo_rel.startswith("md/") else repo_rel
+            path_normalized = _strip_md_prefixes(repo_rel, md_subdir)
+            path_normalized = _drop_md_extension(path_normalized)
 
         for sec_title, sec_text in sections:
             chunks = chunk_content(sec_text)
@@ -392,6 +447,16 @@ def _parse_args() -> argparse.Namespace:
         "--modes", default="md,html", help="Comma-separated modes to include: md,html"
     )
     ap.add_argument(
+        "--md-subdir",
+        default="docs",
+        help="Markdown subdir to include under md/ (default: docs)",
+    )
+    ap.add_argument(
+        "--html-subdir",
+        default="src",
+        help="HTML subdir to include under html/ (default: src)",
+    )
+    ap.add_argument(
         "--source-url-template",
         default="https://{owner}.github.io/{repo}/{path}",
         help="Template for MD source URLs.",
@@ -437,5 +502,7 @@ if __name__ == "__main__":
         api_url=args.api_url,
         owner_default=args.owner_default,
         branch_default=args.branch_default,
+        md_subdir=args.md_subdir,
+        html_subdir=args.html_subdir,
     )
     print(json.dumps(stats, indent=2))
