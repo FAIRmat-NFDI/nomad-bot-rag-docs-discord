@@ -199,8 +199,8 @@ async def ask(req: QuestionRequest):
         # Configure your RAGQueryEngine with the live collection
         config = {
             "collection": collection,
-            "openai_base_url": "http://127.0.0.1:11434/v1",
-            "embedding_url": "http://127.0.0.1:11434/api/embed",
+            "openai_base_url": "http://172.28.105.142:11434/v1",
+            "embedding_url": "http://172.28.105.142:11434/api/embed",
             "embedding_model": "nomic-embed-text",
             "generator_model": "gpt-oss:20b",
         }
