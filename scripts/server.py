@@ -1,5 +1,9 @@
 # scripts/server.py
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict
 import os
@@ -18,7 +22,8 @@ from query import RAGQueryEngine
 CHROMA_DIR = "./chroma_store"
 
 # NOTE: point this at your dynamic JSONL
-JSONL_PATH = "../data/chunks/docs.dynamic.jsonl"
+JSONL_PATH = "data/chunks/docs.dynamic.jsonl"
+COLLECTION_NAME = "mkdocs"
 
 # ==== EMBEDDING FUNCTION ====
 class LocalEmbeddingFunction(EmbeddingFunction):
@@ -99,10 +104,10 @@ def _make_unique_id(rid: str, item: dict, seen: set, counter: int) -> str:
 def build_chroma_from_jsonl(jsonl_path, chroma_client, embed_fn):
     print("🔧 Building Chroma index from JSONL...")
 
-    # (re)create collection cleanly
-    existing = {c.name for c in chroma_client.list_collections()}
-    if "mkdocs" in existing:
-        chroma_client.delete_collection("mkdocs")
+    # # The original server.py deleted the collection every time. This is (apparently) safer. Check before merging
+    if COLLECTION_NAME in [c.name for c in chroma_client.list_collections()]:
+        print(f"Collection '{COLLECTION_NAME}' already exists. Reusing it.")
+        return
 
     collection = chroma_client.create_collection(
         name="mkdocs",
@@ -152,7 +157,28 @@ def retrieve_context(query, collection, top_k=3):
     return results['documents'][0] if results['documents'] else []
 
 # ==== FastAPI Setup ====
-app = FastAPI()
+app = FastAPI(title="NOMAD RAGBot", description="AI-powered chatbot for NOMAD documentation")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Create directories for static files and templates
+static_dir = "static"
+templates_dir = "templates"
+
+os.makedirs(static_dir, exist_ok=True)
+os.makedirs(templates_dir, exist_ok=True)
+
+# Mount static files and templates
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
+templates = Jinja2Templates(directory=templates_dir)
+
 client = OpenAI(
     base_url="http://172.28.105.142:11434/v1",
     api_key="not-needed"
@@ -188,6 +214,12 @@ def startup():
 
     collection = chroma_client.get_collection(name="mkdocs", embedding_function=embed_fn)
 
+# === Web Interface Routes ===
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    """Serve the main chat interface."""
+    return templates.TemplateResponse("index.html", {"request": request})
+
 # === Ask endpoint ===
 @app.post("/ask", response_model=AnswerResponse)
 async def ask(req: QuestionRequest):
@@ -212,4 +244,11 @@ async def ask(req: QuestionRequest):
 
     except Exception as e:
         print(f"An error occurred: {e}")
-        return {"error": str(e)}
+        return AnswerResponse(answer="Sorry, I encountered an error while processing your question. Please try again.", citations="")
+
+if __name__ == "__main__":
+    import uvicorn
+    print("🚀 Starting NOMAD RAGBot Web Interface...")
+    print("📖 Access the web interface at: http://localhost:8001")
+    print("🔗 API documentation at: http://localhost:8001/docs")
+    uvicorn.run(app, host="0.0.0.0", port=8001)

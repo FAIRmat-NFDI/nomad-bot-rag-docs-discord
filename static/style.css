@@ -1,0 +1,41 @@
+/* Additional styles for NOMAD RAGBot web interface */
+/* Most styles are inline in the HTML template for simplicity */
+
+/* Custom scrollbar for chat messages */
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Additional responsive improvements */
+@media (max-width: 480px) {
+    .chat-header h1 {
+        font-size: 1.5em;
+    }
+    
+    .chat-header .subtitle {
+        font-size: 0.9em;
+    }
+    
+    .message-content {
+        font-size: 0.9em;
+        padding: 15px 18px;
+    }
+    
+    .chat-input {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
