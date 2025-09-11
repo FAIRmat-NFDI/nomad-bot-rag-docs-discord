@@ -1,0 +1,15 @@
+{
+  "owner": "FAIRmat-NFDI",
+  "repo": "nomad-material-processing",
+  "branch": "main",
+  "commit_sha": "a20c7d32d2b756cab795cdecb6ebbfe3c7cd1348",
+  "mode": "md",
+  "extensions": [
+    ".md",
+    ".mdx"
+  ],
+  "include_prefix": [],
+  "exclude_prefix": [],
+  "downloaded": 28,
+  "saved_at": "2025-09-11T12:57:32Z"
+}

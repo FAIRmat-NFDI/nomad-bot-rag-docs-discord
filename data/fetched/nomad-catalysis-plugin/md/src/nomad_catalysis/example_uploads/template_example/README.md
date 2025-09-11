@@ -1,0 +1,13 @@
+# Introduction
+Welcome to the Heterogeneous Catalysis Example upload showcasing some functionalities of the [`nomad-catalysis` plugin](https://github.com/FAIRmat-NFDI/nomad-catalysis-plugin).
+In this example upload you find a template file for easy generation of catalyst sample and catalytic reaction entries. The data for the entries is read out from an excel sheet, which you can download [here](https://raw.githubusercontent.com/FAIRmat-NFDI/nomad-catalysis-plugin/main/src/nomad_catalysis/example_uploads/template_example/template_CatalysisCollection.xlsx). Note that the file ending `CatalysisCollection.xlsx` can not be changed, for the automatic parsing to work. However, csv files ending `CatalysisCollection.csv` will work the same. Further templates for datasets which generate exclusively Catalyst Sample entries are [here](https://raw.githubusercontent.com/FAIRmat-NFDI/nomad-catalysis-plugin/main/docs/assets/template_CatalystSampleCollection.xlsx) and a template that only generates Catalytic Reaction entries can be downloaded [here](https://raw.githubusercontent.com/FAIRmat-NFDI/nomad-catalysis-plugin/main/docs/assets). For a single Catalytic Reaction entry see this template [here](https://raw.githubusercontent.com/FAIRmat-NFDI/nomad-catalysis-plugin/main/src/nomad_catalysis/example_uploads/template_example/template_CatalyticReaction.xlsx). More options for properties which can be read in directly from the excel sheet can be found in the [nomad-catalysis plugin documentation](https://fairmat-nfdi.github.io/nomad-catalysis-plugin/) [here](https://fairmat-nfdi.github.io/nomad-catalysis-plugin/how_to/use_this_plugin.html#format-of-the-csv-or-xlsx-data-file).
+
+# Viewing uploaded data
+
+You can see a list of the included files under the `> /` button after clicking it below or after navigating to the `Files` tab on the top of the page, where you can also download single files.
+To get an overview about what data is in the whole upload, click on the Search icon at the top of the page and select the `Heterogeneous Catalysis ` search page.
+
+
+# Where to go from here
+
+If you are interested in uploading your data to NOMAD and have general questions you will find support at [FAIRmat](https://www.fairmat-nfdi.eu/fairmat/). For questions related to this example or catalysis data in general contact [Julia Schumann](mailto:jschumann@physik.hu-berlin.de) or another member of the [FAIRmat team](https://www.fairmat-nfdi.eu/fairmat/about-fairmat/contact-fairmat).

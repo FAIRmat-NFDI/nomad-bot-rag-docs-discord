@@ -1,0 +1,15 @@
+{
+  "owner": "FAIRmat-NFDI",
+  "repo": "nomad-tadf-molecules",
+  "branch": "main",
+  "commit_sha": "1de5ea879d5e6f8af6689ec85b6e6ab9ea643f2b",
+  "mode": "md",
+  "extensions": [
+    ".md",
+    ".mdx"
+  ],
+  "include_prefix": [],
+  "exclude_prefix": [],
+  "downloaded": 9,
+  "saved_at": "2025-09-11T12:58:58Z"
+}

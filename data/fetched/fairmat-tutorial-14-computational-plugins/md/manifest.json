@@ -1,0 +1,15 @@
+{
+  "owner": "FAIRmat-NFDI",
+  "repo": "fairmat-tutorial-14-computational-plugins",
+  "branch": "main",
+  "commit_sha": "916cb23bfd911678b1c304612e4386b22d9ab457",
+  "mode": "md",
+  "extensions": [
+    ".md",
+    ".mdx"
+  ],
+  "include_prefix": [],
+  "exclude_prefix": [],
+  "downloaded": 8,
+  "saved_at": "2025-09-11T12:56:20Z"
+}

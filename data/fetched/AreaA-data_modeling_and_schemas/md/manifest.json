@@ -1,0 +1,15 @@
+{
+  "owner": "FAIRmat-NFDI",
+  "repo": "AreaA-data_modeling_and_schemas",
+  "branch": "main",
+  "commit_sha": "d7db1bc694342aaf8d628da2febca237d91e23ed",
+  "mode": "md",
+  "extensions": [
+    ".md",
+    ".mdx"
+  ],
+  "include_prefix": [],
+  "exclude_prefix": [],
+  "downloaded": 29,
+  "saved_at": "2025-09-11T12:56:02Z"
+}
