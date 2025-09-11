@@ -167,12 +167,12 @@ Question: {query}
         answer = self.generate_answer(query, relevant_chunks)
         answer_latency = time.perf_counter() - answer_start_time        
         logger.info(f"[Latency] Answer generation: {answer_latency:.4f}s")        
-        
-        logger.info(f"--- Formatting citations for: '{query}' ---")        
+              
         citations = self._format_citations(relevant_chunks)
+        
         logger.info(f"Generated answer: '{answer}'")
 
         total_latency = time.perf_counter() - total_start_time
         logger.info(f"--- Total query pipeline finished in {total_latency:.4f}s ---")
-        
+
         return answer, citations, relevant_chunks
