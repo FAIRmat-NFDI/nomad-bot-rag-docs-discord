@@ -101,7 +101,7 @@ class RAGQueryEngine:
             logger.error(f"Unexpected response structure from embedding endpoint: {e}. Response: {response.text}")
             raise
 
-    def _prepare_messages(self, query: str, context_chunks: List[Dict]) -> List[Dict[str, str]]:
+    def _prepare_messages(self, query: str, context_chunks: List[Dict], history: List[Dict[str, str]]) -> List[Dict[str, str]]:
         """Creates the message structure for the OpenAI Chat Completions API."""
         context_str = "\n\n".join(f"Context {i+1}:\n{chunk['content']}" for i, chunk in enumerate(context_chunks))
         system_prompt = """You are a helpful and friendly assistant specializing in NOMAD, a platform for managing and sharing materials science data. Your goal is to provide clear, accurate, and concise answers based on the provided context.
@@ -121,7 +121,8 @@ Based *only* on the context above, please answer the following question.
 
 Question: {query}
 """
-        return [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}]
+        messages = history + [{"role": "user", "content": user_prompt}]
+        return messages
 
     def _format_citations(self, chunks: List[Dict]) -> str:
         """Formats the citation string from the metadata of retrieved chunks."""
@@ -132,9 +133,9 @@ Question: {query}
             citation_set.add(f"Source file: `{source_path}`")
         return "\n".join(f"- {citation}" for citation in sorted(list(citation_set))) or "No sources found."
 
-    def generate_answer(self, query: str, context_chunks: List[Dict]) -> str:
+    def generate_answer(self, query: str, context_chunks: List[Dict], history: List[Dict[str, str]]) -> str:
         """Generates an answer using the OpenAI Chat Completions API."""
-        messages = self._prepare_messages(query, context_chunks)
+        messages = self._prepare_messages(query, context_chunks, history)
         try:
             logger.info("Generating answer via local chat model...")
             response = self.client.chat.completions.create(
@@ -147,13 +148,13 @@ Question: {query}
             logger.error(f"Error during answer generation with local chat model: {e}")
             return "Sorry, I encountered an error while generating the answer."
 
-    def query(self, query: str, top_k: int = 5) -> Tuple[str, str, List[Dict]]:
+    def query(self, query: str, history: List[Dict[str, str]], top_k: int = 5) -> Tuple[str, str, List[Dict]]:
         """Performs a full RAG query and returns answer, citations, and chunks."""
         logger.info(f"Received query: '{query}'")
         query_embedding = self._get_local_embedding(query)
         logger.info("Retrieving relevant chunks from ChromaDB...")
         relevant_chunks = self.retriever.retrieve(query_embedding, top_k=top_k)
-        answer = self.generate_answer(query, relevant_chunks)
+        answer = self.generate_answer(query, relevant_chunks, history)
         logger.info("Formatting citations...")
         citations = self._format_citations(relevant_chunks)
         logger.info(f"Generated answer: '{answer}'")

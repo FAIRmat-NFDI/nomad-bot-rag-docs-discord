@@ -191,6 +191,7 @@ def startup():
 # === Ask endpoint ===
 @app.post("/ask", response_model=AnswerResponse)
 async def ask(req: QuestionRequest):
+    global chat_history
     if not collection:
         # collection should be set in startup; guard just in case
         return {"error": "Collection not initialized. Please wait for the server to start fully."}
@@ -206,7 +207,10 @@ async def ask(req: QuestionRequest):
         }
 
         engine = RAGQueryEngine(**config)
-        answer, citations, _ = engine.query(req.question)
+        answer, citations, _ = engine.query(req.question, history=chat_history)
+
+        chat_history.append({"role": "user", "content": req.question})
+        chat_history.append({"role": "system", "content": answer})
 
         return AnswerResponse(answer=answer, citations=citations)
 
