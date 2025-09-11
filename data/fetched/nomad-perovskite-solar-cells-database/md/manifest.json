@@ -1,0 +1,15 @@
+{
+  "owner": "FAIRmat-NFDI",
+  "repo": "nomad-perovskite-solar-cells-database",
+  "branch": "main",
+  "commit_sha": "6a1c6e19296c8d3f3f1fff9939227d395684146f",
+  "mode": "md",
+  "extensions": [
+    ".md",
+    ".mdx"
+  ],
+  "include_prefix": [],
+  "exclude_prefix": [],
+  "downloaded": 14,
+  "saved_at": "2025-09-11T12:58:34Z"
+}

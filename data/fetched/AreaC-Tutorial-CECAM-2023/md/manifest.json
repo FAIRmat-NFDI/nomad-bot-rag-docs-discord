@@ -1,0 +1,15 @@
+{
+  "owner": "FAIRmat-NFDI",
+  "repo": "AreaC-Tutorial-CECAM-2023",
+  "branch": "main",
+  "commit_sha": "d958a2d3c1600b66b4c6fcdc3b4bcb2c4866627d",
+  "mode": "md",
+  "extensions": [
+    ".md",
+    ".mdx"
+  ],
+  "include_prefix": [],
+  "exclude_prefix": [],
+  "downloaded": 15,
+  "saved_at": "2025-09-11T12:56:07Z"
+}
