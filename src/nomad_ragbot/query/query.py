@@ -2,9 +2,9 @@ import logging
 import os
 from typing import List, Dict, Tuple, Set
 
-import chromadb
+# import chromadb # No longer needed here
 import openai
-import requests  # Import the requests library for local embeddings
+import requests
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -15,27 +15,16 @@ class ChromaDBRetriever:
     """
     Retrieves document chunks from a unified ChromaDB collection.
     """
-    def __init__(self, host: str = "localhost", port: int = 8000, collection_name: str = "nomad_knowledge"):
-        try:
-            # Assuming Chroma is running locally as a server, not persisted to disk
-            self.client = chromadb.HttpClient(host=host, port=port)
-            self.client.heartbeat()
-            logger.info(f"Successfully connected to ChromaDB at {host}:{port}.")
-        except Exception as e:
-            logger.error(f"Failed to connect to ChromaDB. Please ensure it is running. Error: {e}")
-            raise ConnectionError("Could not connect to ChromaDB.") from e
-
-        try:
-            self.collection = self.client.get_collection(collection_name)
-            logger.info(f"Successfully retrieved collection: '{collection_name}'.")
-        except Exception as e:
-            # Note: The embedding function must match the one used to create the collection.
-
-            logger.warning(f"Failed to get collection '{collection_name}'. Error: {e}")
-            raise ValueError(f"Collection '{collection_name}' not found.") from e
+    # MODIFIED: The __init__ method now accepts a pre-initialized collection object.
+    def __init__(self, collection):
+        if not collection:
+            raise ValueError("A valid ChromaDB collection object must be provided.")
+        self.collection = collection
+        logger.info(f"Successfully attached to collection: '{self.collection.name}'.")
 
     def retrieve(self, query_embedding: List[float], top_k: int = 5) -> List[Dict]:
         """Retrieves the top_k most relevant chunks from the collection."""
+        # This method is unchanged and works perfectly.
         results = self.collection.query(
             query_embeddings=[query_embedding],
             n_results=top_k
@@ -55,21 +44,22 @@ class RAGQueryEngine:
     """
     A RAG engine using a local OpenAI-compatible API for chat and a custom endpoint for embeddings.
     """
+    # MODIFIED: The __init__ method now accepts the 'collection' object directly.
     def __init__(self,
-                 chromadb_host: str = "localhost",
-                 chromadb_port: int = 8000,
+                 collection,  # This is the key change!
                  openai_api_key: str = "not-needed",
-                 openai_base_url: str = "http://172.28.105.142:11434/v1",
-                 embedding_url: str = "http://172.28.105.142:11434/api/embed",
+                 openai_base_url: str = "http://127.0.0.1:11434/v1",
+                 embedding_url: str = "http://127.0.0.1:11434/api/embed",
                  embedding_model: str = "nomic-embed-text",
                  generator_model: str = "gpt-oss:20b"):
         """
-        Initializes the RAGQueryEngine with specific endpoints from chatbot.py.
+        Initializes the RAGQueryEngine.
         """
-        logger.info("Initializing RAG Query Engine with local model configuration...")
-        self.retriever = ChromaDBRetriever(host=chromadb_host, port=chromadb_port)
+        logger.info("Initializing RAG Query Engine with provided collection...")
+        # MODIFIED: Pass the provided collection object to the retriever.
+        self.retriever = ChromaDBRetriever(collection=collection)
         
-        # Configure OpenAI client for the CHAT model
+        # Configure OpenAI client for the CHAT model (this part is unchanged)
         try:
             self.client = openai.OpenAI(api_key=openai_api_key, base_url=openai_base_url)
             self.generator_model_name = generator_model
@@ -78,36 +68,32 @@ class RAGQueryEngine:
             logger.error(f"Failed to initialize OpenAI client. Error: {e}")
             raise
 
-        # Store config for the custom EMBEDDING model endpoint
+        # Store config for the custom EMBEDDING model endpoint (this part is unchanged)
         self.embedding_url = embedding_url
         self.embedding_model_name = embedding_model
         logger.info(f"Custom embedding endpoint configured for URL: {self.embedding_url}")
 
+    # --- ALL OTHER METHODS BELOW THIS LINE ARE UNCHANGED ---
+    # They will now use the collection that was passed in.
+
     def _get_local_embedding(self, text: str) -> List[float]:
         """
         Gets a vector embedding from a local, custom model server.
-        This mimics the logic from chatbot.py's LocalEmbeddingFunction.
         """
         try:
             response = requests.post(
                 self.embedding_url,
-                json={
-                    "model": self.embedding_model_name,
-                    "input": text
-                },
+                json={"model": self.embedding_model_name, "input": text},
                 headers={"Content-Type": "application/json"}
             )
-            response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
+            response.raise_for_status()
             data = response.json()
-            # The original script had a typo 'embed', but based on the class it was likely 'embedding'
-            # I'll check for both for robustness
             if 'embedding' in data:
                  return data['embedding']
-            elif 'embeddings' in data: # The original class had this typo
+            elif 'embeddings' in data:
                  return data['embeddings'][0]
             else:
                  raise KeyError("Embedding not found in response from server.")
-
         except requests.exceptions.RequestException as e:
             logger.error(f"Error calling embedding endpoint: {e}")
             raise
@@ -115,11 +101,9 @@ class RAGQueryEngine:
             logger.error(f"Unexpected response structure from embedding endpoint: {e}. Response: {response.text}")
             raise
 
-
     def _prepare_messages(self, query: str, context_chunks: List[Dict]) -> List[Dict[str, str]]:
         """Creates the message structure for the OpenAI Chat Completions API."""
         context_str = "\n\n".join(f"Context {i+1}:\n{chunk['content']}" for i, chunk in enumerate(context_chunks))
-
         system_prompt = """You are a helpful and friendly assistant specializing in NOMAD, a platform for managing and sharing materials science data. Your goal is to provide clear, accurate, and concise answers based on the provided context.
 
 IMPORTANT GUIDELINES:
@@ -137,10 +121,7 @@ Based *only* on the context above, please answer the following question.
 
 Question: {query}
 """
-        return [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ]
+        return [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}]
 
     def _format_citations(self, chunks: List[Dict]) -> str:
         """Formats the citation string from the metadata of retrieved chunks."""
@@ -149,19 +130,17 @@ Question: {query}
             meta = chunk.get('metadata', {})
             source_path = meta.get('source', 'Unknown Source')
             citation_set.add(f"Source file: `{source_path}`")
-            
         return "\n".join(f"- {citation}" for citation in sorted(list(citation_set))) or "No sources found."
 
     def generate_answer(self, query: str, context_chunks: List[Dict]) -> str:
         """Generates an answer using the OpenAI Chat Completions API."""
         messages = self._prepare_messages(query, context_chunks)
-        
         try:
             logger.info("Generating answer via local chat model...")
             response = self.client.chat.completions.create(
                 model=self.generator_model_name,
                 messages=messages,
-                temperature=0.0, # Set to 0 for deterministic, factual answers
+                temperature=0.0,
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
@@ -171,50 +150,11 @@ Question: {query}
     def query(self, query: str, top_k: int = 5) -> Tuple[str, str, List[Dict]]:
         """Performs a full RAG query and returns answer, citations, and chunks."""
         logger.info(f"Received query: '{query}'")
-        
         query_embedding = self._get_local_embedding(query)
-        
         logger.info("Retrieving relevant chunks from ChromaDB...")
         relevant_chunks = self.retriever.retrieve(query_embedding, top_k=top_k)
-        
         answer = self.generate_answer(query, relevant_chunks)
-        
         logger.info("Formatting citations...")
         citations = self._format_citations(relevant_chunks)
-        
         logger.info(f"Generated answer: '{answer}'")
         return answer, citations, relevant_chunks
-
-# This block allows you to run the script directly for testing
-if __name__ == '__main__':
-    # Configuration from your chatbot.py script
-    CHAT_BASE_URL = "http://172.28.105.142:11434/v1"
-    EMBEDDING_URL = "http://172.28.105.142:11434/api/embed"
-    EMBEDDING_MODEL = "nomic-embed-text"
-    GENERATOR_MODEL = "gpt-oss:20b"
-    API_KEY = "not-needed" 
-
-    try:
-        engine = RAGQueryEngine(
-            openai_api_key=API_KEY,
-            openai_base_url=CHAT_BASE_URL,
-            embedding_url=EMBEDDING_URL,
-            embedding_model=EMBEDDING_MODEL,
-            generator_model=GENERATOR_MODEL
-        )
-        user_query = "How do I upload a new entry to NOMAD?"
-        
-        final_answer, final_citations, retrieved_chunks = engine.query(user_query)
-        
-        print("\n" + "="*50)
-        print(f"Query: {user_query}")
-        print("\n" + "="*50)
-        print(f"Answer:\n{final_answer}")
-        print("\n" + "-"*50)
-        print(f"Sources:\n{final_citations}")
-        print("\n" + "="*50)
-
-    except (ConnectionError, ValueError) as e:
-        logger.error(f"Could not run RAG engine example: {e}")
-    except Exception as e:
-        logger.error(f"An unexpected error occurred: {e}")
