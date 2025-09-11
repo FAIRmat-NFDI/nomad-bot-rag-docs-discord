@@ -1,0 +1,15 @@
+{
+  "owner": "FAIRmat-NFDI",
+  "repo": "FAIRmat-tutorial-16",
+  "branch": "main",
+  "commit_sha": "5a79a47dae11d138d753fbd2794b0dd03c2aaf35",
+  "mode": "md",
+  "extensions": [
+    ".md",
+    ".mdx"
+  ],
+  "include_prefix": [],
+  "exclude_prefix": [],
+  "downloaded": 10,
+  "saved_at": "2025-09-11T12:56:15Z"
+}

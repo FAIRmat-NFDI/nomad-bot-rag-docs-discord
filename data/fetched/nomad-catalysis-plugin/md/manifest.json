@@ -1,0 +1,15 @@
+{
+  "owner": "FAIRmat-NFDI",
+  "repo": "nomad-catalysis-plugin",
+  "branch": "main",
+  "commit_sha": "5188074429eb3ff816d484d59c0db936c1f4aa00",
+  "mode": "md",
+  "extensions": [
+    ".md",
+    ".mdx"
+  ],
+  "include_prefix": [],
+  "exclude_prefix": [],
+  "downloaded": 10,
+  "saved_at": "2025-09-11T12:56:45Z"
+}

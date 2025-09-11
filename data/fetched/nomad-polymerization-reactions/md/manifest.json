@@ -1,0 +1,15 @@
+{
+  "owner": "FAIRmat-NFDI",
+  "repo": "nomad-polymerization-reactions",
+  "branch": "main",
+  "commit_sha": "980ebaaa5e195c18c5fafeed4c3546d8ddf97e31",
+  "mode": "md",
+  "extensions": [
+    ".md",
+    ".mdx"
+  ],
+  "include_prefix": [],
+  "exclude_prefix": [],
+  "downloaded": 9,
+  "saved_at": "2025-09-11T12:58:42Z"
+}

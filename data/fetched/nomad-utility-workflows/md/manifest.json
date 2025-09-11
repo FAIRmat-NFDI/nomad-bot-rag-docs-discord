@@ -1,0 +1,15 @@
+{
+  "owner": "FAIRmat-NFDI",
+  "repo": "nomad-utility-workflows",
+  "branch": "main",
+  "commit_sha": "857f91e3fc1382ce7ab5c7ff29b77dc7f4cd753a",
+  "mode": "md",
+  "extensions": [
+    ".md",
+    ".mdx"
+  ],
+  "include_prefix": [],
+  "exclude_prefix": [],
+  "downloaded": 13,
+  "saved_at": "2025-09-11T12:59:10Z"
+}
