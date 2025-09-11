@@ -5,9 +5,10 @@ from typing import List, Dict, Tuple, Set
 # import chromadb # No longer needed here
 import openai
 import requests
+import time
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 
@@ -149,12 +150,29 @@ Question: {query}
 
     def query(self, query: str, top_k: int = 5) -> Tuple[str, str, List[Dict]]:
         """Performs a full RAG query and returns answer, citations, and chunks."""
-        logger.info(f"Received query: '{query}'")
+        logger.info(f"--- Starting new query pipeline for: '{query}' ---")
+        total_start_time = time.perf_counter()
+
+        embed_start_time = time.perf_counter()
         query_embedding = self._get_local_embedding(query)
-        logger.info("Retrieving relevant chunks from ChromaDB...")
+        embed_latency = time.perf_counter() - embed_start_time
+        logger.info(f"[Latency] Embedding generation: {embed_latency:.4f}s")
+        
+        retrieval_start_time = time.perf_counter()        
         relevant_chunks = self.retriever.retrieve(query_embedding, top_k=top_k)
+        retrieval_latency = time.perf_counter() - retrieval_start_time        
+        logger.info(f"[Latency] Chunk retrieval: {retrieval_latency:.4f}s")        
+        
+        answer_start_time = time.perf_counter()        
         answer = self.generate_answer(query, relevant_chunks)
-        logger.info("Formatting citations...")
+        answer_latency = time.perf_counter() - answer_start_time        
+        logger.info(f"[Latency] Answer generation: {answer_latency:.4f}s")        
+              
         citations = self._format_citations(relevant_chunks)
+        
         logger.info(f"Generated answer: '{answer}'")
+
+        total_latency = time.perf_counter() - total_start_time
+        logger.info(f"--- Total query pipeline finished in {total_latency:.4f}s ---")
+
         return answer, citations, relevant_chunks
