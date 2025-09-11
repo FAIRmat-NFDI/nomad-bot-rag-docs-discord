@@ -3,7 +3,8 @@ import os
 from typing import List, Dict, Tuple, Set
 
 import chromadb
-import openai  # Import the OpenAI library
+import openai
+import requests  # Import the requests library for local embeddings
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -16,6 +17,7 @@ class ChromaDBRetriever:
     """
     def __init__(self, host: str = "localhost", port: int = 8000, collection_name: str = "nomad_knowledge"):
         try:
+            # Assuming Chroma is running locally as a server, not persisted to disk
             self.client = chromadb.HttpClient(host=host, port=port)
             self.client.heartbeat()
             logger.info(f"Successfully connected to ChromaDB at {host}:{port}.")
@@ -27,7 +29,9 @@ class ChromaDBRetriever:
             self.collection = self.client.get_collection(collection_name)
             logger.info(f"Successfully retrieved collection: '{collection_name}'.")
         except Exception as e:
-            logger.error(f"Failed to get collection '{collection_name}'. Please ensure it exists. Error: {e}")
+            # Note: The embedding function must match the one used to create the collection.
+            # We are assuming the collection exists and was created with the same embedding logic.
+            logger.warning(f"Failed to get collection '{collection_name}'. Error: {e}")
             raise ValueError(f"Collection '{collection_name}' not found.") from e
 
     def retrieve(self, query_embedding: List[float], top_k: int = 5) -> List[Dict]:
@@ -49,45 +53,68 @@ class ChromaDBRetriever:
 
 class RAGQueryEngine:
     """
-    A RAG engine using an OpenAI-compatible API for embeddings and generation.
+    A RAG engine using a local OpenAI-compatible API for chat and a custom endpoint for embeddings.
     """
     def __init__(self,
                  chromadb_host: str = "localhost",
                  chromadb_port: int = 8000,
-                 openai_api_key: str = "YOUR_API_KEY_HERE",
-                 openai_base_url: str = "http://localhost:8000/v1",
-                 embedding_model: str = "text-embedding-ada-002",
-                 generator_model: str = "gpt-3.5-turbo"):
+                 openai_api_key: str = "not-needed",
+                 openai_base_url: str = "http://172.28.105.142:11434/v1",
+                 embedding_url: str = "http://172.28.105.142:11434/api/embed",
+                 embedding_model: str = "nomic-embed-text",
+                 generator_model: str = "gpt-oss:20b"):
         """
-        Initializes the RAGQueryEngine.
-
-        Args:
-            openai_api_key: Your OpenAI API key (or a placeholder for local models).
-            openai_base_url: The base URL of your local OpenAI-compatible server.
-            embedding_model: The name/ID of the embedding model to use.
-            generator_model: The name/ID of the generator model to use.
+        Initializes the RAGQueryEngine with specific endpoints from chatbot.py.
         """
-        logger.info("Initializing RAG Query Engine with OpenAI-compatible models...")
+        logger.info("Initializing RAG Query Engine with local model configuration...")
         self.retriever = ChromaDBRetriever(host=chromadb_host, port=chromadb_port)
         
+        # Configure OpenAI client for the CHAT model
         try:
             self.client = openai.OpenAI(api_key=openai_api_key, base_url=openai_base_url)
-            self.embedding_model_name = embedding_model
             self.generator_model_name = generator_model
-            logger.info(f"OpenAI client configured for base URL: {openai_base_url}")
+            logger.info(f"OpenAI chat client configured for base URL: {openai_base_url}")
         except Exception as e:
             logger.error(f"Failed to initialize OpenAI client. Error: {e}")
             raise
 
-    def generate_embedding(self, text: str) -> List[float]:
-        """Generates a vector embedding for the given text using the OpenAI API."""
+        # Store config for the custom EMBEDDING model endpoint
+        self.embedding_url = embedding_url
+        self.embedding_model_name = embedding_model
+        logger.info(f"Custom embedding endpoint configured for URL: {self.embedding_url}")
+
+    def _get_local_embedding(self, text: str) -> List[float]:
+        """
+        Gets a vector embedding from a local, custom model server.
+        This mimics the logic from chatbot.py's LocalEmbeddingFunction.
+        """
         try:
-            text = text.replace("\n", " ")
-            response = self.client.embeddings.create(model=self.embedding_model_name, input=[text])
-            return response.data[0].embedding
-        except Exception as e:
-            logger.error(f"Error generating embedding with OpenAI API: {e}")
+            response = requests.post(
+                self.embedding_url,
+                json={
+                    "model": self.embedding_model_name,
+                    "input": text
+                },
+                headers={"Content-Type": "application/json"}
+            )
+            response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
+            data = response.json()
+            # The original script had a typo 'embed', but based on the class it was likely 'embedding'
+            # I'll check for both for robustness
+            if 'embedding' in data:
+                 return data['embedding']
+            elif 'embeddings' in data: # The original class had this typo
+                 return data['embeddings'][0]
+            else:
+                 raise KeyError("Embedding not found in response from server.")
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error calling embedding endpoint: {e}")
             raise
+        except (KeyError, IndexError) as e:
+            logger.error(f"Unexpected response structure from embedding endpoint: {e}. Response: {response.text}")
+            raise
+
 
     def _prepare_messages(self, query: str, context_chunks: List[Dict]) -> List[Dict[str, str]]:
         """Creates the message structure for the OpenAI Chat Completions API."""
@@ -120,15 +147,9 @@ Question: {query}
         citation_set: Set[str] = set()
         for chunk in chunks:
             meta = chunk.get('metadata', {})
-            source = meta.get('source')
-            if source == 'mkdocs':
-                url = meta.get('url', 'No URL found')
-                citation_set.add(f"[Documentation Page]({url})")
-            elif source == 'discord':
-                author = meta.get('author', 'Unknown User')
-                message_url = meta.get('message_url', '#')
-                citation_set.add(f"[Discord message by {author}]({message_url})")
-
+            source_path = meta.get('source', 'Unknown Source')
+            citation_set.add(f"Source file: `{source_path}`")
+            
         return "\n".join(f"- {citation}" for citation in sorted(list(citation_set))) or "No sources found."
 
     def generate_answer(self, query: str, context_chunks: List[Dict]) -> str:
@@ -136,23 +157,22 @@ Question: {query}
         messages = self._prepare_messages(query, context_chunks)
         
         try:
-            logger.info("Generating answer via OpenAI compatible API...")
+            logger.info("Generating answer via local chat model...")
             response = self.client.chat.completions.create(
                 model=self.generator_model_name,
                 messages=messages,
-                temperature=0.2, # Lower temperature for more factual answers
-                max_tokens=1024
+                temperature=0.0, # Set to 0 for deterministic, factual answers
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
-            logger.error(f"Error during answer generation with OpenAI API: {e}")
+            logger.error(f"Error during answer generation with local chat model: {e}")
             return "Sorry, I encountered an error while generating the answer."
 
     def query(self, query: str, top_k: int = 5) -> Tuple[str, str, List[Dict]]:
         """Performs a full RAG query and returns answer, citations, and chunks."""
         logger.info(f"Received query: '{query}'")
         
-        query_embedding = self.generate_embedding(query)
+        query_embedding = self._get_local_embedding(query)
         
         logger.info("Retrieving relevant chunks from ChromaDB...")
         relevant_chunks = self.retriever.retrieve(query_embedding, top_k=top_k)
@@ -167,16 +187,18 @@ Question: {query}
 
 # This block allows you to run the script directly for testing
 if __name__ == '__main__':
-    # It's recommended to set these as environment variables
-    API_KEY = os.getenv("OPENAI_API_KEY", "not-needed-for-local")
-    BASE_URL = os.getenv("OPENAI_BASE_URL", "http://localhost:8000/v1")
-    EMBEDDING_MODEL = "your-local-embedding-model-name"  # e.g., "mxbai-embed-large-v1"
-    GENERATOR_MODEL = "your-local-generator-model-name"  # e.g., "llama3-8b-instruct"
+    # Configuration from your chatbot.py script
+    CHAT_BASE_URL = "http://172.28.105.142:11434/v1"
+    EMBEDDING_URL = "http://172.28.105.142:11434/api/embed"
+    EMBEDDING_MODEL = "nomic-embed-text"
+    GENERATOR_MODEL = "gpt-oss:20b"
+    API_KEY = "not-needed" 
 
     try:
         engine = RAGQueryEngine(
             openai_api_key=API_KEY,
-            openai_base_url=BASE_URL,
+            openai_base_url=CHAT_BASE_URL,
+            embedding_url=EMBEDDING_URL,
             embedding_model=EMBEDDING_MODEL,
             generator_model=GENERATOR_MODEL
         )
