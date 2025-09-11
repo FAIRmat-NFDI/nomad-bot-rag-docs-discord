@@ -72,7 +72,6 @@ def build_chroma_from_jsonl(jsonl_path, chroma_client, embed_fn):
             }],
             ids=[item.get("id", f"chunk_{count}")]
         )
-        print("working")
         count += 1
 
     print(f"✅ Indexed {count} chunks from JSONL.")
