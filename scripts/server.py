@@ -61,19 +61,89 @@ def build_chroma_from_jsonl(jsonl_path, chroma_client, embed_fn):
         if not text.strip():
             continue
 
-        collection.add(
-            documents=[text],
-            metadatas=[{
-                "source": item.get("source"),
-                "title": item.get("title"),
-                "section": item.get("section"),
-                "url": item.get("url"),
-                "timestamp": item.get("timestamp"),
-            }],
-            ids=[item.get("id", f"chunk_{count}")]
-        )
+def _sanitize_metadata(d: dict) -> dict:
+    out = {}
+    for k, v in d.items():
+        if v is None:
+            continue
+        if isinstance(v, (str, int, float, bool)):
+            out[k] = v
+        else:
+            out[k] = str(v)
+    return out
+
+def load_jsonl_chunks(filepath):
+    with open(filepath, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            yield json.loads(line)
+
+def _make_unique_id(rid: str, item: dict, seen: set[int | str], counter: int) -> str:
+    """Ensure ID uniqueness; append a deterministic suffix if needed."""
+    if rid not in seen:
+        return rid
+    # Prefer stable components to avoid flapping across runs
+    path = item.get("path") or item.get("path_normalized") or item.get("path_original") or ""
+    src  = item.get("source") or ""
+    sec  = item.get("section") or ""
+    # Short hash-like suffix
+    base = f"{rid}|{path}|{src}|{sec}"
+    suffix = abs(hash(base)) % (10**8)
+    cand = f"{rid}::{suffix}"
+    # If by any chance still collides, fall back to counter
+    while cand in seen:
+        counter += 1
+        cand = f"{rid}::{suffix}-{counter}"
+    return cand
+
+def build_chroma_from_jsonl(jsonl_path, chroma_client, embed_fn):
+    print("🔧 Building Chroma index from JSONL...")
+
+    # Recreate collection cleanly
+    existing = {c.name for c in chroma_client.list_collections()}
+    if "mkdocs" in existing:
+        chroma_client.delete_collection("mkdocs")
+
+    collection = chroma_client.create_collection(
+        name="mkdocs",
+        embedding_function=embed_fn
+    )
+
+    ids, documents, metadatas = [], [], []
+    seen_ids = set()
+    count = 0
+
+    for item in load_jsonl_chunks(jsonl_path):
+        text = item.get("text")
+        if not text or not str(text).strip():
+            continue
+
+        raw_id = str(item.get("id") or f"chunk_{count}")
+        rid = _make_unique_id(raw_id, item, seen_ids, count)
+        seen_ids.add(rid)
+
+        meta_raw = {
+            "source": item.get("source"),  # full page URL (from your generator)
+            "title": item.get("title"),
+            "section": item.get("section"),
+            "timestamp": item.get("timestamp"),
+            # optional extras if present in your JSONL:
+            "repo": item.get("repo"),
+            "path": item.get("path") or item.get("path_normalized") or item.get("path_original"),
+        }
+        meta = _sanitize_metadata(meta_raw)
+
+        ids.append(rid)
+        documents.append(str(text))
+        metadatas.append(meta)
         count += 1
 
+    if not ids:
+        raise RuntimeError(f"No valid records found in {jsonl_path}")
+
+    collection.add(ids=ids, documents=documents, metadatas=metadatas)
     print(f"✅ Indexed {count} chunks from JSONL.")
     return collection
 
@@ -96,7 +166,7 @@ chat_history: List[Dict[str, str]] = [
     {"role": "system", "content": "You are a helpful assistant that answers questions about the MkDocs documentation files provided in context."}
 ]
 
-JSONL_PATH = "../data/docs/nomad_docs.dynamic.jsonl"
+JSONL_PATH = "../data/chunks/docs.dynamic.jsonl"
 
 @app.on_event("startup")
 def startup():
