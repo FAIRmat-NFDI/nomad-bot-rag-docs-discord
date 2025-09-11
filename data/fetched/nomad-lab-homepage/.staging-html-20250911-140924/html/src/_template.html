@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NOMAD is a data infrastructure service and software
+        that let's you manage, share, and publish materials science research data.">
+    <title>NOMAD</title>
+    <link rel="shortcut icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap">
+</head>
+
+<body style="margin: 0;">
+    <!-- maintanance banner -->
+    <% if (htmlWebpackPlugin.options.variables.maintenance) { %>
+    <aside class="nomad-snackbar mdc-snackbar">
+        <div class="mdc-snackbar__surface" role="status" aria-relevant="additions" style="max-width: none;">
+          <div class="mdc-snackbar__label" aria-atomic="false">
+            <%= htmlWebpackPlugin.options.variables.maintenance %>
+          </div>
+          <div class="mdc-snackbar__actions" aria-atomic="true">
+            <button type="button" class="mdc-button mdc-snackbar__action">
+              <div class="mdc-button__ripple"></div>
+              <span class="mdc-button__label">Dismiss</span>
+            </button>
+          </div>
+        </div>
+    </aside>
+    <% } %>
+    <!-- mobile drawer nav-->
+    <aside class="mdc-drawer mdc-drawer--modal">
+        <div class="mdc-drawer__content">
+            <nav class="mdc-list-group">
+                <a class="mdc-list-item" href="index.html" tabindex="0">
+                    <img src="./assets/nomad.svg" alt="nomad logo"/>
+                </a>
+                <ul class="mdc-list" role="menu">
+                    <li class="mdc-list-item" onclick="location.href = 'index.html'">
+                        <span class="mdc-list-item__ripple"></span>
+                        <span class="mdc-list-item__text">Home</span>
+                    </li>
+                </ul>
+                <% for (menu of htmlWebpackPlugin.options.menus.main) { %>
+                    <h3 class="mdc-list-group__subheader"><%= menu.title %></h3>
+                    <ul class="mdc-list" role="menu"></ul>
+                        <% for (itemKey of Object.keys(menu.items)) {
+                            const item = menu.items[itemKey]
+                        %>
+                            <li class="mdc-list-item" onclick="location.href = '<%= item %>'">
+                                <span class="mdc-list-item__ripple"></span>
+                                <span class="mdc-list-item__text"><%= itemKey %></span>
+                            </li>
+                        <% } %>
+                    </ul>
+                <% } %>
+            </nav>
+        </div>
+    </aside>
+
+    <div class="mdc-drawer-scrim"></div>
+
+    <!-- normal menu nav -->
+    <header class="mdc-top-app-bar--fixed nomad-app-bar">
+        <div>
+            <section class="title">
+                <a href="index.html"><img src="./assets/nomad.svg" alt="nomad logo"/></a>
+                <button class="nomad-nav-button mdc-icon-button material-icons mdc-top-app-bar__navigation-icon mdc-top-app-bar__action-item">
+                    <div class="mdc-icon-button__ripple"></div>
+                    menu
+                </button>
+                <span class="mdc-top-app-bar__title">NOMAD</span>
+            </section>
+            <section class="menu-bar" role="toolbar">
+                <% for (menu of htmlWebpackPlugin.options.menus.main) { %>
+                    <div id="<%= menu.id %>" class="menu-bar-item mdc-menu-surface--anchor">
+                        <button>
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label"><%= menu.title %></span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true">keyboard_arrow_down</i>
+                        </button>
+                        <div class="menu mdc-menu-surface">
+                            <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
+                                <% for (itemKey of Object.keys(menu.items)) {
+                                    const item = menu.items[itemKey]
+                                %>
+                                    <li role="menuitem" onclick="location.href = '<%= item %>'">
+                                        <span class="mdc-list-item__ripple"></span>
+                                        <span class="mdc-list-item__text"><%= itemKey %></span>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </div>
+                    </div>
+                <% } %>
+                <a href="<%= htmlWebpackPlugin.options.variables.urls.production_installation%>">
+                    <button class="mdc-button--unelevated">
+                        <span class="mdc-button__ripple"></span>
+                        <span class="mdc-button__label">open nomad</span>
+                    </button>
+                </a>
+            </section>
+        </div>
+    </header>
+
+    <main class="mdc-top-app-bar--fixed-adjust">
+        <div>
+            <%= require('ejs-compiled-loader!./' + htmlWebpackPlugin.options.page + '.html')(htmlWebpackPlugin.options.variables) %>
+        </div>
+    </main>
+
+    <footer>
+        <div>
+            <div>
+                <% for (menuKey of Object.keys(htmlWebpackPlugin.options.menus.footer)) {
+                    const menu = htmlWebpackPlugin.options.menus.footer[menuKey]
+                %>
+                    <div>
+                        <div class="mdc-typography--headline6">
+                            <%= menuKey %>
+                        </div>
+                        <ul>
+                            <% for (itemKey of Object.keys(menu)) {
+                                const item = menu[itemKey]
+                            %>
+                                <li><a href="<%= item %>"><%= itemKey %></a></li>
+                            <% } %>
+                        </ul>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

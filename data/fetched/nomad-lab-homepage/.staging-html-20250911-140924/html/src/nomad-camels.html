@@ -1,0 +1,271 @@
+<!-- hero -->
+<div class="nomad-hero" style="grid-template-columns: 500px 1fr; column-gap: 32px; align-items:center">
+    <div>
+        <div class="hero-title">
+            <span class="brandname brandname--camels">NOMAD CAMELS</span><br/>
+            Control instruments, run measurement protocols, and record FAIR data!
+        </div>
+        <div class="hero-description">
+            NOMAD CAMELS lets you turn your research ideas into measurement
+             and process protocols in minutes.
+             Implement instrument communication without programming skills,
+             increase productivity and flexibility, and produce FAIR data.
+        </div>
+        <div class="hero-actions">
+            <a href="https://fau-lap.github.io/NOMAD-CAMELS/doc/installation/installation.html">
+                <button class="nomad-button nomad-button--filled nomad-button--camels">
+                    <span class="mdc-button__ripple"></span>
+                    <span class="mdc-button__label">Install NOMAD CAMELS</span>
+                    <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                </button>
+            </a>
+        </div>
+    </div>
+    <img src="assets/camels.png" alt="nomad camels elements"/>
+</div>
+
+<!-- features-->
+<div class="nomad-section">
+    <div class="section-subheading">Features</div>
+    <div class="section-title">What is NOMAD CAMELS?</div>
+    <div class="section-description">
+        NOMAD CAMELS (short: CAMELS) is a standalone open-source measurement software targeted towards the requirements of experimental physics.
+        Ease of use, rich metadata and FAIR-compliant data are at the heart of CAMELS design.
+        CAMELS is suited for any researcher wanting full control and full documentation of experiments without the need of programming skills.
+    </div>
+    <div class="content nomad-gallery nomad-gallery--3">
+        <div class="nomad-content">
+            <i class="material-icons">download</i>
+            <div class="content-title">Smooth installation</div>
+            <div class="content-description">
+                CAMELS is a python package distributed via PyPI. It is easily installable on any computer. On Windows, let the installer do all the work for you.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">check</i>
+            <div class="content-title">Easy to use</div>
+            <div class="content-description">
+                No programming skills required. Just configure your measurement and process protocols. Get it done within
+                minutes.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">book</i>
+            <div class="content-title">FAIR data</div>
+            <div class="content-description">
+                Automatically store FAIR data with rich metadata that lets you and others understand your experiment in detail.
+                Optionally connect directly with your NOMAD Oasis. </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">tune</i>
+            <div class="content-title">Flexible and extendable</div>
+            <div class="content-description">
+            Add further instruments to your setup at will. Reuse and adapt existing measurements quickly.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">hub</i>
+            <div class="content-title">Scalable</div>
+            <div class="content-description">
+                Work with small setups using directly connected instruments. Or connect to large distributed systems using advanced protocols like EPICS.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">group</i>
+            <div class="content-title">Community driven</div>
+            <div class="content-description">
+                Contribute to CAMELS and add further instruments on GitHub. CAMELS comes with an instrument driver wizard that helps you implement new instruments.
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- fairmat_banner %>
+
+<!-- use cases -->
+<div class="nomad-section">
+    <div class="section-subheading">Use cases</div>
+    <div class="section-title">Why use NOMAD CAMELS?</div>
+    <div class="section-description">
+        CAMELS allows you to define measurement protocols and instrument control using a graphical user interface with just a few mouse clicks while you don't need to care about device communication – CAMELS does.
+    </div>
+    <div>
+        <div class="nomad-gallery nomad-gallery--3 nomad-gallery--filled">
+            <div class="nomad-content">
+                <i class="material-icons">grid_view</i>
+                <div class="content-title">
+                    Graphical user interface
+                </div>
+                <div class="content-description">
+                    You define your measurement and process protocols with a few clicks.
+                </div>
+                <div class="content-content">
+                    <ul>
+                        <li>Easily add and remove instruments</li>
+                        <li>Design your measurement and process protocols</li>
+                        <li>Run experiments</li>
+                        <li>Automatically get comprehensive documentation of your experiment</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="nomad-content">
+                <i class="material-icons">tune</i>
+                <div class="content-title">
+                    Instrument control
+                </div>
+                <div class="content-description">
+                    Let CAMELS take care of instrument communication.
+                </div>
+                <div class="content-content">
+                    <ul>
+                        <li>Community-developed instrument drivers</li>
+                        <li>Local communication via any interface</li>
+                        <li>Connect to your existing distributed instrument infrastructure via EPICS</li>
+                        <li>Build your own instrument drivers using built-in assistants</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="nomad-content">
+                <i class="material-icons">book</i>
+                <div class="content-title">
+                    FAIR data
+                </div>
+                <div class="content-description">
+                    Let CAMELS automatically store all available data and metadata.
+                </div>
+                <div class="content-content">
+                    <ul>
+                        <li>Measurement data and timestamps</li>
+                        <li>Instruments and settings </li>
+                        <li>Human-readable summary</li>
+                        <li>Python code which runs the measurement protocol</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- oasis_banner %>
+
+<div class="nomad-section nomad-gallery nomad-gallery--2 nomad-gallery--2--1-2">
+    <div>
+        <div class="section-title">
+            How to run NOMAD CAMELS
+        </div>
+        <div class="section-description">
+            CAMELS is distributed via PyPI and can run on any computer that supports Python. There is a special installer for Windows. See our installation guide in the documentation.
+        </div>
+        <div class="section-action">
+            <a href="https://fau-lap.github.io/NOMAD-CAMELS/doc/installation/installation.html">
+                <button class="nomad-button nomad-button--filled nomad-button--camels ">
+                    <span class="mdc-button__ripple"></span>
+                    <span class="mdc-button__label">Install NOMAD CAMELS</span>
+                    <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                </button>
+            </a>
+        </div>
+    </div>
+    <div class="nomad-filled nomad-camels-filled">
+        <div style="display: flex; flex-direction: column; gap: 2em;">
+            <div class="nomad-content nomad-content--left-justified">
+                <div class="content-title">
+                    1. CAMELS Software
+                </div>
+                <div class="content-description">
+                    CAMELS requires a desktop computer running Windows, Linux/UNIX or macOS. The required Python environment is installed either through the installer (on Windows) or manually (<a href="https://fau-lap.github.io/NOMAD-CAMELS/doc/installation/installation.html"> installation guide</a>).
+                </div>
+            </div>
+            <div class="nomad-content nomad-content--left-justified">
+                <div class="content-title">
+                    2. Drivers
+                </div>
+                <div class="content-description">
+                    Once installed, CAMELS lets you install instrument drivers from PyPi via the graphical user interface. You can also create and run local self-developed instrument drivers.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FAU affiliation -->
+
+<div class="nomad-section nomad-gallery nomad-gallery--2--2-1">
+    <div class="nomad-filled nomad-camels-filled">
+            <div class="nomad-content nomad-content--left-justified">
+                <div class="content-title">
+                    Developed at the Friedrich-Alexander-Universität Erlangen-Nürnberg with FAIR data practices and open-source approach in mind.
+                </div>
+                <a href="https://www.lap.physik.nat.fau.eu/">
+                    <button class="nomad-button camel-button ">
+                        <span class="mdc-button__ripple"></span>
+                        <span class="mdc-button__label">Chair of Applied Physics</span>
+                        <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                    </button>
+                </a>
+            </div>
+    </div>
+    <div>
+        <img src="assets/users/fau.svg"  class="img_fixed" alt="fau logo"/>
+    </div>
+</div>
+
+<!-- NOMAD CAMELS is open source-->
+<div class="nomad-title">
+    <div class="title-title" style="text-align: center;">NOMAD CAMELS is open source</div>
+    <div class="title-description" style="text-align: left; margin-bottom: 3em;">
+        CAMELS is an open-source project. We are happy for feedback, suggestions, discussions, and for contributions to further developments of CAMELS’ graphical user interface and instrument drivers.
+    </div>
+    <div class="title-content nomad-gallery nomad-gallery--3">
+        <div class="nomad-content">
+            <i class="material-icons">verified</i>
+            <div class="content-title">GNU LGPL 2.1</div>
+            <div class="content-description">
+                We use a permissive license so that you can use CAMELS everywhere and for all purposes.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">forum</i>
+            <div class="content-title">Discuss</div>
+            <div class="content-description">
+                Openly discuss issues and opportunities and help shape future CAMELS development on GitHub.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">edit</i>
+            <div class="content-title">Contribute</div>
+            <div class="content-description">
+                Develop and share new instrument drivers or contribute bugfixes, features and extensions via standard open-source workflows on Github.
+            </div>
+        </div>
+    </div>
+    <div style="margin: 2em; display: flex; flex-direction: row; column-gap: 1em; justify-content: center;">
+                <a href="https://github.com/FAU-LAP/NOMAD-CAMELS" title="Github hyperlink">
+            <button class="nomad-button">
+                <span class="mdc-button__ripple"></span>
+                <span class="mdc-button__label">Open an issue at GitHub</span>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+            </button>
+        </a>
+        <a href="https://github.com/FAU-LAP/CAMELS_drivers" title="Github hyperlink">
+            <button class="nomad-button">
+                <span class="mdc-button__ripple"></span>
+                <span class="mdc-button__label">Contribute to instrument driver</span>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+            </button>
+        </a>
+        <a href="https://fau-lap.github.io/NOMAD-CAMELS/" title="Github hyperlink">
+            <button class="nomad-button">
+                <span class="mdc-button__ripple"></span>
+                <span class="mdc-button__label">Read our documentation</span>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+            </button>
+        </a>
+    </div>
+</div>
+
+
+
+
+
