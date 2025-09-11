@@ -25,6 +25,7 @@ import argparse
 import os
 import time
 import shutil
+import re
 from pathlib import Path
 from typing import List, Optional
 
@@ -125,7 +126,8 @@ def download_file(
 
 
 def atomic_replace(dst: Path, staging: Path):
-    # Remove existing destination and move staging into place atomically
+    # Ensure destination parent exists, remove existing destination, then move staging into place atomically
+    dst.parent.mkdir(parents=True, exist_ok=True)
     if dst.exists():
         if dst.is_dir():
             shutil.rmtree(dst)
@@ -188,14 +190,18 @@ def main():
     include_list = [s for s in args.include_prefix.split(",") if s.strip()]
     exclude_list = [s for s in args.exclude_prefix.split(",") if s.strip()]
 
-    # Compute destination paths
+    # Compute destination paths: external/<repo>/<mode>
     base = Path(args.base_dir)
-    dst_root = base / mode  # e.g., external/html or external/md
+    repo_safe = re.sub(r"[^A-Za-z0-9_.-]+", "-", args.repo)
+    dst_root = base / repo_safe / mode  # e.g., external/nomad-docs/html
 
-    # If not cleaning, write into a timestamped subfolder and leave a 'current' symlink
+    # If not cleaning, write into a timestamped subfolder (under the same repo) and leave a 'current' symlink
     timestamp = time.strftime("%Y%m%d-%H%M%S")
-    staging_parent = base / f".staging-{mode}-{timestamp}"
+    staging_parent = base / repo_safe / f".staging-{mode}-{timestamp}"
     staging_root = staging_parent / mode
+
+    # Ensure staging directory exists before download loop
+    staging_root.mkdir(parents=True, exist_ok=True)
 
     print(f"🔎 Resolving branch '{branch}' for {owner}/{repo} …")
     sha = get_branch_commit_sha(owner, repo, branch, token)
@@ -249,29 +255,26 @@ def main():
             json.dumps(m, indent=2), encoding="utf-8"
         )
 
-    staging_parent.mkdir(parents=True, exist_ok=True)
-    staging_root.mkdir(parents=True, exist_ok=True)
-
     if args.no_clean:
-        # keep timestamped snapshot and update a 'current' symlink for convenience
-        target = base / f"{mode}-{timestamp}"
+        # keep timestamped snapshot under external/<repo>/<mode-YYYYmmdd-HHMMSS>
+        target = base / repo_safe / f"{mode}-{timestamp}"
         staging_parent.rename(target)
-        current_link = base / f"{mode}-current"
+        current_link = base / repo_safe / f"{mode}-current"
         if current_link.exists() or current_link.is_symlink():
             current_link.unlink()
         current_link.symlink_to(target.resolve())
         print(f"📌 Snapshot saved at: {target} (symlink: {current_link})")
+        final_path = target
     else:
-        # atomically replace the previous mode directory
+        # atomically replace external/<repo>/<mode>
         atomic_replace(dst_root, staging_root)
-        # remove the empty staging parent
+        # remove empty staging parent container if present
         if staging_parent.exists():
             shutil.rmtree(staging_parent, ignore_errors=True)
         print(f"✅ Replaced snapshot at: {dst_root.resolve()} (clean state)")
+        final_path = dst_root
 
-    print(
-        f"🎉 Done. Files saved under: {(base / (mode if not args.no_clean else f'{mode}-{timestamp}')).resolve()}"
-    )
+    print(f"🎉 Done. Files saved under: {final_path.resolve()}")
 
 
 if __name__ == "__main__":
