@@ -20,7 +20,7 @@ import requests
 # ==== CONFIG ====
 DOCS_DIR = "./docs"
 CHROMA_DIR = "./chroma_store"
-EMBED_MODEL = "text-embedding-ada-002"
+EMBED_MODEL = "nomic-embed-text"
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 100
 
@@ -28,7 +28,7 @@ CHUNK_OVERLAP = 100
 import requests
 
 class LocalEmbeddingFunction:
-    def __init__(self, model_name="nomic-embed-text"):
+    def __init__(self, model_name=EMBED_MODEL):
         self.model_name = model_name  # ✅ Set this before using it
 
     def __call__(self, input: list[str]) -> list[list[float]]:
@@ -37,7 +37,7 @@ class LocalEmbeddingFunction:
             response = requests.post(
                 "http://172.28.105.142:11434/api/embed",  # Or adjust path as needed
                 json={
-                    "model": "nomic-embed-text",  # Or your actual local embedding model
+                    "model": self.model_name,  # Or your actual local embedding model
                     "input": text
                 }
             )
@@ -46,22 +46,7 @@ class LocalEmbeddingFunction:
         return embeddings
     def name(self) -> str:
         # ✅ This is required by ChromaDB to track config
-        return f"sentence-transformers-{self.model_name}"
-
-
-# class LocalEmbeddingFunction:
-#     def __call__(self, input):
-#         embeddings = []
-#         for text in input:
-#             response = requests.post(
-#                 "http://172.28.105.142:11434/api/embeddings",
-#                 json={"model": "nomic-embed-text", "input": text}
-#             )
-#             print(response.text)
-#             data = response.json()
-#             print(data)
-#             embeddings.append(data['data'][0]['embedding'])
-#         return embeddings
+        return f"{self.model_name}"
 
 def read_markdown_files(directory):
     docs = []
