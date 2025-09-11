@@ -1,0 +1,15 @@
+{
+  "owner": "FAIRmat-NFDI",
+  "repo": "nomad-unisyscat-plugin",
+  "branch": "main",
+  "commit_sha": "7d5042ff3e01dfa3ba5b605c4945b794b7202253",
+  "mode": "md",
+  "extensions": [
+    ".md",
+    ".mdx"
+  ],
+  "include_prefix": [],
+  "exclude_prefix": [],
+  "downloaded": 5,
+  "saved_at": "2025-09-11T12:59:04Z"
+}

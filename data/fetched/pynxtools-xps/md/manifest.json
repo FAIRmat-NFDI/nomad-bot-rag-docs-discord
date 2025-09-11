@@ -1,0 +1,15 @@
+{
+  "owner": "FAIRmat-NFDI",
+  "repo": "pynxtools-xps",
+  "branch": "main",
+  "commit_sha": "fdef5a812c48cfa746da594547a81417818f3818",
+  "mode": "md",
+  "extensions": [
+    ".md",
+    ".mdx"
+  ],
+  "include_prefix": [],
+  "exclude_prefix": [],
+  "downloaded": 26,
+  "saved_at": "2025-09-11T13:00:10Z"
+}

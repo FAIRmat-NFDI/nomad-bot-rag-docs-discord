@@ -1,0 +1,15 @@
+{
+  "owner": "FAIRmat-NFDI",
+  "repo": "nomad-parser-plugin-boss",
+  "branch": "main",
+  "commit_sha": "013d2aee7d67c5bb89b71f95782dd787a378dd27",
+  "mode": "md",
+  "extensions": [
+    ".md",
+    ".mdx"
+  ],
+  "include_prefix": [],
+  "exclude_prefix": [],
+  "downloaded": 10,
+  "saved_at": "2025-09-11T12:58:08Z"
+}
