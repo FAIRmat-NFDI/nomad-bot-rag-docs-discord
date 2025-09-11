@@ -1,4 +1,4 @@
-# utils/docs_dynamic_chunking.py
+# utils/dynamic_chunking.py
 # -*- coding: utf-8 -*-
 
 from __future__ import annotations
@@ -22,7 +22,6 @@ uv run python utils/dynamic_chunking.py \
   --api-url https://nomad-lab.eu/prod/v1/api/v1/extensions/docs \
   --owner-default FAIRmat-NFDI \
   --branch-default main
-
 """
 
 
@@ -46,9 +45,8 @@ def read_text(path: Path) -> str:
 
 
 def html_to_markdownish(html: str) -> str:
-    """Extract a markdown-ish plain text from HTML using headings and paragraphs."""
+    """Extract a markdown-ish text from HTML using headings and paragraphs."""
     soup = BeautifulSoup(html or "", "html.parser")
-
     lines: List[str] = []
     for el in soup.find_all(
         ["h1", "h2", "h3", "h4", "h5", "h6", "p", "li", "pre", "code"]
@@ -195,16 +193,6 @@ def list_files(root: Path, modes: List[str]) -> List[Path]:
     return sorted(out)
 
 
-def find_manifest_for_repo(
-    input_root: Path, repo_name: str, mode: str
-) -> Optional[Dict[str, str]]:
-    """
-    Expect manifest at <input_root>/<repo>/<mode>/manifest.json.
-    """
-    candidate = input_root / repo_name / mode / "manifest.json"
-    return load_manifest(candidate) if candidate.exists() else None
-
-
 def build_source_url_for_md(
     repo: str,
     repo_rel_md: str,
@@ -218,7 +206,7 @@ def build_source_url_for_md(
     branch = (manifest or {}).get("branch") or branch_default
     # strip leading "md/" if present
     norm = repo_rel_md[3:] if repo_rel_md.startswith("md/") else repo_rel_md
-    tmpl = md_url_template or "https://github.com/{owner}/{repo}/blob/{branch}/{path}"
+    tmpl = md_url_template or "https://{owner}.github.io/{repo}/{path}"
     return tmpl.format(owner=owner, repo=repo_name, branch=branch, path=norm)
 
 
@@ -229,14 +217,12 @@ def build_source_url_for_html(
     owner_default: str,
     html_url_template: str,
 ) -> str:
-    # Prefer explicit site base URL from the manifest (e.g., https://nomad-lab.eu/nomad-lab/)
+    # Prefer explicit site base URL from manifest (e.g., https://nomad-lab.eu/nomad-lab/)
     site_base = (manifest or {}).get("site_base_url", "").strip()
-    # repo_rel_html like "html/guide/index.html" → web_rel = "guide/" (strip "html/" and "index.html")
     web_rel = repo_rel_html[5:] if repo_rel_html.startswith("html/") else repo_rel_html
     if web_rel.endswith("index.html"):
         web_rel = web_rel[: -len("index.html")]
     if site_base:
-        # Ensure single slash join
         return (site_base.rstrip("/") + "/" + web_rel.lstrip("/")).rstrip("/")
     # fallback to owner.github.io pattern
     owner = (manifest or {}).get("owner") or owner_default
@@ -265,7 +251,8 @@ def build_records_for_file(
     chunks: List[str],
     source_url: str,
     repo: str,
-    repo_rel: str,
+    path_original: str,
+    path_normalized: str,
     ts_iso: str,
 ) -> List[Dict]:
     rec_id_prefix = (
@@ -276,12 +263,13 @@ def build_records_for_file(
         rows.append(
             {
                 "id": f"{rec_id_prefix}:{i}",
-                "source": source_url,  # canonical URL for the page
+                "source": source_url,
                 "repo": repo,
                 "title": title,
                 "section": section_title,
                 "text": ch,
-                "path_original": repo_rel,
+                "path_original": path_original,
+                "path_normalized": path_normalized,
                 "timestamp": ts_iso,
             }
         )
@@ -295,7 +283,7 @@ def run_dynamic_chunking(
     input_root: str = "external",
     out_path: str = "data/chunks/docs.dynamic.jsonl",
     modes: List[str] = ["md", "html"],
-    source_url_template: str = "https://github.com/{owner}/{repo}/blob/{branch}/{path}",
+    source_url_template: str = "https://{owner}.github.io/{repo}/{path}",
     html_url_template: str = "https://{owner}.github.io/{repo}/{path}",
     api_docs_repo_name: str = "nomad-api",
     api_url: str = "https://nomad-lab.eu/prod/v1/api/v1/extensions/docs",
@@ -310,36 +298,42 @@ def run_dynamic_chunking(
 
     for f in files:
         # <root>/<repo>/<mode>/... → repo_dir = <root>/<repo>
-        try:
-            repo_dir = f.parents[1]
-            repo = repo_dir.name
-            mode = f.parents[0].name  # md or html
-        except Exception:
+        rel_from_root = f.relative_to(root)
+        parts = rel_from_root.parts
+        if len(parts) < 3 or parts[1] not in {"md", "html"}:
+            # Not in the expected <repo>/<mode>/... layout; skip defensively
+            # (or you can raise/log here)
             continue
 
-        # repo-relative path including mode folder (e.g., "md/docs/foo.md" or "html/x/index.html")
-        repo_rel = str(f.relative_to(repo_dir)).replace("\\", "/")
+        repo = parts[0]  # <repo>
+        mode = parts[1]  # md or html
+        repo_dir = root / repo  # canonical repo dir
+        repo_rel = "/".join(parts[1:])  # includes "md/..." or "html/..."
         ts = file_mtime_utc_iso(f)
 
         # Manifest (if present)
         manifest_path = repo_dir / mode / "manifest.json"
         manifest = load_manifest(manifest_path) if manifest_path.exists() else None
 
-        # Read file content and normalize to markdown-ish text
+        # Read + normalize to markdown-ish text
         raw = read_text(f)
         textish = html_to_markdownish(raw) if mode == "html" else raw
 
-        # Split into sections, then chunk
+        # Split into sections
         title = doc_title_from_md(textish, f)
         sections = split_markdown_by_headings(textish) or [("Introduction", textish)]
 
-        # Build source URL per case
+        # Build source URL + normalized path for metadata
         if repo == api_docs_repo_name and mode == "md":
             page_url = build_source_url_for_api(api_url)
+            path_normalized = repo_rel[3:] if repo_rel.startswith("md/") else repo_rel
         elif mode == "html":
             page_url = build_source_url_for_html(
                 repo, repo_rel, manifest, owner_default, html_url_template
             )
+            path_normalized = repo_rel[5:] if repo_rel.startswith("html/") else repo_rel
+            if path_normalized.endswith("index.html"):
+                path_normalized = path_normalized[: -len("index.html")]
         else:
             page_url = build_source_url_for_md(
                 repo,
@@ -349,6 +343,7 @@ def run_dynamic_chunking(
                 branch_default,
                 source_url_template,
             )
+            path_normalized = repo_rel[3:] if repo_rel.startswith("md/") else repo_rel
 
         for sec_title, sec_text in sections:
             chunks = chunk_content(sec_text)
@@ -361,7 +356,8 @@ def run_dynamic_chunking(
                     chunks=chunks,
                     source_url=page_url,
                     repo=repo,
-                    repo_rel=repo_rel,
+                    path_original=repo_rel,
+                    path_normalized=path_normalized,
                     ts_iso=ts,
                 )
             )
@@ -397,7 +393,7 @@ def _parse_args() -> argparse.Namespace:
     )
     ap.add_argument(
         "--source-url-template",
-        default="https://github.com/{owner}/{repo}/blob/{branch}/{path}",
+        default="https://{owner}.github.io/{repo}/{path}",
         help="Template for MD source URLs.",
     )
     ap.add_argument(
