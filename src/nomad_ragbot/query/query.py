@@ -30,7 +30,7 @@ class ChromaDBRetriever:
             logger.info(f"Successfully retrieved collection: '{collection_name}'.")
         except Exception as e:
             # Note: The embedding function must match the one used to create the collection.
-            # We are assuming the collection exists and was created with the same embedding logic.
+
             logger.warning(f"Failed to get collection '{collection_name}'. Error: {e}")
             raise ValueError(f"Collection '{collection_name}' not found.") from e
 
