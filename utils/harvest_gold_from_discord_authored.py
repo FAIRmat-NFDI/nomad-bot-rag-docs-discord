@@ -13,14 +13,35 @@ Two input modes:
    If only "text" exists (no messages), we fall back to line-based heuristic.
 
 Output:
-- eval/gold_candidates_discord_authored.jsonl
-- eval/gold_candidates_discord_authored.csv  (if --write-csv)
+- eval/data/gold_candidates_discord_authored.jsonl
+- eval/data/gold_candidates_discord_authored.csv  (if --write-csv)
 
 Example Usage:
 uv run python utils/harvest_gold_from_discord_authored.py \
   --threads-jsonl external/discord/stripped/issues.jsonl \
-  --out-jsonl eval/gold_candidates_discord_authored.jsonl \
-  --write-csv
+  --out-jsonl eval/data/gold_candidates_discord_authored.jsonl \
+  --out-csv  eval/data/gold_candidates_discord_authored.csv \
+  --write-csv \
+  --min-score 0.55 \
+  --q-thresh 0.5 \
+  --max-lookahead 20 \
+  --skip-acks \
+  --debug
+
+uv run python utils/harvest_gold_from_discord_authored.py \
+  --threads-jsonl external/discord/stripped/issues.jsonl \
+  --out-jsonl eval/data/gold_candidates_discord_authored.jsonl \
+  --out-csv   eval/data/gold_candidates_discord_authored.csv \
+  --write-csv \
+  --min-score 0.55 \
+  --q-thresh 0.5 \
+  --max-lookahead 20 \
+  --max-q-chars 600 \
+  --max-a-chars 1200 \
+  --max-prepend-blocks 2 \
+  --max-append-blocks 3 \
+  --skip-acks \
+  --debug
 
 
 Heuristics:
@@ -44,8 +65,41 @@ Q_WORDS = (
     r"(how|why|what|where|when|which|who|can|could|should|is|are|does|do|anyone|help)"
 )
 A_HINTS = r"(try|use|run|click|set|install|link|configure|update|check|ensure|pass|call|create|open)"
+ACK_RE = re.compile(
+    r"^(thanks|thank you|ok|okay|great|cool|nice|got it|works|awesome|perfect|cheers)[\W\d]*$",
+    re.I,
+)
 URL_RE = re.compile(r"https?://\S+")
 CODE_RE = re.compile(r"`[^`]+`|```[\s\S]+?```")
+
+SENT_SPLIT = re.compile(r"(?<=[.!?])\s+")
+
+
+def trim_to_chars(text: str, limit: int) -> tuple[str, bool]:
+    """
+    Trim to ~limit chars, preferring sentence boundaries; returns (trimmed, was_trimmed)
+    """
+    s = text.strip()
+    if limit <= 0 or len(s) <= limit:
+        return s, False
+    # Try to cut at last sentence boundary before limit
+    cut = s[:limit]
+    parts = SENT_SPLIT.split(cut)
+    if len(parts) > 1:
+        # rejoin all complete sentences except a possibly incomplete tail
+        acc = ""
+        total = 0
+        for i, p in enumerate(parts):
+            seg = (p + " ") if i < len(parts) - 1 else p
+            if total + len(seg) > limit:
+                break
+            acc += seg
+            total += len(seg)
+        acc = acc.strip()
+        if acc:
+            return acc + " …", True
+    # fallback: hard cut
+    return cut.rstrip() + " …", True
 
 
 # ---------- Scorers ----------
@@ -214,7 +268,20 @@ def to_blocks_from_text(text: str) -> List[Dict]:
 
 
 # ---------- Harvest with authorship ----------
-def harvest_thread_authored(thread: Dict, min_score: float, max_q: int) -> List[Dict]:
+def harvest_thread_authored(
+    thread: Dict,
+    min_score: float,
+    max_q: int,
+    q_thresh: float = 0.6,
+    max_lookahead: int = 12,
+    allow_same_author: bool = False,
+    skip_acks: bool = True,
+    debug: bool = False,
+    max_q_chars: int = 600,
+    max_a_chars: int = 1200,
+    max_prepend_blocks: int = 2,
+    max_append_blocks: int = 2,
+) -> List[Dict]:
     msgs = thread.get("messages")
     if msgs:
         blocks = to_blocks_from_messages(msgs)
@@ -227,7 +294,7 @@ def harvest_thread_authored(thread: Dict, min_score: float, max_q: int) -> List[
 
     # Detect question blocks
     q_idxs = [(i, sent_score_question(b["text"])) for i, b in enumerate(blocks)]
-    q_idxs = [(i, s) for (i, s) in q_idxs if s >= 0.6]
+    q_idxs = [(i, s) for (i, s) in q_idxs if s >= q_thresh]
 
     # Thin out very dense detections (keep stronger if adjacent)
     filtered = []
@@ -246,43 +313,72 @@ def harvest_thread_authored(thread: Dict, min_score: float, max_q: int) -> List[
         qb = blocks[qi]
         asker = qb["author_id"]
 
-        # Build QUESTION: include immediately previous blocks by the SAME author
+        # Build QUESTION: include immediately previous blocks by the SAME author (capped)
         q_text_parts = [qb["text"]]
         j = qi - 1
-        while j >= 0 and blocks[j]["author_id"] == asker:
-            # prepend previous same-author block
+        prepend_used = 0
+        while (
+            j >= 0
+            and blocks[j]["author_id"] == asker
+            and prepend_used < max_prepend_blocks
+        ):
             q_text_parts.insert(0, blocks[j]["text"])
             j -= 1
+            prepend_used += 1
         question_text = " ".join(q_text_parts).strip()
 
         # Build ANSWER: next block by a DIFFERENT author, plus their subsequent consecutive blocks
         ans_start = None
-        for k in range(qi + 1, len(blocks)):
-            if blocks[k]["author_id"] and blocks[k]["author_id"] != asker:
-                ans_start = k
-                break
+        look_limit = min(len(blocks), qi + 1 + max_lookahead)
+        ans_start = next(
+            (
+                k
+                for k in range(qi + 1, look_limit)
+                if (
+                    (not skip_acks or not ACK_RE.match(blocks[k]["text"].strip()))
+                    and (
+                        (blocks[k]["author_id"] and blocks[k]["author_id"] != asker)
+                        or (not blocks[k]["author_id"])
+                        or allow_same_author
+                    )
+                )
+            ),
+            None,
+        )
+
         if ans_start is None:
-            continue  # no answer found
+            if debug:
+                print(
+                    f"[DEBUG] thread={thread.get('id','?')} | qi={qi} | no answer within {max_lookahead} blocks"
+                )
+            continue
 
         answerer = blocks[ans_start]["author_id"]
         a_text_parts = [blocks[ans_start]["text"]]
         k = ans_start + 1
-        while k < len(blocks) and blocks[k]["author_id"] == answerer:
+        append_used = 0
+        while (
+            k < len(blocks)
+            and blocks[k]["author_id"] == answerer
+            and append_used < max_append_blocks
+        ):
             a_text_parts.append(blocks[k]["text"])
             k += 1
+            append_used += 1
         answer_text = " ".join(a_text_parts).strip()
-
         if not answer_text:
             continue
 
-        # Score the assembled texts
-        a_base = sent_score_answer(answer_text)
-        # bonus for links/code in answer
-        if URL_RE.search(answer_text):
+        # --- NEW: Trim here ---
+        q_trimmed, q_was_trimmed = trim_to_chars(question_text, max_q_chars)
+        a_trimmed, a_was_trimmed = trim_to_chars(answer_text, max_a_chars)
+
+        # Score (use trimmed answer for scoring)
+        a_base = sent_score_answer(a_trimmed)
+        if URL_RE.search(a_trimmed):
             a_base += 0.1
-        if CODE_RE.search(answer_text):
+        if CODE_RE.search(a_trimmed):
             a_base += 0.1
-        # proximity: fewer blocks between Q and A
         distance = max(1, ans_start - qi)
         prox = max(0.0, 0.2 - 0.05 * (distance - 1))
         final = max(0.0, min(1.0, 0.55 * qscore + 0.35 * a_base + prox))
@@ -294,8 +390,8 @@ def harvest_thread_authored(thread: Dict, min_score: float, max_q: int) -> List[
             "thread_id": thread.get("id", ""),
             "title": thread.get("title", ""),
             "section": thread.get("section", ""),
-            "question": question_text,
-            "proposed_answer": answer_text,
+            "question": q_trimmed,
+            "proposed_answer": a_trimmed,
             "source_url": thread.get("url"),
             "timestamp": thread.get("timestamp", ""),
             "method": "discord_authored_blocks",
@@ -304,6 +400,14 @@ def harvest_thread_authored(thread: Dict, min_score: float, max_q: int) -> List[
             "a_block": ans_start,
             "asker_id": asker,
             "answerer_id": answerer,
+            "meta": {
+                "q_len": len(question_text),
+                "a_len": len(answer_text),
+                "q_trimmed": q_was_trimmed,
+                "a_trimmed": a_was_trimmed,
+                "prepend_blocks_used": prepend_used,
+                "append_blocks_used": append_used,
+            },
         }
         out.append(rec)
 
@@ -357,12 +461,55 @@ def main():
         help="Alternative: JSONL with per-thread objects; prefer ones that include 'messages'",
     )
     ap.add_argument(
-        "--out-jsonl", default="eval/gold_candidates_discord_authored.jsonl"
+        "--out-jsonl", default="eval/data/gold_candidates_discord_authored.jsonl"
     )
-    ap.add_argument("--out-csv", default="eval/gold_candidates_discord_authored.csv")
+    ap.add_argument(
+        "--out-csv", default="eval/data/gold_candidates_discord_authored.csv"
+    )
     ap.add_argument("--min-score", type=float, default=0.62)
     ap.add_argument("--max-q-per-thread", type=int, default=5)
     ap.add_argument("--write-csv", action="store_true")
+    ap.add_argument(
+        "--q-thresh", type=float, default=0.6, help="Question threshold (default 0.6)"
+    )
+    ap.add_argument(
+        "--a-thresh",
+        type=float,
+        default=0.0,
+        help="(Reserved) Answer threshold, influences scoring only",
+    )
+    ap.add_argument(
+        "--max-lookahead",
+        type=int,
+        default=12,
+        help="Blocks to look ahead for an answer (default 12)",
+    )
+    ap.add_argument(
+        "--allow-same-author", action="store_true", help="Allow same-author answers"
+    )
+    ap.add_argument(
+        "--skip-acks", action="store_true", help="Skip short ack blocks as answers"
+    )
+    ap.add_argument("--debug", action="store_true", help="Print per-thread debug stats")
+    ap.add_argument(
+        "--max-q-chars", type=int, default=600, help="Cap question text length (chars)"
+    )
+    ap.add_argument(
+        "--max-a-chars", type=int, default=1200, help="Cap answer text length (chars)"
+    )
+    ap.add_argument(
+        "--max-prepend-blocks",
+        type=int,
+        default=2,
+        help="Max previous same-author blocks to include in the question",
+    )
+    ap.add_argument(
+        "--max-append-blocks",
+        type=int,
+        default=2,
+        help="Max subsequent same-author blocks to include in the answer",
+    )
+
     args = ap.parse_args()
 
     threads: List[Dict] = []
@@ -379,9 +526,23 @@ def main():
     all_cands: List[Dict] = []
     for th in threads:
         cands = harvest_thread_authored(
-            th, min_score=args.min_score, max_q=args.max_q_per_thread
+            th,
+            min_score=args.min_score,
+            max_q=args.max_q_per_thread,
+            q_thresh=args.q_thresh,
+            max_lookahead=args.max_lookahead,
+            allow_same_author=args.allow_same_author,
+            skip_acks=args.skip_acks,
+            debug=args.debug,
+            max_q_chars=args.max_q_chars,
+            max_a_chars=args.max_a_chars,
+            max_prepend_blocks=args.max_prepend_blocks,
+            max_append_blocks=args.max_append_blocks,
         )
         all_cands.extend(cands)
+
+    print("Threads:", len(threads))
+    print("With messages:", sum(1 for t in threads if t.get("messages")))
 
     # sort best-first
     all_cands.sort(key=lambda r: (r["score"], r.get("timestamp", "")), reverse=True)

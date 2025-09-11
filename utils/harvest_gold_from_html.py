@@ -3,7 +3,7 @@
 Harvest candidate Q&A from a built MkDocs (Material) site snapshot.
 
 Input:  root of HTML files (e.g., external/html/)
-Output: eval/gold_candidates.jsonl  (+ optional CSV for review)
+Output: eval/data/gold_candidates.jsonl  (+ optional CSV for review)
 
 Heuristics:
 - Heading questions (H2/H3): ends with "?" or starts with (how/what/why/…)
@@ -28,8 +28,8 @@ from bs4 import BeautifulSoup
 import re, json, csv, argparse, hashlib
 
 HTML_ROOT_DEFAULT = "external/nomad-docs/html"
-OUT_JSONL = Path("eval/gold_candidates.jsonl")
-OUT_CSV = Path("eval/gold_review.csv")
+OUT_JSONL = Path("eval/data/gold_candidates.jsonl")
+OUT_CSV = Path("eval/data/gold_review.csv")
 
 QUESTION_STARTS = (
     "how ",

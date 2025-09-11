@@ -13,3 +13,18 @@ dependencies = [
     "lxml",
     "ipywidgets>=8.1.7",
 ]
+
+[project.optional-dependencies]
+eval = [
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "tqdm>=4.66",
+    "streamlit>=1.36",
+    "sentence-transformers>=3.0; python_version>='3.9'",
+    "openai>=1.40",
+    "pyarrow>=15.0"
+]
+
+[project.scripts]
+ragbot-eval = "nomad_ragbot.eval.pipeline:main"
+ragbot-eval-dash = "nomad_ragbot.dash.streamlit_app:main"

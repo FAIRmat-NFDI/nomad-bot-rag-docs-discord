@@ -13,8 +13,8 @@ Input JSONL record (one per thread), minimally:
 }
 
 Output:
-- eval/gold_candidates_discord.jsonl
-- eval/gold_candidates_discord.csv  (if --write-csv)
+- eval/data/gold_candidates_discord.jsonl
+- eval/data/gold_candidates_discord.csv  (if --write-csv)
 
 Heuristics:
 - detect Q-lines (question marks + interrogatives + troubleshooting cues)
@@ -24,8 +24,8 @@ Heuristics:
 Example Usage:
 uv run python utils/harvest_gold_from_discord.py \
   --threads-jsonl external/discord/stripped/issues.jsonl \
-  --out-jsonl eval/gold_candidates_discord.jsonl \
-  --out-csv  eval/gold_candidates_discord.csv \
+  --out-jsonl eval/data/gold_candidates_discord.jsonl \
+  --out-csv  eval/data/gold_candidates_discord.csv \
   --write-csv \
   --min-score 0.62 \
   --max-q-per-thread 50
@@ -248,8 +248,8 @@ def main():
     ap.add_argument(
         "--threads-jsonl", required=True, help="Path to normalized threads JSONL"
     )
-    ap.add_argument("--out-jsonl", default="eval/gold_candidates_discord.jsonl")
-    ap.add_argument("--out-csv", default="eval/gold_candidates_discord.csv")
+    ap.add_argument("--out-jsonl", default="eval/data/gold_candidates_discord.jsonl")
+    ap.add_argument("--out-csv", default="eval/data/gold_candidates_discord.csv")
     ap.add_argument("--min-score", type=float, default=0.6)
     ap.add_argument(
         "--max-q-per-thread", type=int, default=3, help="Max Qs to propose per thread"

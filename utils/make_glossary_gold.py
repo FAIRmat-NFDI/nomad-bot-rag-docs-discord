@@ -8,7 +8,15 @@ Input:
   --base-url   public base URL for citations (default nomad docs site)
 
 Output:
-  eval/gold_nomad_glossary.jsonl  (appends; dedup by (term, source_url))
+  eval/data/gold_nomad_glossary.jsonl  (appends; dedup by (term, source_url))
+
+Example Usage:
+
+uv run python utils/make_glossary_gold.py \
+  --html-root external/nomad-docs/html \
+  --base-url https://fairmat-nfdi.github.io/nomad-docs \
+  --out eval/data/gold_nomad_glossary.jsonl
+
 
 Question format:
   "What does <TERM> mean in NOMAD?"   (or "What is <TERM> in NOMAD?" if you prefer)
@@ -111,7 +119,7 @@ def main():
         help="Public base URL for citations",
     )
     ap.add_argument(
-        "--out", default="eval/gold_nomad_glossary.jsonl", help="Output JSONL path"
+        "--out", default="eval/data/gold_nomad_glossary.jsonl", help="Output JSONL path"
     )
     ap.add_argument(
         "--question-style",
