@@ -183,7 +183,7 @@ def list_files(
 ) -> List[Path]:
     """
     Look for files only under <root>/<repo>/<mode>/** with mode in {'md','html'}.
-    For Markdown, restrict to <repo>/md/<md_subdir>/** (default 'docs').
+    For Markdown, include *all* files under <repo>/md/** (not only md/<md_subdir>/).
     For HTML,     restrict to <repo>/html/<html_subdir>/** (default 'src').
     """
     mode_exts = {"md": {".md", ".mdx"}, "html": {".html"}}
@@ -194,10 +194,7 @@ def list_files(
             if not mode_dir.is_dir():
                 continue
             if mode == "md":
-                base_dir = mode_dir / md_subdir
-                if not base_dir.is_dir():
-                    continue
-                search_root = base_dir
+                search_root = mode_dir
             elif mode == "html":
                 base_dir = mode_dir / html_subdir
                 if not base_dir.is_dir():
@@ -209,23 +206,6 @@ def list_files(
                 if f.is_file() and f.suffix.lower() in mode_exts.get(mode, set()):
                     out.append(f)
     return sorted(out)
-
-
-def _strip_md_prefixes(path: str, md_subdir: str) -> str:
-    """Strip 'md/<md_subdir>/' if present, else 'md/'."""
-    prefix = f"md/{md_subdir.strip('/')}/"
-    if path.startswith(prefix):
-        return path[len(prefix) :]
-    if path.startswith("md/"):
-        return path[len("md/") :]
-    return path
-
-
-def _drop_md_extension(path: str) -> str:
-    """Remove .md or .mdx extension (only the final extension)."""
-    if path.lower().endswith(".md") or path.lower().endswith(".mdx"):
-        return path.rsplit(".", 1)[0]
-    return path
 
 
 def _strip_html_prefixes(path: str, html_subdir: str) -> str:
@@ -245,18 +225,33 @@ def build_source_url_for_md(
     owner_default: str,
     branch_default: str,
     md_url_template: str,
-    md_subdir: str,
+    md_blob_url_template: str,
+    md_subdir: str,  # kept for signature compatibility; only 'docs' is special-cased
 ) -> str:
+    """
+    Special case: only files under md/docs/** are treated as built site pages
+    (extension dropped, published URL). All other md/** paths → GitHub blob URL.
+    """
     owner = (manifest or {}).get("owner") or owner_default
     repo_name = (manifest or {}).get("repo") or repo
-    # 'branch' supported for custom templates; not used by default template
     branch = (manifest or {}).get("branch") or branch_default
 
-    norm = _strip_md_prefixes(repo_rel_md, md_subdir)
-    norm = _drop_md_extension(norm)
+    # Only md/docs/** maps to the published site
+    if repo_rel_md.startswith("md/docs/"):
+        norm = repo_rel_md[len("md/docs/") :]
+        if norm.lower().endswith(".md") or norm.lower().endswith(".mdx"):
+            norm = norm.rsplit(".", 1)[0]
+        tmpl = md_url_template or "https://{owner}.github.io/{repo}/{path}"
+        return tmpl.format(owner=owner, repo=repo_name, branch=branch, path=norm)
 
-    tmpl = md_url_template or "https://{owner}.github.io/{repo}/{path}"
-    return tmpl.format(owner=owner, repo=repo_name, branch=branch, path=norm)
+    # Fallback: any other markdown under md/** → GitHub blob URL (keep extension)
+    path_in_repo = repo_rel_md[3:] if repo_rel_md.startswith("md/") else repo_rel_md
+    tmpl_blob = (
+        md_blob_url_template or "https://github.com/{owner}/{repo}/blob/{branch}/{path}"
+    )
+    return tmpl_blob.format(
+        owner=owner, repo=repo_name, branch=branch, path=path_in_repo
+    )
 
 
 def build_source_url_for_html(
@@ -338,11 +333,12 @@ def run_dynamic_chunking(
     modes: List[str] = ["md", "html"],
     source_url_template: str = "https://{owner}.github.io/{repo}/{path}",
     html_url_template: str = "https://{owner}.github.io/{repo}/{path}",
+    md_blob_url_template: str = "https://github.com/{owner}/{repo}/blob/{branch}/{path}",
     api_docs_repo_name: str = "nomad-api",
     api_url: str = "https://nomad-lab.eu/prod/v1/api/v1/extensions/docs",
     owner_default: str = "FAIRmat-NFDI",
     branch_default: str = "main",
-    md_subdir: str = "docs",
+    md_subdir: str = "docs",  # kept for compatibility; only 'docs' is special-cased
     html_subdir: str = "src",
 ) -> Dict[str, object]:
     root = Path(input_root).resolve()
@@ -378,8 +374,18 @@ def run_dynamic_chunking(
         # Build source URL + normalized path for metadata
         if repo == api_docs_repo_name and mode == "md":
             page_url = build_source_url_for_api(api_url)
-            path_normalized = _strip_md_prefixes(repo_rel, md_subdir)
-            path_normalized = _drop_md_extension(path_normalized)
+            # normalized path for API docs: mimic docs pages (drop extension)
+            if repo_rel.startswith("md/docs/"):
+                path_normalized = repo_rel[len("md/docs/") :]
+                if path_normalized.lower().endswith(
+                    ".md"
+                ) or path_normalized.lower().endswith(".mdx"):
+                    path_normalized = path_normalized.rsplit(".", 1)[0]
+            else:
+                # If API repo places md elsewhere, just use file path
+                path_normalized = (
+                    repo_rel[3:] if repo_rel.startswith("md/") else repo_rel
+                )
         elif mode == "html":
             page_url = build_source_url_for_html(
                 repo, repo_rel, manifest, owner_default, html_url_template, html_subdir
@@ -395,10 +401,20 @@ def run_dynamic_chunking(
                 owner_default,
                 branch_default,
                 source_url_template,
+                md_blob_url_template,
                 md_subdir,
             )
-            path_normalized = _strip_md_prefixes(repo_rel, md_subdir)
-            path_normalized = _drop_md_extension(path_normalized)
+            # Normalized path: drop extension only for md/docs/**; otherwise keep original
+            if repo_rel.startswith("md/docs/"):
+                path_normalized = repo_rel[len("md/docs/") :]
+                if path_normalized.lower().endswith(
+                    ".md"
+                ) or path_normalized.lower().endswith(".mdx"):
+                    path_normalized = path_normalized.rsplit(".", 1)[0]
+            else:
+                path_normalized = (
+                    repo_rel[3:] if repo_rel.startswith("md/") else repo_rel
+                )
 
         for sec_title, sec_text in sections:
             chunks = chunk_content(sec_text)
@@ -449,7 +465,7 @@ def _parse_args() -> argparse.Namespace:
     ap.add_argument(
         "--md-subdir",
         default="docs",
-        help="Markdown subdir to include under md/ (default: docs)",
+        help="Note: only md/docs/** is treated as site pages; all other md/** use GitHub blob URLs.",
     )
     ap.add_argument(
         "--html-subdir",
@@ -459,7 +475,12 @@ def _parse_args() -> argparse.Namespace:
     ap.add_argument(
         "--source-url-template",
         default="https://{owner}.github.io/{repo}/{path}",
-        help="Template for MD source URLs.",
+        help="Template for MD site page URLs (used only for md/docs/**).",
+    )
+    ap.add_argument(
+        "--md-blob-url-template",
+        default="https://github.com/{owner}/{repo}/blob/{branch}/{path}",
+        help="Template for non-site markdown blob URLs (all md/** except md/docs/**).",
     )
     ap.add_argument(
         "--html-url-template",
@@ -498,6 +519,7 @@ if __name__ == "__main__":
         modes=modes,
         source_url_template=args.source_url_template,
         html_url_template=args.html_url_template,
+        md_blob_url_template=args.md_blob_url_template,
         api_docs_repo_name=args.api_docs_repo_name,
         api_url=args.api_url,
         owner_default=args.owner_default,
