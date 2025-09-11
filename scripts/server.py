@@ -1,83 +1,152 @@
-from fastapi import FastAPI, Request
+# scripts/server.py
+from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Dict
 import os
+import json
+import requests
+
 from openai import OpenAI
 import chromadb
 from chromadb.config import Settings
 from chromadb.utils.embedding_functions import EmbeddingFunction
-from markdown import markdown
-from bs4 import BeautifulSoup
-import requests
+
+# keep if your RAG engine uses it
 from query import RAGQueryEngine
 
 # ==== CONFIG ====
-DOCS_DIR = "./docs"
 CHROMA_DIR = "./chroma_store"
-CHUNK_SIZE = 500
-CHUNK_OVERLAP = 100
+
+# NOTE: point this at your dynamic JSONL
+JSONL_PATH = "../data/chunks/docs.dynamic.jsonl"
 
 # ==== EMBEDDING FUNCTION ====
 class LocalEmbeddingFunction(EmbeddingFunction):
     def __init__(self, model_name="nomic-embed-text"):
         self.model_name = model_name
+        self.base_url = os.getenv("EMBED_BASE_URL", "http://172.28.105.142:11434")
+        self.timeout = int(os.getenv("EMBED_TIMEOUT", "20"))
+        self._session = requests.Session()
 
     def __call__(self, input: List[str]) -> List[List[float]]:
-        embeddings = []
+        embs = []
         for text in input:
-            response = requests.post(
-                "http://172.28.105.142:11434/api/embed",
-                json={"model": self.model_name, "input": text}
+            r = self._session.post(
+                f"{self.base_url}/api/embed",
+                json={"model": self.model_name, "input": text},
+                timeout=self.timeout,
             )
-            data = response.json()
-            embeddings.append(data["embeddings"][0])
-        return embeddings
+            r.raise_for_status()
+            data = r.json()
+            # supports {"embeddings":[[...]]} or {"embedding":[...]}
+            if "embeddings" in data and data["embeddings"]:
+                embs.append(data["embeddings"][0])
+            elif "embedding" in data:
+                embs.append(data["embedding"])
+            else:
+                raise RuntimeError(f"Unexpected embed response: {data}")
+        return embs
 
     def name(self) -> str:
         return f"sentence-transformers-{self.model_name}"
 
-import json
+# ==== HELPERS YOU ASKED TO RESTORE ====
 
-def load_jsonl_chunks(filepath):
-    """
-    Load pre-chunked data from a JSONL file.
-    Each line is expected to be a valid JSON object with keys like:
-    id, text, source, title, section, url, timestamp
-    """
+def load_jsonl_chunks(filepath: str):
+    """Yield JSON objects from a JSONL file, skipping blank lines."""
     with open(filepath, "r", encoding="utf-8") as f:
         for line in f:
+            line = line.strip()
+            if not line:
+                continue
             yield json.loads(line)
+
+def _sanitize_metadata(d: dict) -> dict:
+    """
+    Chroma Rust backend allows only primitive values (str|int|float|bool).
+    Drop None; stringify non-primitives.
+    """
+    out = {}
+    for k, v in d.items():
+        if v is None:
+            continue
+        if isinstance(v, (str, int, float, bool)):
+            out[k] = v
+        else:
+            out[k] = str(v)
+    return out
+
+def _make_unique_id(rid: str, item: dict, seen: set, counter: int) -> str:
+    """
+    Ensure IDs are unique; if duplicate, append a stable suffix derived from
+    (id, path, source, section). Falls back to counter if necessary.
+    """
+    if rid not in seen:
+        return rid
+    path = item.get("path") or item.get("path_normalized") or item.get("path_original") or ""
+    src  = item.get("source") or ""
+    sec  = item.get("section") or ""
+    base = f"{rid}|{path}|{src}|{sec}"
+    suffix = abs(hash(base)) % (10**8)
+    cand = f"{rid}::{suffix}"
+    while cand in seen:
+        counter += 1
+        cand = f"{rid}::{suffix}-{counter}"
+    return cand
+
+# ==== BUILD CHROMA FROM JSONL (uses restored helpers) ====
 
 def build_chroma_from_jsonl(jsonl_path, chroma_client, embed_fn):
     print("🔧 Building Chroma index from JSONL...")
 
-    if "mkdocs" in [c.name for c in chroma_client.list_collections()]:
+    # (re)create collection cleanly
+    existing = {c.name for c in chroma_client.list_collections()}
+    if "mkdocs" in existing:
         chroma_client.delete_collection("mkdocs")
 
-    collection = chroma_client.create_collection(name="mkdocs", embedding_function=embed_fn)
+    collection = chroma_client.create_collection(
+        name="mkdocs",
+        embedding_function=embed_fn
+    )
 
+    ids, documents, metadatas = [], [], []
+    seen_ids = set()
     count = 0
+
     for item in load_jsonl_chunks(jsonl_path):
-        text = item.get("text", "")
-        if not text.strip():
+        text = item.get("text")
+        if not text or not str(text).strip():
             continue
 
-        collection.add(
-            documents=[text],
-            metadatas=[{
-                "source": item.get("source"),
-                "title": item.get("title"),
-                "section": item.get("section"),
-                "url": item.get("url"),
-                "timestamp": item.get("timestamp"),
-            }],
-            ids=[item.get("id", f"chunk_{count}")]
-        )
+        raw_id = str(item.get("id") or f"chunk_{count}")
+        rid = _make_unique_id(raw_id, item, seen_ids, count)
+        seen_ids.add(rid)
+
+        # Your dynamic JSONL has "source" (full URL). Older field "url" is usually absent.
+        meta_raw = {
+            "source": item.get("source"),  # canonical link
+            "title": item.get("title"),
+            "section": item.get("section"),
+            "timestamp": item.get("timestamp"),
+            # optional extras if present:
+            "repo": item.get("repo"),
+            "path": item.get("path") or item.get("path_normalized") or item.get("path_original"),
+        }
+        meta = _sanitize_metadata(meta_raw)
+
+        ids.append(rid)
+        documents.append(str(text))
+        metadatas.append(meta)
         count += 1
 
+    if not ids:
+        raise RuntimeError(f"No valid records found in {jsonl_path}")
+
+    collection.add(ids=ids, documents=documents, metadatas=metadatas)
     print(f"✅ Indexed {count} chunks from JSONL.")
     return collection
 
+# (kept for compatibility; not used by /ask since you call RAGQueryEngine)
 def retrieve_context(query, collection, top_k=3):
     results = collection.query(query_texts=[query], n_results=top_k)
     return results['documents'][0] if results['documents'] else []
@@ -104,8 +173,6 @@ chat_history: List[Dict[str, str]] = [
     {"role": "system", "content": "You are a helpful assistant that answers questions about the MkDocs documentation files provided in context."}
 ]
 
-JSONL_PATH = "../data/docs/nomad_docs.dynamic.jsonl"
-
 @app.on_event("startup")
 def startup():
     global collection
@@ -115,6 +182,7 @@ def startup():
     ))
     embed_fn = LocalEmbeddingFunction()
 
+    # build only if missing; else reuse persisted store
     if not os.path.exists(CHROMA_DIR) or "mkdocs" not in [c.name for c in chroma_client.list_collections()]:
         build_chroma_from_jsonl(JSONL_PATH, chroma_client, embed_fn)
 
@@ -123,13 +191,12 @@ def startup():
 # === Ask endpoint ===
 @app.post("/ask", response_model=AnswerResponse)
 async def ask(req: QuestionRequest):
-    # The global 'collection' is now ready and available here.
     if not collection:
+        # collection should be set in startup; guard just in case
         return {"error": "Collection not initialized. Please wait for the server to start fully."}
 
     try:
-        # 1. Create the configuration for your RAG engine.
-        #    This is the crucial step where we pass the LIVE collection object.
+        # Configure your RAGQueryEngine with the live collection
         config = {
             "collection": collection,
             "openai_base_url": "http://127.0.0.1:11434/v1",
@@ -137,17 +204,12 @@ async def ask(req: QuestionRequest):
             "embedding_model": "nomic-embed-text",
             "generator_model": "gpt-oss:20b",
         }
-        
-        # 2. Instantiate your powerful RAG engine with this config.
+
         engine = RAGQueryEngine(**config)
-        
-        # 3. Call the 'query' method from your engine. It handles everything now.
         answer, citations, _ = engine.query(req.question)
-        
-        # 4. Return the structured response.
+
         return AnswerResponse(answer=answer, citations=citations)
 
     except Exception as e:
-        # This will catch errors from both the RAG engine and the API itself.
         print(f"An error occurred: {e}")
         return {"error": str(e)}
