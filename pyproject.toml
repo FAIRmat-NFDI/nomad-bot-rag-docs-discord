@@ -12,6 +12,8 @@ dependencies = [
     "beautifulsoup4",
     "lxml",
     "ipywidgets>=8.1.7",
+    "chromadb>=1.0.20",
+    "openai>=1.107.1",
 ]
 
 [project.optional-dependencies]
