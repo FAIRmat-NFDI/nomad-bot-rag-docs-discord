@@ -1,0 +1,10 @@
+# Core dependencies for NOMAD RAGalicious
+gradio>=4.0.0
+openai>=1.0.0
+chromadb>=0.4.0
+requests>=2.31.0
+pydantic>=2.0.0
+
+# Optional: For better text processing (used in server.py)
+markdown>=3.5.0
+beautifulsoup4>=4.12.0
