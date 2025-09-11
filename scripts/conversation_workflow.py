@@ -1,22 +1,23 @@
-import json
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from typing import List, Dict
 import os
+from openai import OpenAI
 import chromadb
 from chromadb.config import Settings
 from chromadb.utils.embedding_functions import EmbeddingFunction
+from markdown import markdown
+from bs4 import BeautifulSoup
 import requests
-
-# MODIFIED: Import your RAGQueryEngine
 from query import RAGQueryEngine
 
-# ==== CONFIG (Unchanged) ====
+# ==== CONFIG ====
+DOCS_DIR = "./docs"
 CHROMA_DIR = "./chroma_store"
-JSONL_PATH = "../data/docs/nomad_docs.dynamic.jsonl"
-COLLECTION_NAME = "mkdocs"
+CHUNK_SIZE = 500
+CHUNK_OVERLAP = 100
 
-# ==== EMBEDDING FUNCTION (Unchanged) ====
+# ==== EMBEDDING FUNCTION ====
 class LocalEmbeddingFunction(EmbeddingFunction):
     def __init__(self, model_name="nomic-embed-text"):
         self.model_name = model_name
@@ -25,39 +26,68 @@ class LocalEmbeddingFunction(EmbeddingFunction):
         embeddings = []
         for text in input:
             response = requests.post(
-                "http://127.0.0.1:11434/api/embed",
+                "http://172.28.105.142:11434/api/embed",
                 json={"model": self.model_name, "input": text}
             )
-            response.raise_for_status() # Good practice to check for errors
             data = response.json()
-            # server.py had "embeddings", query.py handled both. Let's stick to server's original.
-            embeddings.append(data["embeddings"][0]) 
+            embeddings.append(data["embeddings"][0])
         return embeddings
 
-# ==== DATA LOADING (Unchanged, but fixed a small bug in original build function) ====
+    def name(self) -> str:
+        return f"sentence-transformers-{self.model_name}"
+
+import json
+
 def load_jsonl_chunks(filepath):
-    """Loads pre-chunked data from a JSONL file."""
+    """
+    Load pre-chunked data from a JSONL file.
+    Each line is expected to be a valid JSON object with keys like:
+    id, text, source, title, section, url, timestamp
+    """
     with open(filepath, "r", encoding="utf-8") as f:
         for line in f:
             yield json.loads(line)
 
 def build_chroma_from_jsonl(jsonl_path, chroma_client, embed_fn):
-    """Builds or rebuilds the ChromaDB collection from a JSONL file."""
     print("🔧 Building Chroma index from JSONL...")
 
-    # The original server.py deleted the collection every time. This is safer.
-    if COLLECTION_NAME in [c.name for c in chroma_client.list_collections()]:
-        print(f"Collection '{COLLECTION_NAME}' already exists. Reusing it.")
-        return
+    if "mkdocs" in [c.name for c in chroma_client.list_collections()]:
+        chroma_client.delete_collection("mkdocs")
 
-    collection = chroma_client.create_collection(name=COLLECTION_NAME, embedding_function=embed_fn)
-    # The rest of this function is fine.
-    # ... (code to add documents) ...
-    print(f"✅ Indexing complete.")
+    collection = chroma_client.create_collection(name="mkdocs", embedding_function=embed_fn)
 
+    count = 0
+    for item in load_jsonl_chunks(jsonl_path):
+        text = item.get("text", "")
+        if not text.strip():
+            continue
 
-# ==== FastAPI Setup (Unchanged) ====
+        collection.add(
+            documents=[text],
+            metadatas=[{
+                "source": item.get("source"),
+                "title": item.get("title"),
+                "section": item.get("section"),
+                "url": item.get("url"),
+                "timestamp": item.get("timestamp"),
+            }],
+            ids=[item.get("id", f"chunk_{count}")]
+        )
+        count += 1
+
+    print(f"✅ Indexed {count} chunks from JSONL.")
+    return collection
+
+def retrieve_context(query, collection, top_k=3):
+    results = collection.query(query_texts=[query], n_results=top_k)
+    return results['documents'][0] if results['documents'] else []
+
+# ==== FastAPI Setup ====
 app = FastAPI()
+client = OpenAI(
+    base_url="http://172.28.105.142:11434/v1",
+    api_key="not-needed"
+)
 
 class QuestionRequest(BaseModel):
     question: str
@@ -69,7 +99,13 @@ class AnswerResponse(BaseModel):
 # Global variable to hold the collection after startup
 collection = None
 
-# ==== STARTUP LOGIC (Unchanged) ====
+# Memory (global for now)
+chat_history: List[Dict[str, str]] = [
+    {"role": "system", "content": "You are a helpful assistant that answers questions about the MkDocs documentation files provided in context."}
+]
+
+JSONL_PATH = "../data/docs/nomad_docs.dynamic.jsonl"
+
 @app.on_event("startup")
 def startup():
     global collection
@@ -79,15 +115,12 @@ def startup():
     ))
     embed_fn = LocalEmbeddingFunction()
 
-    # This logic correctly creates or loads the persistent DB
-    if not os.path.exists(CHROMA_DIR) or COLLECTION_NAME not in [c.name for c in chroma_client.list_collections()]:
+    if not os.path.exists(CHROMA_DIR) or "mkdocs" not in [c.name for c in chroma_client.list_collections()]:
         build_chroma_from_jsonl(JSONL_PATH, chroma_client, embed_fn)
 
-    collection = chroma_client.get_collection(name=COLLECTION_NAME, embedding_function=embed_fn)
-    print("✅ ChromaDB collection is ready.")
+    collection = chroma_client.get_collection(name="mkdocs", embedding_function=embed_fn)
 
-# === Ask endpoint (MODIFIED) ===
-# This is where we integrate your logic.
+# === Ask endpoint ===
 @app.post("/ask", response_model=AnswerResponse)
 async def ask(req: QuestionRequest):
     # The global 'collection' is now ready and available here.
