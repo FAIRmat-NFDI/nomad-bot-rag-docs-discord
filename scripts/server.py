@@ -1,7 +1,7 @@
 # scripts/server.py
 from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Dict, Optional
 import os
 import json
 import requests
@@ -160,6 +160,8 @@ client = OpenAI(
 
 class QuestionRequest(BaseModel):
     question: str
+    top_k: Optional[int] = 5
+    rerank_top_n: Optional[int] = 20
 
 class AnswerResponse(BaseModel):
     answer: str
@@ -203,10 +205,15 @@ async def ask(req: QuestionRequest):
             "embedding_url": "http://172.28.105.142:11434/api/embed",
             "embedding_model": "nomic-embed-text",
             "generator_model": "gpt-oss:20b",
+            "reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
         }
 
         engine = RAGQueryEngine(**config)
-        answer, citations, _ = engine.query(req.question)
+        answer, citations, _ = engine.query(
+            req.question,
+            top_k=req.top_k,
+            rerank_top_n=req.rerank_top_n
+        )
 
         return AnswerResponse(answer=answer, citations=citations)
 
