@@ -22,6 +22,7 @@ uv run python utils/dynamic_chunking.py \
   --api-url https://nomad-lab.eu/prod/v1/api/v1/extensions/docs \
   --owner-default FAIRmat-NFDI \
   --branch-default main
+
 """
 
 
@@ -228,12 +229,18 @@ def build_source_url_for_html(
     owner_default: str,
     html_url_template: str,
 ) -> str:
-    owner = (manifest or {}).get("owner") or owner_default
-    repo_name = (manifest or {}).get("repo") or repo
-    # repo_rel_html like "html/guide/index.html" or nested paths
+    # Prefer explicit site base URL from the manifest (e.g., https://nomad-lab.eu/nomad-lab/)
+    site_base = (manifest or {}).get("site_base_url", "").strip()
+    # repo_rel_html like "html/guide/index.html" → web_rel = "guide/" (strip "html/" and "index.html")
     web_rel = repo_rel_html[5:] if repo_rel_html.startswith("html/") else repo_rel_html
     if web_rel.endswith("index.html"):
         web_rel = web_rel[: -len("index.html")]
+    if site_base:
+        # Ensure single slash join
+        return (site_base.rstrip("/") + "/" + web_rel.lstrip("/")).rstrip("/")
+    # fallback to owner.github.io pattern
+    owner = (manifest or {}).get("owner") or owner_default
+    repo_name = (manifest or {}).get("repo") or repo
     tmpl = html_url_template or "https://{owner}.github.io/{repo}/{path}"
     return tmpl.format(owner=owner, repo=repo_name, path=web_rel)
 

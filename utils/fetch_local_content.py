@@ -7,10 +7,12 @@ Examples
 --------
 # Copy HTML files from a local clone
 uv run python utils/fetch_local_content.py \
-  --src-dir ../nomad-lab-homepage \
+  --src-dir <path_to_repo>/nomad-lab-homepage \
   --mode html \
-  --base-dir external \
-  --manifest
+  --base-dir data/fetched \
+  --manifest \
+  --site-base-url https://nomad-lab.eu/nomad-lab/
+
 
 Notes
 -----
@@ -79,6 +81,12 @@ def main():
         action="store_true",
         help="Do NOT replace previous snapshot (timestamped dir)",
     )
+    # NEW: base URL for serving the HTML snapshot online
+    ap.add_argument(
+        "--site-base-url",
+        default="",
+        help="Public base URL for HTML (e.g. https://nomad-lab.eu/nomad-lab/)",
+    )
     args = ap.parse_args()
 
     src_dir = Path(args.src_dir).resolve()
@@ -128,6 +136,9 @@ def main():
             "downloaded": downloaded,
             "saved_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         }
+        # include site base only if provided
+        if args.site_base_url:
+            m["site_base_url"] = args.site_base_url.rstrip("/") + "/"
         (staging_root / "manifest.json").write_text(
             json.dumps(m, indent=2), encoding="utf-8"
         )

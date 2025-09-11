@@ -33,4 +33,5 @@ eval = [
 
 [project.scripts]
 ragbot-eval = "nomad_ragbot.eval.pipeline:main"
-ragbot-eval-dash = "nomad_ragbot.dash.streamlit_app:main"
+ragbot-eval-dash = "nomad_ragbot.dash.__main__:main"
+
