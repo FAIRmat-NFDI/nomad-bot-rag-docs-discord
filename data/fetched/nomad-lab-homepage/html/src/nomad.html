@@ -1,0 +1,292 @@
+<!-- hero -->
+<div class="nomad-hero" style="grid-template-columns: 430px 1fr; column-gap: 64px;">
+    <div>
+        <div class="hero-title">
+            <span class="brandname">NOMAD</span><br/>
+            Share data, not files.
+        </div>
+        <div class="hero-description">
+            NOMAD lets you extract and publish structured data with rich metadata.
+            It provides a unified way to Find, Access, Interoperate with, and
+            Reuse millions of FAIR data from different codes and sources.
+        </div>
+        <div class="hero-actions">
+            <a href="<%= urls.production_installation %>">
+                <button class="nomad-button nomad-button--filled">
+                    <span class="mdc-button__ripple"></span>
+                    <span class="mdc-button__label">Open NOMAD</span>
+                    <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                </button>
+            </a>
+        </div>
+    </div>
+    <img src="./assets/pea.png" alt="nomad data infrastructure"/>
+</div>
+
+    <!-- NOMAD features-->
+    <div class="nomad-section">
+    <div class="section-subheading">Features</div>
+    <div class="section-title">What is NOMAD?</div>
+    <div class="section-description">
+        NOMAD is a free web-service that lets you share your data or use comprehensive data that others provide.
+        You can use NOMAD to organize, analyze, share, and publish your materials science data, as well as explore, download,
+        and analyze your colleagues' data.
+    </div>
+    <div class="section-content nomad-gallery nomad-gallery--3">
+        <div class="nomad-content">
+            <i class="material-icons">cloud_upload</i>
+            <div class="content-title">Drag & Drop</div>
+            <div class="content-description">
+                NOMAD organizes your files as you would on your hard-drive.
+                Upload file-by-file or zip and upload whole directory structures.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">link</i>
+            <div class="content-title">Get a DOI</div>
+            <div class="content-description">
+                NOMAD allows you to publish and archive your data for free.
+                Assign a DOI to uploaded datasets and reference your papers.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">shield</i>
+            <div class="content-title">You Control Your Data</div>
+            <div class="content-description">
+                Not ready to publish?
+                Organize data and collaborate in private first,
+                or use your own NOMAD Oasis for an even higher level of privacy.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">code</i>
+            <div class="content-title">FAIR data</div>
+            <div class="content-description">
+                NOMAD extracts machine-actionable data from over 60+ formats and codes.
+                All data accessible and prepared for analysis.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">storage</i>
+            <div class="content-title">All data, one source</div>
+            <div class="content-description">
+                NOMAD is the largest database of its kind, combining
+                data from popular sources like the
+                Materials Project, AFLOW, and OQMD.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">construction</i>
+            <div class="content-title">Ready to use Tools</div>
+            <div class="content-description">
+                Run Jupyter and other tools directly on NOMAD.
+                Access your data and publish your Jupyter notebooks.
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- fairmat_banner %>
+
+<div class="nomad-section" id="metainfo">
+    <div class="section-subheading">
+        FAIR data
+    </div>
+    <div class="section-title">
+        Why is NOMAD different?
+    </div>
+    <div class="section-description">
+        NOMAD is not about sharing files, it is about sharing data and
+        making data FAIR.
+
+        All data is organized in well-defined structures that are described
+        by a formal schema. This is the basis for searching (Findable),
+        using APIs (Accessible), converting data (Interoperable), and
+        running tools (Re-usable).
+    </div>
+    <div class="nomad-gallery nomad-gallery--2" style="row-gap: 64px;">
+        <img src="assets/nomad-data.png" alt="nomad data schema and sources" style="width: 100%; margin-top: auto; margin-bottom: auto;"/>
+        <div class="nomad-content nomad-content--left-justified">
+            <div class="content-title">
+                Structured data and Metainfo
+            </div>
+            <div class="description">
+                All data in NOMAD follows a schema that defines how the data
+                is hierarchically structured and cross-referenced.
+                This schema is called the NOMAD Metainfo.
+                It defines a general domain-independent super structure,
+                as well as highly detailed, specialized data from specific
+                methods, tools, and programs.
+            </div>
+            <div class="content-content">
+                <ul>
+                    <li>
+                        NOMAD's parsers automatically structure your data
+                    </li>
+                    <li>
+                        You can extend the existing NOMAD schema
+                    </li>
+                    <li>
+                        All data are hierarchically organized and connected
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="nomad-content nomad-content--left-justified">
+            <div class="content-title">
+                Analysis tools
+            </div>
+            <div class="description">
+                Since all data is uniformly organized, you can use
+                existing tools or build your tools own tools to analyze data from
+                various sources. The NOMAD Remote Tools Hub (NORTH)
+                allows you to run containerized tools and Jupyter notebooks
+                directly on your data.
+            </div>
+            <div class="content-content">
+                <ul>
+                    <li>
+                        Use JupyterLab to access and modify
+                        files in NOMAD
+                    </li>
+                    <li>
+                        Run predefined notebooks for machine learning in the AI Toolkit
+                    </li>
+                    <li>
+                        All data is available via API
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <img src="assets/nomad-north.png" style="width: 100%; margin-top: auto; margin-bottom: auto;"/>
+    </div>
+</div>
+
+<!-- Getting started -->
+<div class="nomad-section">
+    <div class="section-subheading">Video tutorials</div>
+    <div class="section-title">Getting started</div>
+    <div class="section-description">
+        Our short YouTube tutorials provide specific instructions
+        on how to use the core functionality of NOMAD.
+    </div>
+    <div>
+        <%- video_tutorials %>
+    </div>
+</div>
+
+
+<%- oasis_banner %>
+
+
+<!-- intallations -->
+<div class="nomad-section">
+    <div class="section-subheading">Try and test</div>
+    <div class="section-title">Other NOMAD versions</div>
+    <div class="section-description">
+        In addition to the official NOMAD version, we operate other installations
+        running different NOMAD versions.
+        You can try features which are currently being developed or have an empty test sandbox, or access older versions of NOMAD.
+    </div>
+    <div class="section-content">
+        <div class="nomad-gallery nomad-gallery--3 nomad-gallery--dense nomad-gallery--filled">
+            <div class="nomad-content">
+                <i class="material-icons nomad-icons--filled">science</i>
+                <div class="content-title">
+                    Beta
+                </div>
+                <div class="content-description content-grow">
+                    This installation runs the newest version of the NOMAD software
+                    and uses the official NOMAD data. This installation is called "beta" or
+                    "staging".
+                </div>
+                <div class="content-content">
+                    <ul>
+                        <li>
+                            Developmental features activated
+                        </li>
+                        <li>
+                            Shows the actual NOMAD data
+                        </li>
+                        <li>
+                            Frequently updated
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-action">
+                    <a href="<%= urls.beta_installation %>">
+                        <button class="nomad-button">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">Open NOMAD beta</span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="nomad-content">
+                <i class="material-icons nomad-icons--filled">auto_delete</i>
+                <div class="content-title">
+                    Test
+                </div>
+                <div class="content-description content-grow">
+                    This installation runs the official released version of
+                    the NOMAD software, but on data that is routinely wiped.
+                </div>
+                <div class="content-content">
+                    <ul>
+                        <li>
+                            Official NOMAD software
+                        </li>
+                        <li>
+                            Only contains test data
+                        </li>
+                        <li>
+                            Can be used for testing
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-action">
+                    <a href="<%= urls.test_installation %>">
+                        <button class="nomad-button">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">Open NOMAD test</span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="nomad-content">
+                <i class="material-icons nomad-icons--filled">history</i>
+                <div class="content-title">
+                    Legacy
+                </div>
+                <div class="content-description content-grow">
+                    This installation runs an old version of NOMAD (v0).
+                    Newer versions use a different API that is incompatible.
+                </div>
+                <div class="content-content">
+                    <ul>
+                        <li>
+                            Runs The old v0 NOMAD version
+                        </li>
+                        <li>
+                            Frozen, data up to end of 2021
+                        </li>
+                        <li>
+                            Offers the legacy NOMAD API
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-action">
+                    <a href="<%= urls.legacy_installation %>">
+                        <button class="nomad-button">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">Open NOMAD v0</span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

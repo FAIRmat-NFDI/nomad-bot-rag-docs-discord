@@ -1,0 +1,310 @@
+<!-- hero -->
+<div class="nomad-hero">
+    <div>
+        <div class="hero-title">
+            <span class="brandname">NOMAD</span><br/>
+            Materials science data<br/>
+            managed and shared
+        </div>
+        <div class="hero-description">
+            NOMAD lets you manage and share your materials science data in a way that
+            makes it truly useful to you, your group, and the community. <b>Free and open source.</b>
+        </div>
+        <div class="hero-actions">
+            <a href="<%= urls.production_installation %>">
+                <button class="nomad-button nomad-button--filled">
+                    <span class="mdc-button__ripple"></span>
+                    <span class="mdc-button__label">Open NOMAD</span>
+                    <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                </button>
+            </a>
+        </div>
+    </div>
+    <img src="./assets/nomad-hero.png" alt="nomad screenshot"/>
+</div>
+
+<!-- banner-discord -->
+
+
+<div class="nomad-section">
+    <div class="nomad-banner nomad-banner--discord" style="">
+        <div>
+            <div class="banner-title">
+                NOMAD Discord
+            </div>
+            <div class="banner-description">
+                Join our Discord community of over 500 researchers and developers.
+                Connect with fellow NOMAD users, share ideas, and get answers.
+            </div>
+            <div class="action action--filled">
+                <a href="https://discord.gg/Gyzx3ukUw8">
+                    <button>
+                        <span class="mdc-button__ripple"></span>
+                        <span class="mdc-button__label">Open Discord</span>
+                    </button>
+                </a>
+            </div>
+        </div>
+        <img src="./assets/discord.png" alt="discord and nomad logo"/>
+    </div>
+</div>
+<!-- statistics -->
+<div class="nomad-section nomad-inset">
+    <div>
+        <div class="section-title section-title--centered">used by thousands of materials scientists</div>
+        <div class="nomad-gallery nomad-gallery--3 nomad-gallery--filled">
+            <div class="nomad-statistic">
+                <div>
+                    <span>uploaded entries</span>
+                    <span><%= statistics.entries %></span>
+                </div>
+            </div>
+            <div class="nomad-statistic">
+                <div>
+                    <span>represented materials</span>
+                    <span><%= statistics.materials %></span>
+                </div>
+            </div>
+            <div class="nomad-statistic">
+                <div>
+                    <span>uploaded files</span>
+                    <span><%= statistics.rawFiles %></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PEA -->
+<div class="nomad-section">
+    <div class="section-subheading">Use cases</div>
+    <div class="section-title">More than sharing files</div>
+    <div class="section-description">
+        NOMAD processes your files to extract structured data and rich metadata.
+        It provides a unified way to Find, Access, Interoperate with, and Reuse
+        millions of FAIR data from different codes, sources, and workflows.
+    </div>
+    <div>
+        <div class="nomad-gallery nomad-gallery--3 nomad-gallery--dense nomad-gallery--filled">
+            <div class="nomad-content">
+                <i class="material-icons nomad-icons--filled">cloud_upload</i>
+                <div class="content-title">
+                    Publish
+                </div>
+                <div class="content-description">
+                    Enable your peers to reuse your data in
+                    a common and structured way.
+                </div>
+                <div class="content-content">
+                    <ul>
+                        <li>
+                            Extract data from 60+ formats
+                        </li>
+                        <li>
+                            Incrementally create datasets
+                        </li>
+                        <li>
+                            Customize ELNs
+                        </li>
+                        <li>
+                            Publish data with DOI
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-action">
+                    <a href="<%= urls.production_installation %>/user/uploads">
+                        <button class="nomad-button">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">Upload data</span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="nomad-content">
+                <i class="material-icons nomad-icons--filled">search</i>
+                <div class="content-title">
+                    Explore
+                </div>
+                <div class="content-description">
+                    Find heterogenous data with one interface,
+                    one format, and one license.
+                </div>
+                <div class="content-content">
+                    <ul>
+                        <li>
+                            Search based on rich metadata
+                        </li>
+                        <li>
+                            Preview and visualize data
+                        </li>
+                        <li>
+                            Download files or processed data
+                        </li>
+                        <li>
+                            All data under CC-BY-4.0
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-action">
+                    <a href="<%= urls.production_installation %>/search/entries">
+                        <button class="nomad-button">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">Search NOMAD</span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="nomad-content">
+                <i class="material-icons nomad-icons--filled">code</i>
+                <div class="content-title">
+                    Analyze
+                </div>
+                <div class="content-description">
+                    Programmatically access data and apply machine learning.
+                </div>
+                <div class="content-content">
+                    <ul>
+                        <li>
+                            All functionality usable via APIs
+                        </li>
+                        <li>
+                            Machine-actionable unified data
+                        </li>
+                        <li>
+                            Notebooks run in your browser
+                        </li>
+                        <li>
+                            A comprehensive AI toolkit
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-action">
+                    <a href="ai-toolkit.html">
+                        <button class="nomad-button">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">AI Toolkit</span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- fairmat-->
+<%- fairmat_banner %>
+
+<!-- oasis -->
+<div class="nomad-section">
+    <div class="section-subheading">NOMAD & NOMAD Oasis</div>
+    <div class="section-title">
+        Research data management for your group
+    </div>
+    <div class="section-description">
+        Combine NOMAD and NOMAD Oasis to implement research data management.
+        NOMAD Oasis gives you full control over your group's data, lets you integrate all your data sources, and allows you to run your own analysis tools.
+        We are working on a long term archival feature that lets you publish selected data
+        directly from your Oasis to NOMAD.
+    </div>
+    <div class="nomad-inset">
+        <div class="nomad-gallery nomad-gallery--2 nomad-gallery--filled" style="column-gap: 4em;">
+            <div class="nomad-content">
+                <div class="content-title">
+                    NOMAD
+                </div>
+                <div class="content-description">
+                    An open and free service that lets you
+                    manage, share, and publish data.
+                </div>
+                <div class="content-content content-grow">
+                    <ul>
+                        <li>
+                            Privately manage a limited number of uploads
+                        </li>
+                        <li>
+                            Publish data to the whole community
+                        </li>
+                        <li>
+                            Archive your data and obtain a DOI
+                        </li>
+                        <li>
+                            Use without any installation or hosting
+                        </li>
+                        <li>
+                            Access all published data
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-action">
+                    <a href="nomad.html">
+                        <button class="nomad-button">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">Learn about NOMAD</span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="nomad-content nomad-content--filled">
+                <div class="content-title">
+                    NOMAD Oasis
+                </div>
+                <div class="content-description">
+                    Your resources, your rules, your NOMAD.
+                    Manage data and collaborate locally.
+                </div>
+                <div class="content-content content-grow">
+                    <ul>
+                        <li>
+                            Run on your own resources with your rules
+                        </li>
+                        <li>
+                            Control access and collaborate
+                        </li>
+                        <li>
+                            Manage all data in your group at all stages
+                        </li>
+                        <li>
+                            Adapt your Oasis for your data
+                        </li>
+                        <li>
+                            Publish to NOMAD from Oasis (coming soon)
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-action">
+                    <a href="nomad-oasis.html">
+                        <button class="nomad-button">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">Learn about NOMAD Oasis</span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- social proof-->
+<section class="nomad-section">
+    <div class="section-title section-title--centered">
+        NOMAD Oasis is used by research groups at:
+    </div>
+    <div class="nomad-logo-gallery">
+        <img src="assets/users/hu_r.png" alt="humboldt universität zu berlin"/>
+        <img src="assets/users/helmholtz.svg" alt="helmholtz gesellschaft"/>
+        <img src="assets/users/mpg_r.png" alt="max-planck gesellschaft"/>
+        <img src="assets/users/hamburg.svg" alt="universität hamburg"/>
+        <img src="assets/users/fau.svg" alt="friedrich-alexander-universität erlangen-nürnberg"/>
+        <img src="assets/users/uiuc_r.png" alt="university of illinois urbana-champaign"/>
+        <img src="assets/users/kit.svg" alt="karlsruhe institute of technology"/>
+        <img src="assets/users/rwth.svg" alt="rwth aachen"/>
+        <img src="assets/users/ikz_r.png" alt="insititut für kristallzüchtung"/>
+        <img src="assets/users/mul.jpg" alt="montanuniversität leoben"/>
+        <img src="assets/users/dtu.png" alt="technical univeristy of denmark"/>
+    </div>
+</section>

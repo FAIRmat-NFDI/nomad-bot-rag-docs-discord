@@ -1,0 +1,244 @@
+<!-- hero -->
+<div class="nomad-hero" style="grid-template-columns: 500px 1fr; column-gap: 32px;">
+    <div>
+        <div class="hero-title">
+            <span class="brandname brandname--secondary">NOMAD Oasis</span><br/>
+            Manage your research group's data.
+        </div>
+        <div class="hero-description">
+            NOMAD Oasis lets you create your own NOMAD.
+            Get an instant overview of all your group's data,
+            increase productivity, and implement
+            research data management plans with ease.
+        </div>
+        <div class="hero-actions">
+            <a href="<%= urls.documentation %>/oasis.html">
+                <button class="nomad-button nomad-button--filled">
+                    <span class="mdc-button__ripple"></span>
+                    <span class="mdc-button__label">Install Oasis</span>
+                    <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                </button>
+            </a>
+            <!-- <a href="<%= urls.oasis_registration %>">
+                <button class="nomad-button nomad-button--outlined">
+                    <span class="mdc-button__ripple"></span>
+                    <span class="mdc-button__label">Register your Oasis</span>
+                    <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                </button>
+            </a> -->
+            <a href="<%= urls.oasis_installation %>">
+                <button class="nomad-button nomad-button--outlined">
+                    <span class="mdc-button__ripple"></span>
+                    <span class="mdc-button__label">Open Example Oasis</span>
+                    <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                </button>
+            </a>
+        </div>
+    </div>
+    <img src="assets/oasis.png" alt="nomad oasis data infrastructure"/>
+</div>
+
+<!-- features-->
+<div class="nomad-section">
+    <div class="section-subheading">Features</div>
+    <div class="section-title">What is NOMAD Oasis?</div>
+    <div class="section-description">
+        NOMAD Oasis lets you create your own (local) NOMAD, based on the same software as our public service.
+        With NOMAD Oasis you get
+        all the NOMAD features while implementing
+        your specific data-management needs and individual policies. You
+        get an instant overview of all your group's data and can collaborate
+        without compromising privacy.
+    </div>
+    <div class="content nomad-gallery nomad-gallery--3">
+        <div class="nomad-content">
+            <i class="material-icons">download</i>
+            <div class="content-title">Easy to install</div>
+            <div class="content-description">
+                Install with a simple guide on any computer with Docker.
+                Unlimited scalability on Kubernetes clusters when you need it.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">home</i>
+            <div class="content-title">Runs on your premises</div>
+            <div class="content-description">
+                Runs behind your firewall and inside your VPN. Use your
+                own resources for processing and running analysis tools.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">cloud_done</i>
+            <div class="content-title">Publish selected data</div>
+            <div class="content-description">
+                NOMAD Oasis will soon be connected to the public NOMAD service,
+                allowing you to publish selected data with one click.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">memory</i>
+            <div class="content-title">Integrate all data</div>
+            <div class="content-description">
+                Support your own file formats,
+                include data from existing ELN solutions,
+                and add custom normalization steps.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">construction</i>
+            <div class="content-title">Use your own tools</div>
+            <div class="content-description">
+                NOMAD comes with JupyterHub. Add tools and
+                notebooks that directly access and manipulate your data
+                in NOMAD.
+            </div>
+        </div>
+        <div class="nomad-content">
+            <i class="material-icons">tune</i>
+            <div class="content-title">Custom ELNs</div>
+            <div class="content-description">
+                Extend and customize NOMAD's schema to create
+                specialized editors to document your work and data.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- use cases -->
+<div class="nomad-section">
+    <div class="section-subheading">Use cases</div>
+    <div class="section-title">Why use NOMAD Oasis?</div>
+    <div class="section-description">
+        There are good reasons to manage your data locally, but with Oasis
+        you will also be prepared to publish and share your data via NOMAD.
+    </div>
+    <div>
+        <div class="nomad-gallery nomad-gallery--3 nomad-gallery--filled">
+            <div class="nomad-content">
+                <i class="material-icons">lock</i>
+                <div class="content-title">
+                    Privacy
+                </div>
+                <div class="content-description">
+                    You control your data and can implement your own data policies.
+                </div>
+                <div class="content-content">
+                    <ul>
+                        <li>Manage data without publishing</li>
+                        <li>Run in your network/VPN</li>
+                        <li>Use existing user management</li>
+                        <li>Only allow a whitelist of users</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="nomad-content">
+                <i class="material-icons">inventory</i>
+                <div class="content-title">
+                    Unrestricted storage
+                </div>
+                <div class="content-description">
+                    Use your resources and
+                    manage as much data as you want.
+                </div>
+                <div class="content-content">
+                    <ul>
+                        <li>Use existing storage solutions</li>
+                        <li>Simple file-based backup</li>
+                        <li>Only limited by your resources</li>
+                        <li>Publish to NOMAD (coming soon)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="nomad-content">
+                <i class="material-icons">tune</i>
+                <div class="content-title">
+                    Custom needs
+                </div>
+                <div class="content-description">
+                    Oasis can be extended and customized
+                    beyond the public NOMAD service.
+                </div>
+                <div class="content-content">
+                    <ul>
+                        <li>Customized processing and ELNs</li>
+                        <li>Add support for your file formats</li>
+                        <li>Add your own NORTH tools</li>
+                        <li>Use APIs to integrate your lab</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- fairmat_banner %>
+
+<div class="nomad-section nomad-gallery nomad-gallery--2 nomad-gallery--2--1-2">
+    <div>
+        <div class="section-title">
+            How to run NOMAD Oasis
+        </div>
+        <div class="section-description">
+            NOMAD is containerized. You can run it on a single computer
+            with Docker Compose or on a large cluster with Kubernetes.
+            NOMAD can be used to manage data for small groups as well as large research institutes.
+        </div>
+        <div class="section-action">
+            <a href="<%= urls.documentation %>/oasis.html">
+                <button class="nomad-button nomad-button--filled nomad-button--secondary">
+                    <span class="mdc-button__ripple"></span>
+                    <span class="mdc-button__label">Install Oasis</span>
+                    <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                </button>
+            </a>
+            <a href="<%= urls.oasis_registration %>">
+                <button class="nomad-button nomad-button--outlined nomad-button--secondary">
+                    <span class="mdc-button__ripple"></span>
+                    <span class="mdc-button__label">Register your Oasis</span>
+                    <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                </button>
+            </a>
+        </div>
+    </div>
+    <div class="nomad-filled">
+        <div style="display: flex; flex-direction: column; gap: 2em;">
+            <div class="nomad-content nomad-content--left-justified">
+                <div class="content-title">
+                    1. Hardware requirements
+                </div>
+                <div class="content-description">
+                    The hardware requirements depend on how much data you will store
+                    and how many tools you will run.
+                    You can start with any Linux box you already have and gradually
+                    scale as your demands grow.
+                </div>
+            </div>
+            <div class="nomad-content nomad-content--left-justified">
+                <div class="content-title">
+                    2. Configure your Oasis
+                </div>
+                <div class="content-description">
+                    Getting started with NOMAD is simple, with an easy-to-install default
+                    setup and built-in tools to start.
+                    You can integrate your existing storage solutions,
+                    connect to your existing user management,
+                    create custom schemas and parsers,
+                    or be a part of the global NOMAD community and contribute your tools.
+                </div>
+            </div>
+            <div class="nomad-content nomad-content--left-justified">
+                <div class="content-title">
+                    3. Easy to back up
+                </div>
+                <div class="content-description">
+                    NOMAD is based on files. All data is organized in a conventional
+                    file system that can be easily integrated in your existing
+                    storage and backup solutions.
+                    Additionally, you can export your projects or publish to the free
+                    NOMAD service.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

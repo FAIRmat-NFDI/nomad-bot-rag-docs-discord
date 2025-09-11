@@ -1,0 +1,126 @@
+<div class="nomad-title">
+    <div class="title-title">What features are coming next?</div>
+    <div class="title-description">
+        We are continuously improving the software behind NOMAD and NOMAD Oasis.
+        Here you can find the features which we are currently planning and developing,
+        and you can see if and where they can be tested.
+    </div>
+    <div class="title-content nomad-inset">
+        <div>
+            <div class="nomad-feature-box">
+                <div class="nomad-content">
+                    <div class="content-title">Backlog</div>
+                    <div class="content-description">
+                        These features are discussed and developed, but not yet merged.
+                        You can participate in the discussion on our forum or open
+                        new feature requests.
+                    </div>
+                    <div class="content-action">
+                        <a href="<%= urls.github %>/issues">
+                            <button class="nomad-button  nomad-button--filled">
+                                <span class="mdc-button__ripple"></span>
+                                <span class="mdc-button__label">Request a feature</span>
+                                <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                <div class="nomad-content-list">
+                    <% for (feature of features.backlog) { %>
+                        <div class="nomad-content nomad-content--secondary nomad-content--left-justified">
+                            <div class="content-title"><%= feature.title %></div>
+                            <div class="content-description"><%- feature.description %></div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+            <div class="nomad-feature-box">
+                <div class="nomad-content">
+                    <div class="content-title">Develop</div>
+                    <div class="content-description">
+                        These features have a preliminary implementation but are still being tested.
+                        They are available on the <i>develop</i>
+                        branch of our repository
+                        or on an Oasis using the <i>develop</i> image tag.
+                    </div>
+                    <div class="content-action">
+                        <a href="<%= urls.documentation %>/howto/develop/setup.html">
+                            <button class="nomad-button nomad-button--filled">
+                                <span class="mdc-button__ripple"></span>
+                                <span class="mdc-button__label">Setup for developers</span>
+                                <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                <div class="nomad-content-list">
+                    <% for (feature of features.develop) { %>
+                            <div class="nomad-content nomad-content--secondary nomad-content--left-justified">
+                                <div class="content-title"><%= feature.title %></div>
+                                <div class="content-description"><%- feature.description %></div>
+                            </div>
+                    <% } %>
+                </div>
+            </div>
+            <div class="nomad-feature-box">
+                <div class="nomad-content">
+                    <div class="content-title">In beta</div>
+                    <div class="content-description">
+                        These features are still experimental and have been
+                        put on the NOMAD beta installation
+                        or on an Oasis using the <i>latest</i> image tag.
+                    </div>
+                    <div class="content-action">
+                        <a href="<%= urls.beta_installation %>">
+                            <button class="nomad-button nomad-button--filled">
+                                <span class="mdc-button__ripple"></span>
+                                <span class="mdc-button__label">Open NOMAD beta</span>
+                                <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                <div class="nomad-content-list">
+                    <% for (feature of features.beta) { %>
+                        <div class="nomad-content nomad-content--secondary nomad-content--left-justified">
+                            <div class="content-title"><%= feature.title %></div>
+                            <div class="content-description"><%- feature.description %></div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="nomad-section">
+    <div class="section-title">Recently released</div>
+    <div class="section-description">
+        These features have been recently released and
+        can be used on the public NOMAD service or an
+        any Oasis using the <i>stable</i> image tag.
+    </div>
+    <div class="section-content">
+        <div class="nomad-inset">
+            <div class="nomad-content-list">
+                <div class="nomad-filled">
+                    <% for (feature of features.released) { %>
+                        <div class="nomad-content nomad-content--secondary nomad-content--left-justified">
+                            <div class="content-title"><%= feature.title %></div>
+                            <div class="content-description"><%- feature.description %></div>
+                        </div>
+                    <% } %>
+                </div>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="<%= urls.production_installation %>">
+                        <button class="nomad-button nomad-button--filled">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label">Open NOMAD</span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

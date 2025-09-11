@@ -1,0 +1,9 @@
+{
+  "openapi_url": "https://nomad-lab.eu/prod/v1/api/v1/openapi.json",
+  "snapshot_date": "2025-09-11",
+  "sha256": "aa8a703c04038b91f180ffd5ee4f1d73b4e531dc227417febf1968f396944397",
+  "outputs": {
+    "md_dir": "/home/jfrudzinski/work/Discord/nomad-bot-rag-docs-discord/external/nomad-api/md",
+    "jsonl": null
+  }
+}
