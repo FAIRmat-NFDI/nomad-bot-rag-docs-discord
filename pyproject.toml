@@ -35,4 +35,5 @@ eval = [
 [project.scripts]
 ragbot-eval = "nomad_ragbot.eval.pipeline:main"
 ragbot-eval-dash = "nomad_ragbot.dash.__main__:main"
+nomad-ragbot-ui = "nomad_ragbot.gradio_app:main"
 

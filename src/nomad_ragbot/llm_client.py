@@ -7,6 +7,10 @@ from google import genai
 
 load_dotenv()
 
+import requests
+
+API_URL = "http://127.0.0.1:8000/ask"
+
 
 def setup_client():
     """Setup the Gemini client."""
@@ -16,12 +20,41 @@ def setup_client():
     return genai.Client(api_key=api_key)
 
 
-def generate_response(prompt, model="models/gemini-2.5-flash-lite"):
-    """Generate response for a given prompt."""
+import re
+import requests
 
-    client = setup_client()
-    response = client.models.generate_content(
-        model=model,
-        contents=prompt,
-    )
-    return response.text
+
+def _make_links_clickable(citations_text: str) -> str:
+    """
+    Convert backtick-wrapped URLs in the citations text into clickable Markdown links.
+    """
+    if not citations_text:
+        return "_No citations provided._"
+
+    # Regex: find backtick-wrapped URLs
+    url_pattern = re.compile(r"`(https?://[^\s`]+)`")
+
+    def replacer(match):
+        url = match.group(1)
+        return f"[{url}]({url})"
+
+    # Replace each backtick-wrapped URL with Markdown link
+    clickable = url_pattern.sub(replacer, citations_text)
+    return clickable
+
+
+def generate_response(prompt: str):
+    """Call FastAPI /ask and return (answer, citations_markdown)."""
+    try:
+        resp = requests.post(API_URL, json={"question": prompt}, timeout=60)
+        resp.raise_for_status()
+        data = resp.json()
+
+        answer = data.get("answer", "")
+        citations_raw = data.get("citations", "")
+        citations_md = _make_links_clickable(citations_raw)
+
+        return answer, citations_md
+    except Exception as e:
+        err = f"Error contacting backend: {e}"
+        return err, "_No citations due to error._"
