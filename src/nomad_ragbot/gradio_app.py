@@ -66,13 +66,20 @@ html, body, .gradio-container {
 
 /* Buttons */
 .nomad-primary {
-  background:linear-gradient(135deg,var(--nomad-primary) 0%,var(--nomad-primary-dark) 100%)!important;
-  border:none!important; color:white!important; font-weight:600!important;
-  border-radius:10px!important; padding:12px 20px!important;
-  box-shadow:0 4px 12px rgba(75,123,255,.25)!important;
-  transition:transform .2s ease;
+  background: var(--nomad-primary) !important; /* flat color */
+  border: none !important;
+  color: white !important;
+  font-weight: 600 !important;
+  border-radius: 10px !important;
+  padding: 12px 20px !important;
+  /* optional: remove depth */
+  box-shadow: none !important;
+  transition: transform .2s ease, background-color .2s ease !important;
 }
-.nomad-primary:hover { transform:translateY(-1px); }
+.nomad-primary:hover {
+  transform: translateY(-1px);
+  background: var(--nomad-primary-dark) !important; /* flat hover */
+}
 .nomad-secondary {
   background:var(--panel)!important; color:var(--text)!important;
   border:1px solid var(--border)!important; border-radius:10px!important;
@@ -83,7 +90,9 @@ html, body, .gradio-container {
   background:transparent!important; border:none!important;
   padding:0!important; margin:0 0 18px 0!important;
 }
-.citations-box { color:var(--muted)!important; }
+.citations-box { color:rgba(159, 176, 211, 0.8) !important; }
+
+
 
 /* Status */
 .status-box { color:var(--muted)!important; font-style:italic; min-height:1.2em; }
