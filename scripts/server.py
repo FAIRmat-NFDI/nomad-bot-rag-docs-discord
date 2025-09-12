@@ -19,6 +19,7 @@ CHROMA_DIR = "./chroma_store"
 
 # NOTE: point this at your dynamic JSONL
 JSONL_PATH = "../data/chunks/docs.dynamic.jsonl"
+COLLECTION_NAME = "mkdocs"
 
 # ==== EMBEDDING FUNCTION ====
 class LocalEmbeddingFunction(EmbeddingFunction):
@@ -99,10 +100,10 @@ def _make_unique_id(rid: str, item: dict, seen: set, counter: int) -> str:
 def build_chroma_from_jsonl(jsonl_path, chroma_client, embed_fn):
     print("🔧 Building Chroma index from JSONL...")
 
-    # (re)create collection cleanly
-    existing = {c.name for c in chroma_client.list_collections()}
-    if "mkdocs" in existing:
-        chroma_client.delete_collection("mkdocs")
+    # # The original server.py deleted the collection every time. This is (apparently) safer. Check before merging
+    if COLLECTION_NAME in [c.name for c in chroma_client.list_collections()]:
+        print(f"Collection '{COLLECTION_NAME}' already exists. Reusing it.")
+        return
 
     collection = chroma_client.create_collection(
         name="mkdocs",
