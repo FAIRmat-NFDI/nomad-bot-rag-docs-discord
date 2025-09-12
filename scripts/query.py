@@ -149,15 +149,33 @@ Question: {query}
 """
         return [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}]
 
-    def _format_citations(self, chunks: List[Dict]) -> str:
-        """Formats the citation string from the metadata of retrieved chunks."""
-        citation_set: Set[str] = set()
+    def _format_citations(self, chunks: List[Dict], threshold: float) -> str:
+        """
+        Formats the citation string from the metadata of chunks that are above a relevance threshold.
+        Citations are ordered by rerank_score and are unique.
+        """
+        ordered_unique_sources = []
+        seen_sources = set()
+
         for chunk in chunks:
+            # First, check if the chunk's score is above the threshold.
+            score = chunk.get('rerank_score', -999) # Default to a very low score if not present
+            if score < threshold:
+                continue # Skip this chunk as it's not relevant enough.
+
             meta = chunk.get('metadata', {})
             source_path = meta.get('source', 'Unknown Source')
-            citation_set.add(f"Source file: `{source_path}`")
-        return "\n".join(f"- {citation}" for citation in sorted(list(citation_set))) or "No sources found."
 
+            # Now, check if we've already added this source to our list.
+            if source_path not in seen_sources:
+                ordered_unique_sources.append(source_path)
+                seen_sources.add(source_path)
+        
+        if not ordered_unique_sources:
+            return "No sources found above the relevance threshold."
+
+        return "\n".join(f"- Source file: `{source}`" for source in ordered_unique_sources)
+    
     def generate_answer(self, query: str, context_chunks: List[Dict]) -> str:
         """Generates an answer using the OpenAI Chat Completions API."""
         messages = self._prepare_messages(query, context_chunks)
@@ -173,7 +191,7 @@ Question: {query}
             logger.error(f"Error during answer generation with local chat model: {e}")
             return "Sorry, I encountered an error while generating the answer."
 
-    def query(self, query: str, top_k: int = 5, rerank_top_n: int = 20) -> Tuple[str, str, List[Dict]]:
+    def query(self, query: str, top_k: int = 5, rerank_top_n: int = 20, rerank_threshold: float = 0.0) -> Tuple[str, str, List[Dict]]:
         """
         Performs a full RAG query: embed, retrieve, rerank, and generate.
 
@@ -181,26 +199,31 @@ Question: {query}
             query: The user's question.
             top_k: The final number of chunks to use for the answer.
             rerank_top_n: The number of chunks to retrieve initially for reranking.
+            rerank_threshold: The minimum reranker score for a source to be cited.
         """
         logger.info(f"Received query: '{query}'")
         query_embedding = self._get_local_embedding(query)
         
-        # STEP 1: Retrieve a larger number of chunks for the reranker.
         logger.info(f"Retrieving top {rerank_top_n} chunks for reranking...")
         retrieved_chunks = self.retriever.retrieve(query_embedding, top_k=rerank_top_n)
         
-        # STEP 2: Rerank the retrieved chunks to find the most relevant ones.
         reranked_chunks = self._rerank_chunks(query, retrieved_chunks)
         
-        # STEP 3: Select the final top_k chunks to be used as context.
         final_chunks = reranked_chunks[:top_k]
         logger.info(f"Selected top {len(final_chunks)} chunks after reranking.")
         
-        # The rest of the process uses the higher-quality, reranked context.
         answer = self.generate_answer(query, final_chunks)
         
         logger.info("Formatting citations...")
-        citations = self._format_citations(final_chunks)
+
+        ## MODIFIED: Add logic to check the answer before formatting citations.
+        # If the chatbot says it doesn't know, we should not show any sources.
+        if "don't have information" in answer:
+            citations = "I was unable to find any relevant sources to answer your question."
+        else:
+            # Otherwise, format citations using the new threshold logic.
+            # We pass the same 'final_chunks' used for the answer to ensure consistency.
+            citations = self._format_citations(final_chunks, threshold=rerank_threshold)
         
         logger.info(f"Generated answer: '{answer}'")
         return answer, citations, final_chunks
