@@ -455,21 +455,54 @@ def main():
 
     st.markdown(f"**Rows:** {len(fdf)}")
 
+    import altair as alt  # add at top
+
     # ----- Charts -----
     if metric in fdf.columns and not fdf.empty:
         st.subheader("Score by index")
-        st.bar_chart(fdf[[metric]].dropna())
+
+        s = fdf.reset_index()[[metric]]
+        s = s.reset_index().rename(columns={"index": "row"})
+
+        chart = (
+            alt.Chart(s)
+            .mark_bar()
+            .encode(
+                x="row:O",
+                y=alt.Y(f"{metric}:Q", scale=alt.Scale(domain=[0, 1])),
+                tooltip=[metric],
+            )
+        )
+
+        threshold_line = (
+            alt.Chart(pd.DataFrame({"y": [threshold]}))
+            .mark_rule(
+                color="#ff0000", strokeDash=[4, 4], size=3
+            )  # bright red, thicker
+            .encode(y="y:Q")
+        )
+
+        st.altair_chart(chart + threshold_line, use_container_width=True)
 
         st.subheader("Score distribution")
-        s = fdf[metric].dropna().astype(float)
-        if not s.empty:
-            bins = np.linspace(0.0, 1.0, 21)  # 20 bins
-            counts, edges = np.histogram(s.values, bins=bins)
+        vals = fdf[metric].dropna().astype(float)
+        if not vals.empty:
+            bins = np.linspace(0.0, 1.0, 21)
+            counts, edges = np.histogram(vals.values, bins=bins)
             centers = (edges[:-1] + edges[1:]) / 2.0
-            hist_df = pd.DataFrame(
-                {"count": counts}, index=pd.Index(centers, name="score")
+            hist_df = pd.DataFrame({"score": centers, "count": counts})
+
+            # hist_chart = alt.Chart(hist_df).mark_bar().encode(x="score:Q", y="count:Q")
+            # st.altair_chart(hist_chart, use_container_width=True)
+            hist_chart = (
+                alt.Chart(hist_df)
+                .mark_bar(color="#8fb1d6", width=50)  # wider bars, custom color
+                .encode(
+                    x=alt.X("score:Q", bin=alt.Bin(maxbins=20), title="Score"),
+                    y=alt.Y("count:Q", title="Count"),
+                )
             )
-            st.bar_chart(hist_df)
+            st.altair_chart(hist_chart, use_container_width=True)
 
     # ----- Details -----
     st.subheader("Details")
