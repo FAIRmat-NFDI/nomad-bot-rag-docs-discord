@@ -132,6 +132,13 @@ def _clean_label(v) -> Optional[str]:
     return None if s.lower() in INVALID_STRINGS else s
 
 
+def _norm_q(s: Optional[str]) -> Optional[str]:
+    """Normalized question key for fallback joining when ids don't match."""
+    if not isinstance(s, str):
+        return None
+    return re.sub(r"\s+", " ", s.lower()).strip() or None
+
+
 # ----------------------------
 # Normalizers
 # ----------------------------
@@ -148,6 +155,9 @@ def _normalize_results_df(df: pd.DataFrame) -> pd.DataFrame:
     for col in ["question", "gold", "pred"]:
         if col not in df.columns:
             df[col] = np.nan
+
+    # normalized question key for joining when ids don't match
+    df["qkey"] = df["question"].apply(_norm_q)
 
     # optional
     for col in ["citations", "error"]:
@@ -191,11 +201,15 @@ def _normalize_gold_df(gdf: pd.DataFrame) -> pd.DataFrame:
         is_missing = s.isna() | (s.astype(str).str.strip() == "")
         if is_missing.any():
             n = int(is_missing.sum())
-            # assign deterministic auto ids for the missing slots
             gdf.loc[is_missing, "id"] = [f"auto-{i}" for i in range(n)]
 
     gdf["id"] = gdf["id"].astype(str).str.strip()
     # ------------------------------------------------
+
+    # question + qkey for fallback alignment
+    if "question" not in gdf.columns:
+        gdf["question"] = np.nan
+    gdf["qkey"] = gdf["question"].apply(_norm_q)
 
     # Ensure 'meta' exists and extract meta.type / meta.method (cleaned)
     if "meta" not in gdf.columns:
@@ -223,7 +237,7 @@ def _normalize_gold_df(gdf: pd.DataFrame) -> pd.DataFrame:
     )
     gdf["source_kind"] = gdf["source_kind"].fillna("unknown")
 
-    # Optional sample URL/domain for reference in the top table
+    # Optional sample URL/domain for the top table
     url_col = _best_existing(gdf, ["source_url", "gold_url", "url", "doc_url"])
     if url_col:
         gdf["_sample_url"] = gdf[url_col].astype(str)
@@ -241,6 +255,7 @@ def _normalize_gold_df(gdf: pd.DataFrame) -> pd.DataFrame:
     return gdf[
         [
             "id",
+            "qkey",
             "source_kind",
             "meta_type",
             "meta_method",
@@ -261,12 +276,13 @@ def _attach_source_kind(
         g = gdf.copy()
         g["id"] = g["id"].astype(str).str.strip()
 
+        # Primary merge on id
         out = out.merge(g, on="id", how="left", suffixes=("", "_gold"))
 
         def first_non_null(s: pd.Series):
             return s.dropna().iloc[0] if s.notna().any() else np.nan
 
-        # Use .size() (row count), not nunique(id), to avoid undercount when ids were missing initially
+        # Corpus sources table (counts by source_kind)
         base = g.groupby("source_kind", dropna=False)
         src_meta = (
             base.size()
@@ -285,6 +301,45 @@ def _attach_source_kind(
             .sort_values("n_items", ascending=False)
             .reset_index(drop=True)
         )
+
+        # ---- Fallback fill via qkey for rows still missing source_kind ----
+        if "qkey" in out.columns:
+            need = out["source_kind"].isna() | (out["source_kind"] == "")
+            if need.any():
+                q2_kind = (
+                    g.dropna(subset=["qkey"])
+                    .drop_duplicates(subset=["qkey"])
+                    .set_index("qkey")["source_kind"]
+                )
+                q2_type = (
+                    g.dropna(subset=["qkey"])
+                    .drop_duplicates(subset=["qkey"])
+                    .set_index("qkey")["meta_type"]
+                )
+                q2_method = (
+                    g.dropna(subset=["qkey"])
+                    .drop_duplicates(subset=["qkey"])
+                    .set_index("qkey")["meta_method"]
+                )
+
+                out.loc[need, "source_kind"] = (
+                    out.loc[need, "qkey"]
+                    .map(q2_kind)
+                    .fillna(out.loc[need, "source_kind"])
+                )
+                if "meta_type" in out.columns:
+                    out.loc[need, "meta_type"] = (
+                        out.loc[need, "qkey"]
+                        .map(q2_type)
+                        .fillna(out.loc[need, "meta_type"])
+                    )
+                if "meta_method" in out.columns:
+                    out.loc[need, "meta_method"] = (
+                        out.loc[need, "qkey"]
+                        .map(q2_method)
+                        .fillna(out.loc[need, "meta_method"])
+                    )
+        # ------------------------------------------------------------------
 
     # Ensure we always have a source_kind in results (fallback to domain from citations if needed)
     if "source_kind" not in out.columns:
@@ -338,7 +393,7 @@ def main():
     gold_path = args.gold_path or _maybe_find_gold_near(args.results_path)
     gdf = load_gold(gold_path) if gold_path else None
 
-    # Attach source_kind (source → meta.type → meta.method), with fallbacks
+    # Attach source_kind (source → meta.type → meta.method), with fallbacks + qkey
     df, src_meta = _attach_source_kind(df, gdf)
 
     # Run metadata (expander)
@@ -350,6 +405,7 @@ def main():
     st.subheader("Corpus sources")
     if src_meta is not None and not src_meta.empty:
         st.dataframe(src_meta, width="stretch")
+        corpus_kinds = src_meta["source_kind"].astype(str).tolist()
     else:
         counts = (
             df["source_kind"]
@@ -358,12 +414,13 @@ def main():
             .reset_index(name="n_items")
         )
         st.dataframe(counts, width="stretch")
+        corpus_kinds = counts["source_kind"].astype(str).tolist()
 
     # Sidebar filters
     st.sidebar.header("Filters")
-    kinds = sorted(
-        [v for v in df["source_kind"].dropna().astype(str).unique().tolist() if v]
-    )
+    # Keep sidebar kinds aligned with corpus table, but only those present in results to avoid empty selection
+    present = set(df["source_kind"].dropna().astype(str).unique().tolist())
+    kinds = [k for k in corpus_kinds if k in present]
     selected_kinds = st.sidebar.multiselect(
         "Source types (source_kind)", kinds, default=kinds
     )
@@ -398,37 +455,33 @@ def main():
 
     st.markdown(f"**Rows:** {len(fdf)}")
 
-    # Summary by source_kind
-    if metric not in fdf.columns:
-        st.warning(f"Metric '{metric}' not found in results.")
-    else:
-        if not fdf.empty:
-            by_kind = (
-                fdf.groupby("source_kind")[metric]
-                .agg(
-                    [
-                        ("count", "count"),
-                        ("mean", "mean"),
-                        (
-                            f"pass@{threshold:.2f}",
-                            lambda s: float((s >= threshold).mean())
-                            if s.notna().any()
-                            else np.nan,
-                        ),
-                    ]
-                )
-                .reset_index()
-                .sort_values("mean", ascending=False)
-            )
-            st.subheader("By source_kind")
-            st.dataframe(by_kind, width="stretch")
-
-        st.subheader("Distribution")
+    # ----- Charts -----
+    if metric in fdf.columns and not fdf.empty:
+        st.subheader("Score by index")
         st.bar_chart(fdf[[metric]].dropna())
 
-    # Details
+        st.subheader("Score distribution")
+        s = fdf[metric].dropna().astype(float)
+        if not s.empty:
+            bins = np.linspace(0.0, 1.0, 21)  # 20 bins
+            counts, edges = np.histogram(s.values, bins=bins)
+            centers = (edges[:-1] + edges[1:]) / 2.0
+            hist_df = pd.DataFrame(
+                {"count": counts}, index=pd.Index(centers, name="score")
+            )
+            st.bar_chart(hist_df)
+
+    # ----- Details -----
     st.subheader("Details")
     id_col = "id" if "id" in fdf.columns else _best_existing(fdf, ["idx"])
+
+    # Passed column (boolean) based on threshold
+    if metric in fdf.columns:
+        passed_bool = (fdf[metric] >= threshold).fillna(False)
+        fdf = fdf.assign(passed=passed_bool)
+    else:
+        fdf = fdf.assign(passed=np.nan)
+
     cols = [
         c
         for c in [
@@ -441,12 +494,20 @@ def main():
             "pred",
             "citations",
             "error",
+            "passed",
             metric if metric in fdf.columns else None,
         ]
         if c and c in fdf.columns
     ]
     display_df = fdf[cols].rename(columns={id_col or "id": "id"})
-    st.dataframe(display_df, width="stretch", height=520)
+
+    cfg = {}
+    if "passed" in display_df.columns:
+        cfg["passed"] = st.column_config.CheckboxColumn(
+            "passed", help="Metric ≥ threshold", disabled=True
+        )
+
+    st.dataframe(display_df, width="stretch", height=520, column_config=cfg)
 
     st.caption(f"Gold file used: {gold_path if gold_path else '(not found)'}")
 
