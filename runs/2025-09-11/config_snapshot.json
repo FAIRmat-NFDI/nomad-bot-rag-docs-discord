@@ -1,0 +1,12 @@
+{
+  "timestamp": "2025-09-11T15:20:10.964245Z",
+  "git_sha": "4caa48a038d84a3cfccaf6b258362dd287c1dc7a",
+  "data_path": "eval/data/gold_all.jsonl",
+  "use_llm_judge": true,
+  "judge_cache": "runs/judge_cache.parquet",
+  "notes": "",
+  "n_items": 78,
+  "config": {
+    "semantic_model": "all-MiniLM-L6-v2"
+  }
+}

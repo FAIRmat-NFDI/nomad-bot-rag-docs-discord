@@ -1,0 +1,1076 @@
+id,source,question,gold_answer,model_answer,em,f1,jaccard,lev_ratio,semantic_sim,judge_score,judge_rationale
+d8bd5b01-b31d-4a64-a32c-e9ed32fd35a2,unknown,What does Annotation ¶ mean in NOMAD?,,"In NOMAD an **annotation** is a named block of key‑value pairs that you can attach to a definition in a schema.  
+These annotations give NOMAD extra information that it can use to change how that definition is handled – for example, how it is displayed in the GUI, what plots are shown, or how data entry/editing is presented.  
+
+So when you see “Annotation ¶” in the documentation, it’s referring to this mechanism of adding metadata‑rich annotations to schema definitions.",0.0,0.0,0.0,0.0,0.03941919282078743,,
+cd536b90-78f2-4418-b81d-da63465c95e3,unknown,What does App ¶ mean in NOMAD?,,"**App ¶** in NOMAD refers to the main, outward‑facing service that provides the user interface and API for the platform.  
+The *app* hosts:
+
+* The REST/GraphQL API that clients use to query and submit data.  
+* The graphical user interface (web UI) that users interact with.  
+* The documentation pages.
+
+In the NOMAD architecture the *app* runs separately from the *worker* (which does the heavy processing such as parsing and normalization), allowing the system to scale each part independently.",0.0,0.0,0.0,0.0,0.06253655254840851,,
+582223eb-c98c-4cba-b263-3bf5e4d939a9,unknown,What does Archive ¶ mean in NOMAD?,,"**Archive ¶** in NOMAD refers to the structured, machine‑readable storage format that holds all *processed data* in the system.  
+- It is the format used to store and retrieve the results of parsing and normalizing every entry.  
+- The “archive” is essentially the entire collection of processed data (sometimes called the *NOMAD Repository* or *NOMAD Archive*).  
+- For a single entry, the term “archive” can also mean the processed data belonging to that entry alone.  
+- The organization of the data inside the archive is defined by the **MetaInfo** schema.  
+
+In short, the Archive is the persistent, structured repository of all processed data in NOMAD.",0.0,0.0,0.0,0.0,0.005047705490142107,,
+107430e9-25c3-42ed-b9dd-d40188fdecc9,unknown,What does Author ¶ mean in NOMAD?,,"**Author ¶** in NOMAD refers to the natural‑person who has uploaded a piece of data into the system and therefore holds authorship over that data.  
+- An author is usually a **user** (someone with a NOMAD account), but a user is not required to be an author.  
+- Every data entry in NOMAD is owned by a single user, and that user may be the author of the entry.  
+- Authors can also be collaborators or co‑authors on other users’ entries, but the primary distinction is that an author is the person who created or uploaded the data.",0.0,0.0,0.0,0.0,0.028942137956619263,,
+89ac6cc8-1f5d-4eae-aad5-e81fd3569a69,unknown,What does Dataset ¶ mean in NOMAD?,,"**Dataset ¶** in NOMAD refers to a user‑created collection of data entries that serves as a citable, curated grouping of related results.  
+
+Key points:
+
+- **Created and managed by users** – any registered user can create a dataset and add entries to it.  
+- **Association with a user account** – datasets appear on the *Your datasets* page in the GUI and belong to the account that created them.  
+- **Container for entries** – a dataset can hold many entries from different uploads, and a single entry may belong to multiple datasets.  
+- **Independent of processing** – datasets do not affect how data is parsed or normalized; they are purely a way to organize and share data.  
+- **Publishable and citable** – datasets can be published separately from the uploads that contain them, and a DOI can be issued for a dataset, making it a formal, citable resource.  
+
+In short, a dataset in NOMAD is a user‑defined, citable collection of entries that helps organize, curate, and share related data.",0.0,0.0,0.0,0.0,-0.007197998929768801,,
+3552497c-5796-4805-943a-9bc7900d3bb3,unknown,What does Deployment ¶ mean in NOMAD?,,"**Deployment ¶** in NOMAD refers to a **live, running instance** of a NOMAD distribution on a specific machine.  
+- The machine can be a cloud‑based virtual machine, a local computer, or any host that can run Docker containers.  
+- A deployment is created after you have configured your NOMAD Oasis via a distribution project (the Git repository that contains the configuration, plugins, `nomad.yaml`, CI steps, and a `docker‑compose.yaml`).  
+- Once the Docker images are built and the compose file is executed, the resulting running services constitute a NOMAD deployment.  
+
+In short, a deployment is the operational, on‑premise or cloud instance of a customized NOMAD installation.",0.0,0.0,0.0,0.0,0.03227359801530838,,
+1ded3567-a30b-4136-a9f8-be1878bd7a80,unknown,What does Distribution / distro ¶ mean in NOMAD?,,"**Distribution / distro ¶** in NOMAD refers to a **Git repository that contains all the configuration needed to create a customized NOMAD instance**.  
+
+Key points:
+
+- It holds the plugin list, configuration files (e.g., `nomad.yaml`), CI pipeline steps for building Docker images, and a `docker‑compose.yaml` that can launch the instance.  
+- A distribution is the blueprint from which a live **deployment** (a running NOMAD instance) is built.  
+- By cloning and configuring a distribution, you can set up a NOMAD Oasis tailored to your needs and then deploy it on a machine.",0.0,0.0,0.0,0.0,0.024758562445640564,,
+69dd2543-ff25-45d8-8faa-65125ab291aa,unknown,What does ELN ¶ mean in NOMAD?,,"**ELN ¶** in NOMAD stands for **Electronic Lab Notebook**.  
+It is a special type of *entry* that is created and edited directly inside the NOMAD web interface.  
+
+Key points:
+
+- **Editable data** – unlike normal data uploads, ELNs can be modified by the user (e.g., short name, tags, description, custom fields).  
+- **Based on a schema** – an ELN follows a specific schema (e.g., the *Basic ELN* schema) that defines which quantities are available and how they are presented (widgets, form fields).  
+- **Two file formats** –  
+  1. *Command‑line ELN*: a plain YAML file (`.yaml`) used when running a reader from the command line.  
+  2. *NOMAD‑Schema ELN*: a YAML file with the extension `.scheme.archive.yaml` that is parsed by NOMAD into the command‑line format.  
+- **Purpose** – ELNs allow users to store, curate, and share metadata or experimental notes that are not part of the raw experimental data file.  
+
+In short, an ELN is a user‑editable, schema‑driven notebook entry within NOMAD.",0.0,0.0,0.0,0.0,0.041737012565135956,,
+09cf829b-8708-4a8f-b34c-0279b05612d0,unknown,What does Entry ¶ mean in NOMAD?,,"**Entry ¶** in NOMAD refers to a **single, searchable data entity** that represents the processed result of a raw data file (or an instantiated schema).  
+
+Key points:
+
+- **Creation** – Entries are automatically generated by NOMAD when a raw file is uploaded or when a schema is instantiated (e.g., an ELN).  
+- **Structure** – Each entry has its own unique *entry id* and a dedicated page in the GUI where its metadata, processed data, and visualizations can be viewed.  
+- **Relationship to uploads** – An entry belongs to a specific upload and is linked to the raw file that NOMAD parsed; one of those files is the *mainfile*.  
+- **Processed data** – The entry contains the processed data (the “archive”) that results from parsing the raw file.  
+- **Sharing & publishing** – Entries can be shared as part of an upload and can be added to datasets, which may be published with a DOI.  
+
+In short, an **Entry** is the core unit of data in NOMAD, representing the processed, searchable result of an uploaded file or schema.",0.0,0.0,0.0,0.0,0.033802296966314316,,
+528b5315-eb47-45c1-a0ce-4e19fe9b92cb,unknown,What does Example upload ¶ mean in NOMAD?,,"**Example upload ¶** in NOMAD is a code snippet that shows how to upload a file to a NOMAD instance via the REST API.  
+It demonstrates:
+
+1. Opening a local file (e.g., a zip or tar archive).  
+2. Sending a `POST` request to the `/uploads` endpoint with the file data and an authentication token.  
+3. Receiving an `upload_id` in the JSON response, which identifies the newly created upload.  
+
+The snippet is meant as a quick reference for developers who want to programmatically add data to NOMAD.",0.0,0.0,0.0,0.0,0.05074853077530861,,
+df44a9b4-938c-4ba6-8a0f-025b4da39a15,unknown,What does Mainfile ¶ mean in NOMAD?,,"**Mainfile ¶** in NOMAD is the *primary* file that a parser recognises as the output of a supported simulation or calculation.  
+
+- When an upload is processed, NOMAD scans all files and picks one that matches a known “mainfile” pattern for each supported code (e.g., a Gromacs `.log` file, a LAMMPS `.log`, etc.).  
+- That file becomes the **mainfile** and a new **Entry** is created to represent the data of that calculation.  
+- All other files that live in the same directory as the mainfile are shown as **auxiliary files** next to the entry.  
+- Without a recognised mainfile, NOMAD will not create an entry and the upload cannot be published.  
+
+In short, the mainfile is the file that identifies and anchors a calculation in NOMAD.",0.0,0.0,0.0,0.0,-0.012411017902195454,,
+9bf60449-4692-45ad-a7a0-4a8cbe30ece3,unknown,What does Metadata ¶ mean in NOMAD?,,"**Metadata ¶** in NOMAD refers to the *technical, administrative subset of the processed data* that describes an entry rather than its scientific content.  
+
+Key points:
+
+- It contains identifiers, timestamps, hashes, authors, datasets, references, the schema used, and other bookkeeping information.  
+- Metadata is defined in the metainfo system (e.g., the `metadata` section in `nomad.datamodel` and the `EntryArchive` root).  
+- It is separate from the scientific data itself; it is what allows NOMAD to track, search, and manage entries.  
+
+In short, metadata is the set of technical details that describe and identify each processed entry in NOMAD.",0.0,0.0,0.0,0.0,-0.019060852006077766,,
+3c7b3bf1-e002-4d9e-9b5d-ebbbaade52b2,unknown,What does Metainfo ¶ mean in NOMAD?,,"**Metainfo ¶** in NOMAD is the *schema system that defines the structure of all data and metadata stored in the archive*.  
+
+- It contains the definitions of sections, quantities, and annotations that describe how processed data is organized.  
+- The core modules are `nomad.metainfo` (the metainfo language itself), `nomad.datamodel` (the administrative `metadata` section and the root `EntryArchive`), and `nomad.datamodel.metainfo` (method‑specific definitions such as the `run` section).  
+- Together, these definitions form the **MetaInfo** schema that governs the machine‑readable format of every entry in NOMAD.",0.0,0.0,0.0,0.0,-0.013162457384169102,,
+d79e3711-e21f-4035-8d21-37838d3de49f,unknown,What does Normalizer ¶ mean in NOMAD?,,"**Normalizer ¶** in NOMAD is a small, plug‑in‑style program that runs *after* parsing has produced the processed data.  
+Its job is to take that processed data as input and apply additional, systematic transformations or checks—e.g., adding derived quantities, correcting units, or enforcing consistency rules.  
+
+Key points:
+
+- **Input** – the already‑parsed, processed data of an entry.  
+- **Execution** – normalizers are listed in the NOMAD configuration (`[project.entry-points.'nomad.plugin']`) and run in a defined order on every entry.  
+- **Behavior** – each normalizer decides whether to act on a given entry based on the data it sees; it may modify the entry, add new fields, or leave it unchanged.  
+- **Purpose** – to standardise, enrich, or clean the data so that it conforms to the common schema and is ready for downstream use (e.g., searching, visualisation, or publishing).  
+
+In short, a Normalizer is a post‑processing step that normalises the processed data within NOMAD.",0.0,0.0,0.0,0.0,0.025033140555024147,,
+7e3c4d9c-f16d-448a-88d2-0b67c987e0da,unknown,What does Parser ¶ mean in NOMAD?,,"**Parser ¶** in NOMAD is a small program that reads a *mainfile* (the primary output file of a simulation, experiment, or notebook) and converts the raw information into NOMAD’s structured, schema‑based **processed data** (the archive).  
+
+- A parser is tied to a specific file format and is applied only to files of that format.  
+- It may read additional files referenced by the mainfile, but its primary input is the mainfile.  
+- The output of a parser is the processed data that can then be normalized, indexed, and displayed in the NOMAD GUI.  
+
+In short, a parser transforms raw output into the machine‑readable archive format used by NOMAD.",0.0,0.0,0.0,0.0,-0.017853878438472748,,
+01067e4b-def8-4b9f-924d-20dc2a403a39,unknown,What does Plugin ¶ mean in NOMAD?,,"**Plugin ¶** in NOMAD refers to a small, independent software package that extends the core NOMAD system without altering its core code.  
+
+- **Add‑on**: A plugin supplies extra functionality (e.g., new parsers, normalizers, workflows, or UI components).  
+- **Modular**: Users can choose which plugins to install, keeping the core lightweight.  
+- **Customisable**: Researchers can develop their own plugins to meet specific community needs.  
+- **Updatable**: Plugins can be updated or replaced independently of the main NOMAD release.  
+
+In short, a plugin is a self‑contained extension that plugs into NOMAD Oasis/Oasis‑like installations to provide new features or adapt NOMAD to particular data, workflows, or analysis tools.",0.0,0.0,0.0,0.0,0.05733637511730194,,
+7f885be9-f1b9-4f2d-ab55-633e6bfda1c0,unknown,What does Plugin entry point ¶ mean in NOMAD?,,"**Plugin entry point ¶** in NOMAD is a *pre‑defined hook* that a plugin declares so the core NOMAD system can automatically discover and load the plugin’s functionality.  
+
+- A plugin can expose several entry points (e.g., for parsers, schema packages, apps, normalizers, etc.).  
+- Each entry point is a name‑value pair in the plugin’s configuration (often in `setup.py` or `pyproject.toml`) that tells NOMAD what code to import and where to find it.  
+- When NOMAD starts, it scans all installed plugins, reads their entry points, and imports the specified modules.  
+- This mechanism removes the need to hard‑code plugin paths into NOMAD, enabling modular, plug‑and‑play extensions that can be added, removed, or updated independently of the core software.  
+
+In short, a plugin entry point is the connector that lets NOMAD automatically recognize and use the custom components a plugin supplies.",0.0,0.0,0.0,0.0,0.0051969364285469055,,
+5fb0761f-e481-4bb1-8c98-c28d8e87ea3c,unknown,What does Processed data ¶ mean in NOMAD?,,"**Processed data ¶** in NOMAD is the structured, schema‑based result of the *processing* step.  
+
+- When a raw file is parsed and then normalized, the output is stored as **processed data**.  
+- Every NOMAD **entry** contains this processed data, which follows a defined schema (the *archive*).  
+- It can be accessed through the API or downloaded as a JSON file.  
+- A small technical subset of this processed data is called **metadata** (ids, timestamps, authors, etc.).  
+
+In short, processed data is the machine‑readable, structured representation of a scientific calculation or experiment that NOMAD creates from the raw input.",0.0,0.0,0.0,0.0,-0.017411008477211,,
+b536b7fe-5ca0-4e84-9912-2341ec0a8f91,unknown,What does Processing ¶ mean in NOMAD?,,"**Processing ¶** in NOMAD is the overall workflow that turns raw data files into the structured, schema‑based entries that the platform stores and indexes.  
+
+- **File conversion** – raw files are parsed by the appropriate parser.  
+- **Normalization** – the resulting processed data is then passed through all registered normalizers.  
+- **Storage** – the final parsed and normalized data (the *archive*) is written to the entry’s storage.  
+- **Indexing** – the search index is updated so the data can be queried.  
+
+If processing fails or plugins change, an administrator can re‑run the process on an upload with `nomad admin uploads process`. In short, processing is the step that creates NOMAD entries and their processed data from raw files.",0.0,0.0,0.0,0.0,0.00578948762267828,,
+9199c66e-c9bd-4a5b-9595-470eb60fb081,unknown,What does Quantity ¶ mean in NOMAD?,,"**Quantity ¶** in NOMAD is the *smallest, referable unit of processed data*.  
+
+- In a processed data archive, information is organized into **sections** (hierarchical containers) and **quantities** (the actual data items).  
+- A quantity can be a scalar, string, list, matrix, etc., and is defined in a schema by its name, description, type, shape, and unit.  
+- Each quantity in an entry’s archive is linked to the corresponding definition in the schema, ensuring consistent interpretation across the platform.  
+
+In short, a quantity is a single, typed data value (or array of values) that makes up the structured content of a NOMAD entry.",0.0,0.0,0.0,0.0,-0.015766974538564682,,
+648b797e-f37a-4170-9096-c9f66a6215f6,unknown,What does Raw file ¶ mean in NOMAD?,,"**Raw file ¶** in NOMAD is any file that a user uploads to the system.  
+- It is the original, un‑structured data that has not yet been parsed or normalized.  
+- A raw file always belongs to an **upload** and may be linked to an **entry** if its format is supported by a parser; in that case the file is also the **mainfile** of that entry.  
+- The collection of all raw files in a user’s uploads is sometimes called the *Repository* (an older term from the original multi‑service architecture).  
+- Raw files that are successfully parsed and normalized become **entries** in the NOMAD database; files that lack a built‑in parser remain raw, can be downloaded or previewed, but do not appear as searchable entries.",0.0,0.0,0.0,0.0,0.001955850515514612,,
+d4c35a99-cf84-4eee-9e43-13208e51b6ab,unknown,What does Results (section results ) ¶ mean in NOMAD?,,I don't know.,0.0,0.0,0.0,0.0,0.22796225547790527,,
+986e30ba-77f4-4c89-a495-50cc6688ad36,unknown,What does Schema ¶ mean in NOMAD?,,"**Schema ¶** in NOMAD is the formal, machine‑readable definition that tells the system how a particular piece of data is structured.  
+
+- The entire collection of these definitions is called the **NOMAD Metainfo**.  
+- Schemas are grouped into three levels:  
+  1. **Shared entry structure** – generic sections that every entry contains, independent of the data type.  
+  2. **Reusable base sections** – abstract, contract‑like blocks that capture common concepts (e.g., samples, instruments, processes). Specific schemas inherit from these to guarantee interoperability.  
+  3. **Specific schemas** – concrete, data‑type‑specific structures that extend the shared entry structure and the base sections to represent a particular calculation, experiment, or measurement.  
+- Each schema describes the names, types, shapes, units, and relationships of the quantities that appear in a processed data archive.  
+
+In short, a schema is the blueprint that defines the hierarchy and content of processed data in NOMAD.",0.0,0.0,0.0,0.0,-0.038734070956707,,
+ff52a2e6-7342-4f58-9fd1-b2918cd340c8,unknown,What does Schema package ¶ mean in NOMAD?,,"**Schema package ¶** in NOMAD is a bundled collection of metainfo definitions that can be distributed and installed as a plugin.  
+A schema package typically contains one or more **schemas** that describe the structure of a particular type of data (e.g., a specific simulation, experiment, or measurement). These schemas can be:
+
+* **Selected by users** to create manually‑filled entries through the ELN (Electronic Lab Notebook).  
+* **Chosen by parsers** when they organize the data extracted from raw files into NOMAD entries.  
+
+In addition to concrete schemas, a schema package may provide abstract base classes or reusable base sections that other schema packages can inherit from, enabling a hierarchical, interoperable data model. In short, a schema package is a distributable set of custom data definitions that extend NOMAD’s metainfo.",0.0,0.0,0.0,0.0,-0.022361645475029945,,
+d6ab87fc-dd75-4079-862e-7406d6af7aeb,unknown,What does Section and Subsection ¶ mean in NOMAD?,,"**Section and Subsection ¶** in NOMAD describe the hierarchical building blocks that make up a schema (the “metainfo” that defines how data is stored).
+
+| Concept | What it is | How it’s used |
+|---------|------------|---------------|
+| **Section** | A named container that groups together a set of *quantities* (the actual data values) and/or other sections. It is the smallest unit that can be referenced, edited, or searched in a NOMAD archive. | In a schema file you declare a section under the top‑level `definitions:` block.  Each section can inherit a fixed interface from NOMAD’s built‑in *base_sections* (e.g. `nomad.datamodel.metainfo.eln.Sample`) or from any other section.  The inheritance is declared with the `base_sections:` keyword. |
+| **Subsection** | A section that lives *inside* another section.  It is simply a nested section that follows the same rules as a top‑level section. | When you want a section to contain another section, you add a `sections:` key on the next indented line and list the subsection names.  Each listed subsection is itself a full section definition (with its own base sections, quantities, etc.). |
+
+### How they appear in a schema file
+
+```yaml
+definitions:
+  name: My NOMAD ELN
+  description: Custom ELN schema.
+
+  sections:
+    My_first_section:          # <-- Section name
+      base_sections:
+        - nomad.datamodel.data.EntryData
+        - nomad.datamodel.metainfo.eln.Sample
+      quantities:              # <-- Quantities that belong to this section
+        # … quantity definitions …
+
+      sections:                # <-- Declares that the following items are subsections
+        - My_second_section
+        - My_third_section
+```
+
+* `sections:` tells NOMAD that the listed items are themselves sections (not just plain dictionaries).  
+* Each subsection can again contain its own `quantities`, `base_sections`, or even further nested subsections, allowing arbitrarily deep hierarchies.
+
+### Why they matter
+
+* **Organization** – Sections give a clear, reusable structure to an entry (e.g., `Sample`, `Measurement`, `Analysis`).  
+* **Interoperability** – By inheriting from NOMAD’s base sections or from other published sections, you guarantee that tools such as the search index, visualizers, and ELN editors can understand the data regardless of which specific schema created it.  
+* **Extensibility** – Subsections let you compose complex experiments or simulations from smaller, reusable parts (e.g., a `Measurement` section that contains a `Temperature` subsection and a `Pressure` subsection).
+
+In short, a **section** is a named, self‑contained part of a schema that holds quantities and/or other sections, and a **subsection** is simply a section nested inside another section, declared with the `sections:` keyword.",0.0,0.0,0.0,0.0,-0.018063053488731384,,
+6b7972aa-af95-48f9-acc6-4d176898460e,unknown,What does Upload ¶ mean in NOMAD?,,"**Upload ¶** in NOMAD is a user‑created container that holds one or more raw files (and the entries that are automatically generated from those files).  
+
+* **Purpose** – An upload preserves the original directory layout and file‑level metadata, while also grouping the structured data (entries) that result from parsing those files.  
+* **Ownership & Visibility** – Each upload belongs to a single user account (the *owner*).  When first created it is mutable and only visible to the owner and any collaborators that the owner invites.  
+* **Structure** – Inside an upload you can have an arbitrary directory tree of raw files; the upload keeps that hierarchy intact.  
+* **Sharing & Publishing** – The whole upload can be shared with other users, transferred to another account, or published.  Publishing makes the upload immutable and publicly visible; before that it can still be edited by the owner and collaborators.  
+* **Granularity** – Uploads are the smallest unit of data that can be individually shared, transferred, or published in NOMAD.  
+
+In short, an **Upload** is a user‑managed, directory‑structured package of raw files and the entries derived from them, which can later be shared or published as a single, immutable unit.",0.0,0.0,0.0,0.0,0.05467349290847778,,
+a3dd14a1-f8d2-4e54-8a34-ff97af569be1,unknown,What does User ¶ mean in NOMAD?,,"**User ¶** in NOMAD refers to an individual who has an account on the platform.  
+
+* **Identity** – A user is represented by the `NomadUser` data structure, which stores personal and institutional information such as `user_id`, name, affiliation, email, and administrative flags (`is_admin`, `is_oasis_admin`).  
+* **Ownership** – Every piece of data in NOMAD (uploads, entries, etc.) is *owned* by exactly one user.  Other users may be added as collaborators or co‑authors, but the primary owner remains a single user.  
+* **Role distinction** – While a user can also be an **author** of a publication, not every author needs to have a NOMAD account.  Conversely, every user *can* be an author, but authorship is a separate metadata field attached to an entry.  
+* **Interaction** – Users can create, edit, and delete uploads, invite collaborators, and publish data.  Administrative users (`is_admin`, `is_oasis_admin`) have additional platform‑wide permissions.  
+
+In short, a **User** is the authenticated, account‑holding entity that owns and manages data within NOMAD, and whose profile information can be queried via the API (`who_am_i`, `search_users_by_name`, etc.).",0.0,0.0,0.0,0.0,0.058368951082229614,,
+docs-1,docs-faq,Input fields offered by the built-in schema Instrument ELN,"The built-in schema Instrument ELN provides the following fields for input: name: Automatically used as the entry name. tags: User selected tags to improve searchability. datetime: Allows entry of a date/time stamp. ID: A unique, human-readable ID for the. description: A free text field for additional information. Additional subsections available in the data subsection include: instrument identifiers: Specify the type of instrument and additional metadata, if applicable.","**Input fields offered by the built‑in “Instrument ELN” schema**
+
+| Field | Purpose |
+|-------|---------|
+| **name** | The instrument’s name – automatically used as the entry file name. |
+| **tags** | User‑selected tags to improve searchability. |
+| **datetime** | Date/time stamp of when the instrument was logged or used. |
+| **ID** | A unique, human‑readable identifier for the instrument. |
+| **description** | Free‑text field for any additional information. |
+| **instrument identifiers** (sub‑section) | Metadata that specifies the instrument type and any extra identifiers or attributes that apply to that instrument. |
+
+These are the only top‑level fields you can fill in when creating an ELN entry with the “Instrument ELN” schema; the *instrument identifiers* subsection is optional but recommended for richer metadata.",0.0,0.5901639344262295,0.4823529411764706,0.4623955431754875,0.9050848484039307,,
+docs-2,docs-faq,What you will learn¶?,"Organize and manage complex research workflows using NOMAD Integrate diverse data sources into a single, reproducible project Track data provenance and metadata Interface with the NOMAD repository programmatically for automation and high-throughput use","**What you will learn**
+
+- How to define and work with *precision quantities* that are new and specific to the community that uses them.  
+- The minimal theoretical background needed to understand and manipulate these quantities.  
+- Practical instructions for locating a particular entry in NOMAD and for downloading its processed data into a Jupyter notebook.  
+- How to use the basic software‑development concepts (GitHub, Python, and NOMAD metainfo) that underpin the tutorial.  
+- Optional deeper dives (marked with a pencil icon) that cover advanced topics, which can be skipped on a first read.",0.0,0.19354838709677416,0.1,0.24822695035460995,0.4232953190803528,,
+docs-3,docs-faq,Input fields offered by the built-in schema Measurement ELN,"name: Automatically used as the entry name. starting time Allows entry of a date/time stamp for the measurement. tags: User selected tags to improve searchability. ID: A unique, human-readable ID for the process. location: A text field specifying the location where the process took place. description: A free text field for additional information about the process. Additional subsections available in the data subsection include: steps: Define the step-by-step procedure for the material processing...","**Input fields offered by the built‑in “Measurement ELN” schema**
+
+| Field | What it records |
+|-------|-----------------|
+| **name** | The measurement’s name – automatically becomes the entry file name. |
+| **starting time** | Date/time stamp for when the measurement began. |
+| **tags** | User‑selected tags that help the entry show up in searches. |
+| **ID** | A unique, human‑readable identifier for the measurement. |
+| **location** | Text field describing where the measurement was performed. |
+| **description** | Free‑text field for any additional notes or context. |
+
+---
+
+### Sub‑sections that can be filled in the *data* part of the entry
+
+| Sub‑section | Typical content |
+|-------------|-----------------|
+| **steps** | Step‑by‑step procedure of the measurement. |
+| **samples** | Information about the sample(s) that were measured. |
+| **instruments** | Details of the instrument(s) used during the measurement. |
+| **samples** (again) | Metadata about the sample(s) (e.g., sample identifiers, preparation details). |
+| **instruments** | Instrument identifiers, calibration data, etc. |
+
+These are the only top‑level fields you can enter when creating a Measurement ELN entry; the subsections are optional but highly recommended for richer, searchable metadata.",0.0,0.4545454545454545,0.3076923076923077,0.3323727185398655,0.6184456944465637,,
+docs-4,docs-faq,default pagination,"To avoid performance issues, the server will paginate the results by default. To control the pagination, one can use the pagination field in the request configuration (see below).","**Default pagination**
+
+The `pagination` field is defined with a default value of `None`.  
+So, unless you explicitly provide a pagination dictionary, the default pagination configuration is **`None`**.",0.0,0.2545454545454545,0.14285714285714285,0.3149171270718232,0.5185869932174683,,
+docs-5,docs-faq,"What does it mean to ""break an entry""?","If every potential section instance that followed a section definition in the old schema still follows the same section definition in the new schema, we can safely replace the schema. If not, we will need to migrate data to implement the logical transition we intended. Otherwise, we will break existing data.","**Breaking an entry** means that, after a schema change, the entry can no longer be read or validated by NOMAD.  
+There are two ways this can happen:
+
+1. **The raw archive file (`*.archive.json` or `*.archive.yaml`) cannot be parsed** – the JSON‑style data in the file no longer matches the new section definitions, so the parser throws an error when it tries to load the file.
+
+2. **The processed data (the “archive” data inside the entry) cannot be opened** – the `EntryArchive` objects that were created from the old schema are now incompatible with the new schema, so when NOMAD attempts to convert the stored JSON/YAML into section‑definition instances it fails validation and raises errors.
+
+In short, a “broken” entry is one that, because of a schema modification, fails to be parsed or validated and therefore cannot be used in the NOMAD system.",0.0,0.22448979591836735,0.11428571428571428,0.255,0.4545992612838745,,
+docs-6,docs-faq,Download the example file for this exercise,"We have prepared a compressed file for this task, which can be downloaded from this link . The file contains multiple NOMAD ELN entries in .json format. These entries have been created using the NOMAD ELN built-in schema, organized into folders, and categorized with custom tags. You can drag and drop this file into a new upload in NOMAD to view its contents.","**Download the example file for this exercise**
+
+You can get the required data set from the following GitHub link:
+
+```
+https://github.com/FAIRmat-NFDI/FAIRmat-tutorial-16/raw/refs/heads/main/tutorial_16_materials/part_3_files/example_files_upload/experiments_data/xps_nexus_data.zip
+```
+
+1. Click the link (or copy‑paste it into your browser).  
+2. The ZIP file will download to your computer.  
+3. Un‑compress the ZIP to a directory of your choice.  
+
+The extracted folder contains the X‑ray photoelectron spectroscopy (XPS) data for the polymer PBTTT (files in `.nxs`, `.xml`, and an ELN `.yaml`).",0.0,0.22077922077922077,0.14563106796116504,0.28493647912885667,0.28326189517974854,,
+docs-7,docs-faq,no universality,"The * wildcard is not universal and only works for homogeneous data. This means it can only be used to represent upload_id , entry_id , dataset_id , etc., for data that follows a fixed schema ( MongoDB ). It won't work in archives, the corresponding metainfo (definitions), and alike.","**“No universality”** refers to the fact that the `*` wildcard in NOMAD’s API is **not a universal placeholder**.  
+It only works for *homogeneous* data that follows a fixed MongoDB schema (e.g., `upload_id`, `entry_id`, `dataset_id`). It cannot be used in:
+
+* Archive files (`*.archive.yaml/json`)  
+* Metainfo definitions  
+* Other non‑MongoDB data structures
+
+In short, the wildcard is limited to a narrow set of homogeneous collections and does not apply to the full range of NOMAD data types.",0.0,0.49586776859504134,0.40298507462686567,0.38063063063063063,0.7537930011749268,,
+docs-8,docs-faq,technical details,"It is categorized as a GraphQL - like API implemented within the REST style framework FastAPI . Because GraphQL requires static, explicitly defined schemas ahead of time while NOMAD supports data with dynamic schema, it cannot be implemented directly using existing GraphQL tools. As a result, there are no GUI tools available unfortunately.","**Technical details of the built‑in *Material Processing ELN* schema**
+
+| Field | Type | Purpose | Notes |
+|-------|------|---------|-------|
+| **name** | `str` | The name of the process – this string is automatically used as the entry file name (`*.archive.yaml/json`). | – |
+| **starting time** | `datetime` | Timestamp when the process started. | Required for all processing entries. |
+| **ending time** | `datetime` | Timestamp when the process finished. | Together with *starting time* it defines the process duration. |
+| **ID** | `str` | A unique, human‑readable identifier for the process. | Must be unique within the upload; used for cross‑referencing. |
+| **location** | `str` | Free‑text description of where the process was performed (lab, facility, etc.). | Optional but recommended for provenance. |
+| **description** | `str` | Free‑text field for any additional notes or context. | Optional. |
+
+> All of the above fields are simple scalar strings or timestamps; the schema does **not** impose any complex sub‑structures for these top‑level fields.
+
+---
+
+### Sub‑sections that can be added in the *data* part of the entry
+
+| Sub‑section | Typical content | Notes |
+|-------------|-----------------|-------|
+| **steps** | Ordered list of the individual steps of the material‑processing workflow (e.g., “mixing”, “extrusion”, “annealing”). | Each step can itself contain a *starting time*, *ending time*, *location*, *description*, and any relevant *samples* or *instruments*. |
+| **samples** | Information about the material(s) that were processed (sample identifiers, preparation details, etc.). | Often linked to existing *Sample* entries or created anew. |
+| **instruments** | Details of the equipment used (instrument identifiers, calibration data, etc.). | Can reference existing *Instrument* entries or be entered inline. |
+
+---
+
+### The **Outputs** section (used by simulation‑based ELNs)
+
+* The **Outputs** group is a container for all computed physical properties.
+* Each property is stored as its own section under `Outputs` and inherits from the abstract base section `PhysicalProperty`.
+* **PhysicalProperty** contains:
+  * `value` – the numerical result (scalar, vector, or array).
+  * Other relevant quantities (e.g., units, uncertainty, reference to the computational method).
+* The `variables` sub‑section allows a property to be stored as a function of a varying parameter (e.g., temperature, pressure).  
+  * The shape of `value` is then determined dynamically based on the variable’s shape.
+  * Example: `ElectronicBandGap` could be a single scalar or a set of scalars varying with `Temperature`.
+
+These technical details give you a clear picture of what the built‑in *Material Processing ELN* schema expects and how the outputs are structured for simulation‑derived properties.",0.0,0.08018867924528303,0.06607929515418502,0.11806722689075633,0.2991149425506592,,
+docs-9,docs-faq,a valid example,"The following is a valid curl command that fetches the archive of a random entry x36WdKPMctUOkjXMyV8oQq2zWcSx . curl -X 'POST' \ 'https://nomad-lab.eu/prod/v1/api/v1/graph/query' \ -H 'accept: application/json' \ -H 'Content-Type: application/json' \ -d '{ ""entries"":{ ""x36WdKPMctUOkjXMyV8oQq2zWcSx"":{ ""archive"":{ ""m_request"":{ ""directive"":""plain"" } } } } }'","**A valid example upload**
+
+A valid example upload is a pre‑prepared upload that demonstrates the features of a plugin.  
+It can be created in one of three ways:
+
+1. **Fixed content** – the files are hard‑coded in the plugin.  
+2. **Programmatic generation** – the upload is built on the fly when the plugin is loaded.  
+3. **Fetched from an online source** – the plugin downloads the data when the example is instantiated.
+
+In the GUI you can create it by clicking the **“Example uploads”** button on the **Uploads** page.  
+The upload is defined by a plugin entry point (see the *plugin entry point* section).
+
+**Concrete example**
+
+The upload that contains a set of example Bayesian‑optimization task entries (generated with the Jupyter notebook in the “Getting started” example upload) is a perfectly valid example upload.",0.0,0.1229050279329609,0.09090909090909091,0.21899736147757254,0.11850445717573166,,
+docs-10,docs-faq,Input fields offered by the built-in schema Substance ELN,"The built-in schema Substance ELN provides the following fields for input: substance name: Automatically used as the entry name. tags: User selected tags to improve searchability. datetime: Allows entry of a date/time stamp. substance ID: A unique, human-readable ID for the substance. detailed substance description: A free text field for additional information. Additional subsections available in the data subsection include: elemental composition: Define the chemical composition with atomic and ...","**Input fields offered by the built‑in “Substance ELN” schema**
+
+| Field | Description |
+|-------|-------------|
+| **substance name** | Automatically used as the entry file name. |
+| **tags** | User‑selected tags to improve searchability. |
+| **datetime** | Date/time stamp for when the entry was created or recorded. |
+| **substance ID** | A unique, human‑readable identifier for the substance. |
+| **detailed substance description** | Free‑text field for additional information about the substance. |
+
+**Additional subsections available in the *data* part**
+
+| Sub‑section | Typical content |
+|-------------|-----------------|
+| **elemental composition** | Define the chemical composition with atomic and mass fractions. |
+| **pure substance** | Specify if the material is a pure substance purchased from an external vendor, with fields such as: <br>• Substance name <br>• IUPAC name <br>• Molecular formula <br>• CAS number <br>• Inchi Key, SMILES, etc. |
+| **substance identifier** | Add identifiers for specific substances (e.g., registry numbers, database IDs). |
+
+These are all the top‑level fields and subsections you can fill in when creating a Substance ELN entry.",0.0,0.5803571428571428,0.42201834862385323,0.4127310061601642,0.8055318593978882,,
+docs-11,docs-faq,Different ways and scenarios to upload files to NOMAD,"In NOMAD, files can be uploaded in different ways, but whether they are processed into Entries or not depends on their format and NOMAD’s built-in parsers. Here’s how it works: Files that are processed by NOMAD These are files that are recognized by NOMAD, meaning that a built-in parser exists for the file you uploaded, the file will be processed according to a data schemas. It means that NOMAD reads the file, extracts data and organizes them based on the data schema which allows for generating ...","**Different ways and scenarios to upload files to NOMAD**
+
+| Way of uploading | How it works | Typical use‑case |
+|------------------|--------------|-----------------|
+| **Drop / click individual files** | In the *Uploads* page you can click the **“CLICK OR DROP FILES”** button (or drag‑and‑drop) and select one or more files directly.  The files are stored in the upload’s file tree and can later be moved into folders via the *FILES* tab. | • Small, single‑file data sets (e.g., a single PDF, image, or text file).  <br>• Quick “one‑off” uploads that you want to keep as raw data. |
+| **Upload a compressed archive (`.zip` or `.tar`)** | You can bundle many files into a single archive and upload that archive. NOMAD will unpack the archive on the server side and place each contained file in the upload’s directory structure. | • Large data collections that would otherwise hit the per‑file upload limit.  <br>• Structured data sets that already come in a single archive (e.g., a ZIP of a DFT calculation or an XPS experiment). |
+| **Create directories in the upload** | In the *FILES* tab you can create folders (e.g., `DFT/Fe2O3`, `XPS/Polymer`) and drop files into those folders. | • Organising files by experiment, calculation type, or material before they are processed.  <br>• Keeping a clear folder hierarchy that mirrors the experimental workflow. |
+
+---
+
+### Scenarios that illustrate the different upload methods
+
+1. **Miscellaneous files** – PDFs, images, plain text, CSVs, etc.  
+   *These files are usually not parsed by NOMAD; they are stored as raw data and can be accessed directly from the upload.*
+
+2. **DFT calculation files on Iron(III) Oxide** – e.g., VASP, Quantum‑ESPRESSO, CP2K, etc.  
+   *Because NOMAD has built‑in parsers for these formats, the uploaded files are automatically turned into **Entries** that follow the corresponding data schema (e.g., `DFTCalculation`).*
+
+3. **XPS measurement files on polymers** – e.g., SPECS `.nxs` or `.xml` files plus an ELN `.yaml`.  
+   *These are also parsed by NOMAD, producing an **Entry** that contains the experimental data and the ELN metadata.*
+
+---
+
+### What determines whether a file becomes an Entry
+
+* **File format** – Only files for which a built‑in parser exists are processed.  
+* **Parser availability** – If NOMAD recognises the file type, it extracts the data and maps it to the appropriate data schema, enabling visualisations and automated analysis.  
+* **Unprocessed files** – Files that do not match any built‑in parser (e.g., proprietary formats, plain text notes) are stored as raw files in the upload but are not turned into Entries.
+
+---
+
+**In practice**
+
+1. Log in to NOMAD → `PUBLISH` → `Uploads`.  
+2. Click **“CREATE A NEW UPLOAD”**.  
+3. Use the **“CLICK OR DROP FILES”** button (or the *FILES* tab) to add files individually or as a ZIP/TAR archive.  
+4. Organise the files into directories if desired.  
+5. Once the upload is finished, NOMAD will automatically parse any supported files into Entries according to the built‑in parsers.",0.0,0.2654867256637168,0.1963470319634703,0.16013564431047478,0.7201778888702393,,
+docs-12,docs-faq,What is a release¶?,"NOMAD is a public service, a Git repository, a Python package, and a docker image. What exactly is a NOMAD release? It is all of the following: a version tag on the main NOMAD git project , e.g. v1.3.0 a gitlab release based on a tag with potential release notes a version of the nomad-lab Python package released to pypi.org, e.g. nomad-lab==1.3.0 . a docker image tag, e.g. gitlab-registry.mpcdf.mpg.de/nomad-lab/nomad-fair:v1.3.0 the docker image tag stable points to the image with the latest rel...","**What is a release?**
+
+A NOMAD release is the coordinated set of artifacts that marks a new, stable version of the NOMAD stack.  
+It consists of:
+
+| Component | What it is | Example |
+|-----------|------------|---------|
+| **Git tag** | A semantic‑version tag on the main NOMAD repository (`nomad‑FAIR`). | `v1.3.0` |
+| **GitLab release** | A release page created from that tag, optionally with release notes. | `v1.3.0` release notes |
+| **Python package** | The `nomad‑lab` package published to PyPI. | `nomad‑lab==1.3.0` |
+| **Docker image** | A Docker image tagged with the same version. | `gitlab‑registry.mpcdf.mpg.de/nomad‑lab/nomad‑fair:v1.3.0` |
+| **Stable tag** | A Docker tag (`stable`) that always points to the latest released image. | `stable → v1.3.0` |
+
+When all of these pieces are in place, the release is considered complete and the new version is available for users to install, run, or pull.",0.0,0.6477732793522266,0.4642857142857143,0.41469816272965876,0.9081202149391174,,
+docs-13,docs-faq,What is a custom schema¶?,An example of custom schema written in YAML language.,"**What is a custom schema?**
+
+A *custom schema* is a set of data‑structure definitions that you create yourself to describe the processed data produced in your own laboratory or research project.  
+It is written either as a YAML file or as a Python plugin entry point and is packaged into a *schema package*.  
+
+In practice, a custom schema:
+
+* **Defines sections and subsections** that mirror the hierarchy of the data you collect (e.g., “Experiment → Sample → Measurement”).
+* **Specifies quantities** (fields, units, validation rules) that capture the values you need (e.g., temperature, pressure, composition).
+* **Is added to the metainfo** of NOMAD so that the processed data can be stored, visualised, and queried in a structured way.
+
+If parts of your custom schema are general enough to be useful to others, you can extract those parts and contribute them to the community plugin, enriching the overall metainfo available to everyone.",0.0,0.07594936708860758,0.06382978723404255,0.0547945205479452,0.6153693199157715,,
+docs-14,docs-faq,Share your upload,"Step 1: Open the Edit upload members window, but clicking on the EDIT UPLOAD MEMBERS button. Step 2: Start typing the name of the NOMAD user you want to share the upload with. A list of matching users will appear—select the correct name from the list. Step 3: Assign a role to the user by selecting either Coauthor or Reviewer from the dropdown menu. - Coauthors can edit and add files to the upload. - Reviewers can only view the contents of the upload (no editing rights). Step 4: Click on submit .","**How to share an upload**
+
+1. **Open the upload page**  
+   Go to **PUBLISH → Uploads** and click the upload you want to share.
+
+2. **Open the “Edit upload members” dialog**  
+   Click the **EDIT UPLOAD MEMBERS** button below the list of entries.
+
+3. **Add a user**  
+   * Start typing the name of the NOMAD user you want to share with.  
+   * A drop‑down list of matching users will appear – select the correct one.
+
+4. **Assign a role**  
+   * Choose **Coauthor** (edit & add files) or **Reviewer** (view only) from the role drop‑down.
+
+5. **Submit**  
+   Click **submit** to add the user to the upload.
+
+Once added, the user will see the upload in their own “Your uploads” list and will have the permissions you granted.",0.0,0.6350710900473934,0.5060240963855421,0.4484451718494271,0.926676869392395,,
+docs-15,docs-faq,data duplication,"Some fields are both stored in the MongoDB database and the Elasticsearch index. And it is likely that the desired information can be directly fetched from Elasticsearch . In this case, there is no need to navigate to the MongoDB database. However, if the request needs to access archive, it has to use entry -> archive path if starting from search .","**Data duplication**
+
+In NOMAD, many fields are stored in **both** the MongoDB database and the Elasticsearch index.  
+This means the same information exists in two places:
+
+* **MongoDB** – the primary storage for the full entry archive (the raw, structured data).
+* **Elasticsearch** – a denormalised, searchable copy of selected quantities and metadata.
+
+Because the data is duplicated, you can usually retrieve the needed information directly from Elasticsearch without ever touching MongoDB.  
+Only when you need to read the full archive (e.g., to access the `entry.archive` JSON) do you have to follow the `entry → archive` path that starts from a search result.",0.0,0.46540880503144655,0.29411764705882354,0.3892508143322475,0.7532179355621338,,
+docs-16,docs-faq,Task: Create an ELN entry for substances,"Create an ELN entry in NOMAD for the following substances: Chloroform Glass substrate Use the Substance ELN schema and include as many details as you like (e.g., Substance Name, Datetime, Substance ID, Description).","**How to create a Substance ELN entry for a given substance**
+
+Below is a step‑by‑step guide that you can follow for any substance (e.g. *Chloroform* or *Glass substrate*).  
+The same procedure works for the P3HT powder example shown in the tutorial.
+
+---
+
+### 1. Open the “Create a new entry” wizard  
+
+1. Log in to NOMAD.  
+2. In the **PUBLISH** menu, click **CREATE A NEW ENTRY** (or use the “Create a new upload” → “Add entry” flow).  
+3. In the wizard that opens, choose **Substance ELN** from the drop‑down list in step 4.
+
+---
+
+### 2. Fill in the mandatory / recommended fields  
+
+| Field | What to put | Why it matters |
+|-------|-------------|----------------|
+| **Substance name** | `Chloroform` (or `Glass substrate`) | This becomes the entry’s file‑system name and the title shown in the UI. |
+| **Datetime** | `2024‑04‑15 10:30:00` (or the date you actually handled the material) | Helps you and others locate the entry chronologically. |
+| **Substance ID** | `CHL-001` (or `GLASS-001`) | A short, human‑readable identifier that you can use in other documents or scripts. |
+| **Detailed substance description** | A paragraph describing purity, source, handling precautions, etc. | Adds context for future users. |
+| **Tags** | `volatile`, `solvent`, `glass`, `substrate`, etc. | Improves discoverability in the search bar. |
+
+> **Tip:** If you’re unsure about a tag, just type a few letters and NOMAD will suggest existing tags.
+
+---
+
+### 3. (Optional) Add subsections in the *data* area  
+
+If you want to capture more chemistry‑specific information, you can add subsections such as:
+
+* **Elemental composition** – e.g., `C: 1.0`, `H: 1.0`, `Cl: 1.0` for chloroform.  
+* **Physical properties** – density, melting point, boiling point, etc.  
+* **Safety data** – MSDS link, hazard statements, PPE required.
+
+These subsections are optional; the entry will still be valid with just the top‑level fields.
+
+---
+
+### 4. Review and finish  
+
+1. Step 5 of the wizard shows a preview of the entry.  
+2. Click **SAVE** (or **CREATE**).  
+3. The entry now appears in your upload’s file tree under the name you entered (e.g. `Chloroform`).
+
+---
+
+### 5. Repeat for the second substance  
+
+Just repeat the wizard for *Glass substrate* (or any other material).  
+You can keep both entries in the same upload or create separate uploads – it’s up to you.
+
+---
+
+#### Quick example
+
+| Substance | Substance name | Substance ID | Datetime | Description | Tags |
+|-----------|----------------|--------------|----------|-------------|------|
+| Chloroform | Chloroform | CHL-001 | 2024‑04‑15 10:30 | 1‑Chloro‑2‑fluoro‑3‑bromobenzene, analytical grade, 99.9 % purity. | solvent, volatile |
+| Glass substrate | Glass substrate | GLASS-001 | 2024‑04‑15 10:45 | 1 mm thick soda‑lime glass, 25 × 25 mm, cleaned with IPA. | substrate, solid |
+
+Once you’ve created the entries, you can add files (e.g., MSDS PDFs, spectra) or share the upload with collaborators as described in the “Share your upload” section of the tutorial.",0.0,0.10655737704918034,0.09170305676855896,0.08178887993553585,0.6262853145599365,,
+docs-17,docs-faq,Task: Reference P3HT powder as input for the process,"For the Process ELN entry created above, make reference to the substance ELN entry P3HT Powder as an input of the process. Tip: Use the workflow2 section of the entry.","**How to reference the *P3HT Powder* substance in a Process ELN entry**
+
+1. **Open the Process ELN entry** you created for “Preparation of P3HT solution” (or any other process).  
+2. In the wizard, go to the **workflow2** section (the part that defines the process graph).  
+3. Add a new node that points to the *Substance ELN* entry **P3HT Powder**.  
+   * In the node’s “type” field choose **Substance**.  
+   * In the “reference” field paste the full path or the upload‑ID of the *P3HT Powder* entry (e.g. `substance/P3HT Powder`).  
+4. If you already have a **Sample ELN** entry for the solution (e.g., *P3HT_solution_in_CF*), simply add that sample as an input in the **samples** subsection of the process entry.  
+   * If the sample does not exist, first create the Sample ELN entry *P3HT_solution_in_CF* and then add the reference in the process entry’s **samples** subsection.  
+
+After saving, the workflow graph will automatically show the link from the process to the P3HT powder (and, if present, to the sample), making the dependency clear in the interactive graph.",0.0,0.25365853658536586,0.20238095238095238,0.16078838174273857,0.8325586318969727,,
+docs-18,docs-faq,Input fields offered by the built-in schema Material Processing ELN,"The Material Processing ELN schema provides the following fields for input: name: Automatically used as the entry name. starting time and ending time: Allows entry of a date/time stamp for the process duration. tags: User selected tags to improve searchability. ID: A unique, human-readable ID for the process. location: A text field specifying the location where the process took place. description: A free text field for additional information about the process. Additional subsections available in...","**Input fields offered by the built‑in schema *Material Processing ELN***  
+
+| Field | Description |
+|-------|-------------|
+| **name** | Automatically used as the entry file name. |
+| **starting time and ending time** | Date/time stamps for the process duration. |
+| **tags** | User‑selected tags to improve searchability. |
+| **ID** | A unique, human‑readable ID for the process. |
+| **location** | Text field specifying where the process took place. |
+| **description** | Free‑text field for additional information about the process. |
+
+These are the top‑level fields you can fill in when creating a process entry with the Material Processing ELN schema.",0.0,0.7831325301204819,0.6666666666666666,0.6411657559198543,0.850452721118927,,
+docs-19,docs-faq,plain directive,The plain directive means 'just return the data as it is'. We will introduce other directives later.,"I’m sorry, but I don’t have enough information in the provided context to determine what “plain directive” refers to.",0.0,0.15789473684210528,0.09375,0.2920353982300885,0.7640832662582397,,
+docs-20,docs-faq,various formats of references,"The format of the reference string may vary, depending on whether it is a reference to the same entry or to another entry.","**Various formats of references in the NOMAD documentation**
+
+| Context | Reference syntax | What it looks like | Purpose |
+|---------|------------------|--------------------|---------|
+| **Markdown pages** | `[label](path/to/file.md)` | `The reference [section](reference/references.md)` | Links to another Markdown file in the same repo. |
+| **Cross‑reference to a section** | `#section-id` or `#section-id` in the URL | `reference/references.md#cli-commands` | Jumps to a specific heading inside a file. |
+| **Cross‑reference to a heading in the same file** | `#heading` | `#cli-commands` | Links to a heading within the current page. |
+| **Cross‑reference to a code block or variable** | `{{ variable }}` or `{{ code }}` (in MkDocs‑click or Jinja templates) | `{{ cli.commands }}` | Inserts dynamic content from the codebase. |
+| **Footnote style** | `[1]` in the text and `[^1]` at the bottom | `The reference [section](reference/references.md)[^1]` | Adds a footnote that can contain a link or extra explanation. |
+| **Inline code reference** | `` `command` `` | `` `nomad --help` `` | Highlights a command or code snippet. |
+| **Reference to a configuration option** | `config.option` or `config.option` in a code block | `config.database.host` | Points to a specific setting in the configuration schema. |
+
+In short, the documentation uses standard Markdown link syntax for file references, heading anchors for intra‑page navigation, and sometimes template placeholders or footnotes for more dynamic or explanatory references.",0.0,0.11353711790393015,0.08737864077669903,0.09228321400159112,0.3974510431289673,,
+docs-21,docs-faq,workflow_scripts.archive.yaml,data : m_def : 'nomad.datamodel.metainfo.eln.ElnFileManager' name : 'Workflow Scripts' description : 'All the scripts run during setup of the MD simulation.' Files : - file : 'Custom_ELN_Entries/workflow_script_1.py' description : 'Creates the simulation box and inserts water molecules.' - file : 'Custom_ELN_Entries/workflow_script_2.py' description : 'Creates the appropriate force field files for the simulation engine.',"**`workflow_scripts.archive.yaml`**
+
+```yaml
+data:
+  m_def: 'nomad.datamodel.metainfo.eln.ElnFileManager'
+  name: 'Workflow Scripts'
+  description: 'All the scripts run during setup of the MD simulation.'
+  Files:
+    - file: 'Custom_ELN_Entries/workflow_script_1.py'
+      description: 'Creates the simulation box and inserts water molecules.'
+    - file: 'Custom_ELN_Entries/workflow_script_2.py'
+      description: 'Creates the appropriate force field files for the simulation engine.'
+```
+
+This YAML file defines an ELN‑file‑manager entry that bundles the two Python scripts used to set up the molecular‑dynamics simulation.",0.0,0.7874015748031497,0.6666666666666666,0.6949458483754513,0.9072718620300293,,
+docs-22,docs-faq,Adding more workflow metadata,You could extend the workflow metadata by adding the metholodogical input parameters. These are stored in the archive with path run[0].method[-1] . The new single_point.archive.yaml will then be: workflow2 : name : DFT SinglePoint inputs : - name : Input system section : '../upload/archive/mainfile/dft.xml#/run/0/system/-1' - name : Input methodology parameters section : '../upload/archive/mainfile/pressure1/dft_p1.xml#/run/0/method/-1' outputs : - name : Output calculation section : '../upload/...,"**Adding more workflow metadata**
+
+When you build a workflow with `NomadWorkflow`, you can attach any metadata you want to the workflow object before calling `build_workflow_yaml()`.  
+Typical metadata fields are:
+
+| Attribute | What it does | Example |
+|-----------|--------------|---------|
+| `destination_filename` | Path where the generated YAML will be written. | `./project_workflow.archive.yaml` |
+| `name` | Human‑readable name that appears on the workflow graph. | `NOMAD Tutorial Workflows Project` |
+| `description` | Optional free‑text description of the workflow. | `A simple workflow that runs a single‑point DFT calculation.` |
+| `tags` | List of tags that help you filter the workflow in the UI. | `['tutorial', 'DFT', 'single‑point']` |
+| `author` | Name or email of the workflow author. | `alice@example.com` |
+| `run[0].method[-1]` | Methodological input parameters (e.g., functional, basis set, convergence criteria). | `{'functional': 'PBE', 'basis_set': 'DZVP-MOLOPT-SR'}` |
+
+You simply set these attributes on the `NomadWorkflow` instance and then call `build_workflow_yaml()`:
+
+```python
+from nomad.datamodel.metainfo.workflow import NomadWorkflow
+
+# Create the workflow (nodes, edges, etc. are already defined)
+nomad_workflow = NomadWorkflow()
+
+# --- Add metadata ----------------------------------------------------
+nomad_workflow.destination_filename = './project_workflow.archive.yaml'
+nomad_workflow.name = 'NOMAD Tutorial Workflows Project'
+nomad_workflow.description = (
+    'A minimal workflow that performs a single‑point DFT calculation '
+    'and stores the methodological parameters in run[0].method[-1].'
+)
+nomad_workflow.tags = ['tutorial', 'DFT', 'single‑point']
+# You can also add custom attributes that will be stored in the archive
+# e.g. a custom field that the UI can display
+nomad_workflow.custom_field = 'Some extra info'
+
+# --- Generate the YAML file -----------------------------------------
+nomad_workflow.build_workflow_yaml()
+```
+
+After the call, the file `project_workflow.archive.yaml` will contain the workflow definition **plus** all the metadata you attached.  
+When you upload this YAML to NOMAD and open the corresponding entry, the workflow graph will display the workflow name at the top, and any other metadata (description, tags, etc.) will be available in the entry overview or in the raw YAML.",0.0,0.22465753424657534,0.16352201257861634,0.1742886178861789,0.7021326422691345,,
+docs-23,docs-faq,Filtering entries in NOMAD,"NOMAD provides various filters that can be used to efficiently find your ELN entries, but the following two filters are particularlly effective: Filter by built-in schema used to create the entry. For example, ELNInstrument, ELNSubstances, ELNSample, etc. Filter by custom tags, where you assign common tags to related entries for easy grouping. For example, tag all solvents as ""my_solvent"" or all samples as ""my_samples"". Using these filters helps you quickly locate specific entries in your ELN.","**Filtering entries in NOMAD**
+
+1. **Open the Explore page**  
+   * In the NOMAD GUI click **EXPLORE → Entries**.  
+   * You’ll see a list of the most recent entries (public ones are visible to everyone; private/shared entries appear only after you log in).
+
+2. **Use the search bar**  
+   * At the top of the page is a free‑text search box.  
+   * Type keywords (e.g., “P3HT”, “DFT”, “single‑point”) and press **Enter**.  
+   * The list updates instantly to show only entries that contain those words in any searchable field (tags, description, metadata, etc.).
+
+3. **Apply the built‑in filters**  
+   * Below the search bar you’ll find a set of filter widgets:  
+     * **Entry type** – choose “ELN”, “Sample”, “Workflow”, etc.  
+     * **Tags** – pick one or more tags that the entry carries.  
+     * **Author / Owner** – filter by the uploader’s name or email.  
+     * **Date range** – set a start‑ and end‑date to limit the time window.  
+     * **Location / Lab** – if you know where the data was produced.  
+   * Each filter is a dropdown or checkbox; selecting a value immediately narrows the list.
+
+4. **Refine with property filters**  
+   * After an initial search you can add *property* filters.  
+   * Click the **+ Add filter** button (or the “Filter” icon).  
+   * Pick a property from the drop‑down (e.g., `run[0].method.functional`, `system.energy`, `material.name`).  
+   * Set a comparison operator (`=`, `>`, `<`, `between`, etc.) and a value or range.  
+   * The table updates in real time.
+
+5. **Create interactive widgets**  
+   * For a more dynamic experience you can build a *widget* that visualises a property and lets you drag a slider or pick a range.  
+   * Click **+ New widget** → choose the property you want to visualise (e.g., `system.energy`).  
+   * Configure the widget (title, units, default range).  
+   * The widget appears on the page and automatically filters the entry list as you move the slider or change the selection.
+
+6. **Save or export your filter**  
+   * Once you’ve found the subset you need, you can **Save filter** (so you can re‑apply it later) or **Export** the list (CSV, JSON, or directly to a notebook).
+
+**Quick‑start checklist**
+
+| Step | What to do | Why it matters |
+|------|------------|----------------|
+| 1 | Log in (if you need private/shared data) | Grants access to all entries you’re allowed to see |
+| 2 | Use the free‑text search | Fast, broad hit‑search across all searchable fields |
+| 3 | Apply property filters | Narrow results to exact numerical or categorical criteria |
+| 4 | Build widgets | Create reusable, interactive filters for repeated use |
+| 5 | Save or export | Keep a record of the filter or share the results |
+
+With these tools you can quickly drill down from thousands of entries to the handful that match your exact scientific or data‑analysis needs.",0.0,0.15953307392996108,0.10843373493975904,0.16165890816758355,0.7047528028488159,,
+docs-24,docs-faq,How to deal with hotfixes¶?,"This depends on the current develop branch and requires a judgement call. There are two opposing scenarios: The develop branch only contains minor fixes or fix/features that are not likely to effect the released functionality. In this case, a new release with an increased patch version is the right call. The develop branch adds major refactorings and commits that likely effect the released functionality. In this case, a v1.3.0-hotfix branch should be created. After adding commits with the hotfix...","**How to deal with hotfixes**
+
+1. **Create a dedicated hotfix branch**  
+   * From the current `develop` branch, create a branch named `vX.Y.Z-hotfix` (e.g., `v1.3.0-hotfix`).  
+   * This branch should contain only the minimal changes needed to fix a defect in the released version.
+
+2. **Apply the hotfix commits**  
+   * Make the necessary commits on the hotfix branch.  
+   * Keep the branch short‑lived – it should not stay longer than about a week.
+
+3. **Run the release pipeline on the hotfix branch**  
+   * Once the hotfix commits are ready, run the normal release process against the hotfix branch.  
+   * This produces a new patch release (e.g., `v1.3.1`) that contains **only** the hotfixes and none of the changes that are still in `develop`.
+
+4. **Merge the hotfix back into `develop`**  
+   * After the hotfix release is published, merge the `v1.3.0-hotfix` branch back into `develop`.  
+   * This brings the hotfixes into the main development line while keeping the rest of the `develop` history untouched.
+
+5. **Keep hotfixes short‑lived**  
+   * Hotfix branches should be deleted or merged back into `develop` within a week to avoid divergence.
+
+6. **Schedule and frequency**  
+   * Patch releases (e.g., `v1.3.1`, `v1.3.2`, …) should happen frequently—at least once every other month.  
+   * Minor releases are semi‑regular and are triggered by significant new features or bi‑annual FAIRmat events.  
+   * Major releases are planned separately and do not follow a fixed schedule.
+
+7. **Handling breaking changes**  
+   * For breaking changes that affect the schema, use a separate major‑release branch and plan a data migration strategy.  
+   * Feature switches can protect new features, but large refactorings may require a pause in the release schedule.
+
+**Bottom line**: Use a short‑lived hotfix branch (`vX.Y.Z-hotfix`), commit the fixes, release a new patch (`vX.Y.Z+1`), merge the hotfix back into `develop`, and keep the branch alive for no more than a week.",0.0,0.28927680798004984,0.21893491124260356,0.20935539075869936,0.7588859796524048,,
+docs-25,docs-faq,Contents of NOMAD's Explore Menu,"The following explore pages are currently available: Entries : Search entries across all domains. Theory : Focus on calculations and materials data derived from theoretical models. Experiment : Explore data from experimental sources, such as ELNs (Electronic Lab Notebooks) or characterization techniques e.g., EELS (Electron Energy Loss Spectroscopy). Tools : Explore among several AI toolkit notebooks. Use Cases : Search data tailored to specific use cases, such Metal-Organic Frameworks (MOFs).","**Contents of NOMAD’s Explore Menu**
+
+The Explore section of the NOMAD GUI currently offers the following pages:
+
+| Page | Focus / What you’ll find |
+|------|--------------------------|
+| **Entries** | Search and browse all uploaded entries across every domain (public, private, and shared). |
+| **Theory** | Dive into data derived from theoretical calculations—e.g., DFT, MD, and other computational models. |
+| **Experiment** | Explore experimental datasets, such as Electronic Lab Notebooks (ELNs) or characterization results (e.g., EELS, XRD, TEM). |
+| **Tools** | Browse AI‑toolkit notebooks and other computational tools that can be applied to NOMAD data. |
+| **Use Cases** | Filter data tailored to specific scientific or industrial use cases (e.g., Metal‑Organic Frameworks, MOFs). |
+
+These pages are accessible via **EXPLORE → [Page]** in the GUI.",0.0,0.5683060109289618,0.4536082474226804,0.4206128133704735,0.6759394407272339,,
+docs-26,docs-faq,Download the example files for this exercise,"We have prepared a set of files for this task that can be downloaded from this link . Download the folder to your local machine at you preferred directory. This folder contains the input and output files of a DFT calculation for Iron(III) Oxide using the FHI-aims code. FHI-aims* an all-electron density-functional-theory package that employs numeric atom-centered basis functions. It is designed for accurate and efficient simulations of molecules, clusters, surfaces, and bulk materials across the ...","**Download the example files for this exercise**
+
+1. Click the link below (or copy‑paste it into your browser) to download the ZIP archive that contains all the example files:
+
+   <https://github.com/FAIRmat-NFDI/FAIRmat-tutorial-16/raw/refs/heads/main/tutorial_16_materials/part_3_files/example_files_upload/miscellaneous_data/miscellaneous_data.zip>
+
+2. Once the download finishes, locate the ZIP file on your computer.
+
+3. Extract (uncompress) the archive to a folder of your choice.  
+   The extracted folder will contain files in the following formats: `.zip`, `.pdf`, `.jpg`, `.txt`, and `.csv`.
+
+You’re now ready to use these files for the exercise.",0.0,0.25555555555555554,0.1440677966101695,0.2790697674418605,0.2865363359451294,,
+docs-27,docs-faq,Task: Create an ELN entry for a sample,"Create an ELN entry in NOMAD for P3HT solution in chloroform. Reference the sample to its components (P3HT powder and chloroform). Use the Generic Sample ELN schema and include as many details as you like (e.g., Short Name, Datetime, ID, Description).","**Task: Create an ELN entry for a sample**
+
+Follow these quick steps to create a *Generic Sample ELN* entry for either **P3HT Thin Film** or **P3HT Solution** in NOMAD.
+
+---
+
+### 1. Choose the sample  
+- **P3HT Thin Film**  
+  *or*  
+- **P3HT Solution**
+
+*(In the following example we’ll use “P3HT Solution”.)*
+
+---
+
+### 2. Open the “Create entry” wizard  
+1. In the NOMAD GUI, click **EXPLORE → Create entry** (or use the “Create entry” button on the home page).  
+2. Select the **Generic Sample ELN** schema from the list of built‑in schemas.
+
+---
+
+### 3. Fill in the required fields  
+
+| Field | Example value | Notes |
+|-------|---------------|-------|
+| **name** | `P3HT_Solution` | This becomes the file name (`P3HT_Solution.yaml`). |
+| **datetime** | `2024‑07‑15 10:30:00` | Use the date/time you actually prepared the solution. |
+| **ID** | `P3HT_Sol_001` | A short, unique identifier. |
+| **description** | `P3HT solution prepared in chlorobenzene, 10 wt % concentration, used for spin‑coating.` | Add any extra details you want. |
+
+---
+
+### 4. (Optional) Add detailed subsections in the *data* section  
+
+- **elemental composition**  
+  ```yaml
+  elemental_composition:
+    C: 0.85
+    H: 0.15
+  ```
+- **components**  
+  ```yaml
+  components:
+    - name: P3HT
+      amount: 10 wt %
+      solvent: chlorobenzene
+  ```
+- **sample identifier**  
+  ```yaml
+  sample_identifier: SB-2024-07-15
+  ```
+
+---
+
+### 5. Review and submit  
+1. Click **Preview** to see the YAML that will be stored.  
+2. If everything looks correct, click **Create entry**.  
+3. The entry will appear in your **Entries** list and can be shared or published as needed.
+
+That’s it—your sample ELN entry is now in NOMAD!",0.0,0.22382671480144403,0.176056338028169,0.15442846328538984,0.7366958856582642,,
+docs-28,docs-faq,What happens to the VASP POTCAR upon upload?,"For VASP data, NOMAD complies with the licensing of the POTCAR files. In agreement with Georg Kresse , NOMAD extracts the most important information of the POTCAR file and stores them in a stripped version called POTCAR.stripped . The POTCAR files are then automatically removed from the upload, so that you can safely publish your data.","When you upload VASP data, NOMAD does **not** keep the original `POTCAR` files.  
+Instead, it:
+
+1. Parses each `POTCAR` and pulls out the key metadata (e.g., element, valence configuration, pseudopotential details).  
+2. Saves that extracted information in a public‑friendly file called `POTCAR.stripped`.  
+3. Automatically deletes the original `POTCAR` from the upload, so the full, licensed files never appear in the published dataset.  
+
+Thus, only the stripped versions (`POTCAR.stripped`) are available for download, while the full `POTCAR` files are removed to comply with the VASP license.",0.0,0.4722222222222222,0.27710843373493976,0.3175182481751825,0.9212121963500977,,
+docs-29,docs-faq,complete definition,The complete definition of the RequestConfig can be found in nomad/graph/model.py .,"**Complete definition of a `SolutionComponent`**
+
+Below is a fully‑specified example that shows every field that can appear in a
+`SolutionComponent`.  
+It is written in the *YAML* style that you would normally see in a NOMAD ELN entry, but the same structure can be expressed as a Python class definition if you are working directly with the data‑model code.
+
+```yaml
+SolutionComponent:
+  name: ""1‑M NaCl (solvent)""
+  description: |
+    Sodium chloride dissolved in water to give a 1 M aqueous solution.
+    The component is used as the solvent in the final mixture.
+  component_role: ""solvent""          # or ""solute""
+  mass: 0.05844                      # kg (optional – can be derived)
+  volume: 0.001                       # m³ (optional – can be derived)
+  density: 1.0                        # kg m⁻³ (optional – can be derived)
+  amount_of_substance: 0.05844 / 58.44  # moles (optional – can be derived)
+  molar_concentration:                # automatically calculated
+    value: 1.0
+    unit: ""mol L⁻¹""
+
+  pure_substance:
+    name: ""Sodium chloride""
+    iupac_name: ""Sodium chloride""
+    molecular_formula: ""NaCl""
+    cas_number: ""7440-23-5""
+    inchi_key: ""BSYNRYMUTXBXSQ-UHFFFAOYSA-N""
+    smiles: ""Cl.[Na+]""
+    vendor: ""Sigma‑Aldrich""
+    purchase_date: ""2023‑12‑01""
+    batch_number: ""SA‑CL‑20231201""
+
+  substance_identifier:
+    id: ""SA‑CL‑20231201""
+    source: ""Sigma‑Aldrich""
+
+  links:
+    - https://pubchem.ncbi.nlm.nih.gov/compound/7440-23-5
+    - https://doi.org/10.1021/acs.jpcb.0c00123
+
+  more:
+    notes: ""Prepared by hand‑mixing; no purification step.""
+    custom_property: ""example_value""
+
+  elemental_composition:
+    atomic_fraction:
+      Na: 0.5
+      Cl: 0.5
+    mass_fraction:
+      Na: 0.5
+      Cl: 0.5
+```
+
+### What each part does
+
+| Section | Purpose | Notes |
+|---------|---------|-------|
+| **name** | Human‑readable identifier for the component. | Usually the class name or a variable name. |
+| **description** | Textual explanation of the component. | Can be a docstring or a literal string. |
+| **component_role** | `""solvent""` or `""solute""` – determines where the component ends up in the parent `Solution`. | |
+| **mass** | Mass of the component (kg). | Optional – can be derived from `amount_of_substance` × `molecular_mass`. |
+| **volume** | Volume of the component (m³). | Optional – can be derived from `mass` / `density`. |
+| **density** | Density of the component (kg m⁻³). | Optional – can be derived from `mass` / `volume`. |
+| **amount_of_substance** | Moles of the component. | Optional – can be derived from `mass` / `molecular_mass`. |
+| **molar_concentration** | Sub‑section automatically filled by the model. | Contains `value` (mol L⁻¹) and `unit`. |
+| **pure_substance** | Sub‑section that describes the chemical identity. | Includes `substance_name`, `iupac_name`, `molecular_formula`, `cas_number`, `inchi_key`, `smiles`, etc. |
+| **substance_identifier** | Vendor‑specific identifiers (e.g., batch number). | |
+| **links** | List of URLs that provide additional context. | |
+| **more** | Dictionary of any custom key/value pairs you want to attach. | Any `kwargs` passed to the definition are stored here. |
+| **elemental_composition** | Atomic and mass fractions of the component. | Useful for downstream calculations. |
+
+---
+
+**How the model works**
+
+* When you provide **any** of the following three quantities – `mass`, `volume`, or `amount_of_substance` – the model will automatically compute the missing ones using the relationships described in the context.
+* The `molar_concentration` sub‑section is filled in automatically from the `pure_substance.molecular_mass` and the total solution volume.
+* Depending on the value of `component_role`, the component is copied into either `Solution.solvents` or `Solution.solutes` in the parent `Solution` section.
+
+Feel free to drop this definition into your ELN entry and then edit or add fields as your experimental data evolve.",0.0,0.038910505836575876,0.0371900826446281,0.025233644859813054,0.279552161693573,,
+docs-30,docs-faq,Input fields offered by the built-in schema Generic Sample ELN,"The built-in schema Generic Sample ELN provides the following fields for input: name: Automatically used as the entry name. tags: User selected tags to improve searchability. datetime: Allows entry of a date/time stamp. ID: A unique, human-readable ID for the sample. description: A free text field for additional information. Additional subsections available in the data subsection include: elemental composition: Define the chemical composition with atomic and mass fractions. components: Specify t...","**Input fields offered by the built‑in *Generic Sample ELN* schema**
+
+| Field | Description |
+|-------|-------------|
+| **name** | The entry’s file name (used automatically). |
+| **tags** | User‑selected tags to improve searchability. |
+| **datetime** | Date/time stamp of the sample creation or measurement. |
+| **ID** | A unique, human‑readable identifier for the sample. |
+| **description** | Free‑text field for any additional information. |
+
+**Sub‑sections available inside the `data` subsection**
+
+| Sub‑section | Purpose |
+|-------------|---------|
+| **elemental composition** | Define the chemical composition with atomic and mass fractions. |
+| **components** | List the raw materials or system components that make up the sample. |
+| **sample identifier** | Add unique identifiers (e.g., batch numbers, vendor IDs) for the sample. |
+
+These are the fields you can fill in when creating an entry with the *Generic Sample ELN* schema in NOMAD.",0.0,0.6294416243654822,0.5157894736842106,0.45536869340232855,0.7935776114463806,,
+17ca4ec2-00d1-4b75-9998-4f39651467a5,unknown,How can I be sure that my data will be cited properly?,,"To make sure your dataset gets cited the way you want, follow these simple steps:
+
+1. **Give your upload a persistent identifier**  
+   – When you first upload the data, NOMAD creates a permanent ID (e.g., a DOI‑like string).  
+   – Keep this ID handy; you can use it in your manuscript to refer to the dataset.
+
+2. **Add a reference to your paper**  
+   – After your manuscript is accepted and has a DOI, edit the upload’s metadata.  
+   – In the “External DOI” field (or the “Author / Origin / Dataset” section) add the DOI of your paper.  
+   – This links the dataset to the publication, so anyone browsing the dataset can see the paper.
+
+3. **Use the dataset’s own NOMAD DOI**  
+   – Every published dataset receives a unique DOI issued by NOMAD.  
+   – You can find it under *Author / Origin / Dataset* → *Dataset DOI*.  
+   – Cite this DOI in your paper instead of the internal ID.
+
+4. **Check the “Visibility / IDs / Schema” tab**  
+   – This shows all identifiers stored for the dataset, including external IDs (e.g., from other databases).  
+   – Hover over the quantity names to confirm whether an ID is internal or external.
+
+5. **Verify the citation**  
+   – Search for your dataset in NOMAD and confirm that the DOI appears in the “Dataset DOI” field.  
+   – If you see the correct DOI and the external DOI of your paper, the dataset will be cited properly.
+
+In short: keep the persistent identifier, add the paper’s DOI to the upload’s metadata, and use the NOMAD‑issued DOI for your dataset. This guarantees that anyone citing the dataset will reference the correct, citable DOI.",0.0,0.0,0.0,0.0,-0.05039287358522415,,
+03682ebb-e1da-4817-9284-bb0fca4693e6,unknown,Can I change my email address or affiliation?,,I don’t know.,0.0,0.0,0.0,0.0,0.2436225563287735,,
+b3f68f90-fc1d-419f-a93b-d5a979f86550,unknown,I'd like to install NOMAD locally for my group. What should I use?,,"For a group‑wide local deployment you should set up a **NOMAD Oasis**.  
+An Oasis is a self‑contained, open‑source instance of the NOMAD software that you can run on your own servers or cluster, independent of the central NOMAD Lab installation.  
+
+If you’re an internal developer working on the core code, you’d use the “Local NOMAD installation and the source code of NOMAD” route instead. But for a typical group wanting to host their own data, the **NOMAD Oasis** is the right choice.",0.0,0.0,0.0,0.0,-0.017078468576073647,,
+7e75d2ce-ba62-4b58-91bc-f7e334a5ccc9,unknown,Are there any statistics about NOMAD’s data?,,I don’t know.,0.0,0.0,0.0,0.0,0.2436225563287735,,
+31ee250d-5ddb-4d15-b080-257ae4e3ddaf,unknown,What steps are needed to publish data and reference it in a paper?,,"**Steps to publish your data in NOMAD and cite it in a paper**
+
+1. **Upload the raw data files**  
+   * Drag‑and‑drop or use the upload wizard to add your experimental/computational files to NOMAD.
+
+2. **Create an entry**  
+   * Use the appropriate schema (e.g., *Generic Sample ELN*, *Measurement*, etc.).  
+   * Fill in the required fields:  
+     * **samples** – the materials measured  
+     * **measurement identifier** – a unique ID for the run  
+     * **instruments** – list of devices used  
+     * **results** – text, tables, and images summarising the outcome  
+     * (Optional) a step‑by‑step procedure for the material processing.
+
+3. **Add metadata and a persistent identifier**  
+   * NOMAD automatically assigns a **persistent ID** (a DOI‑like string) to every upload.  
+   * Store this ID in your lab notebook or manuscript draft so you can reference it later.
+
+4. **Publish the dataset**  
+   * Once the entry is complete, click **Publish**.  
+   * NOMAD will process the entry, generate a **dataset DOI** (issued by NOMAD), and make the data publicly visible.
+
+5. **Include the DOI in your manuscript**  
+   * When writing the paper, insert the NOMAD dataset DOI in the text or bibliography (e.g., “Data available at DOI: 10.1234/nomad.5678”).
+
+6. **Cross‑reference the paper after acceptance**  
+   * After your manuscript receives its own DOI, edit the metadata of each upload in NOMAD.  
+   * Add the paper’s DOI to the *External DOI* field (or the “Author / Origin / Dataset” section).  
+   * This links the dataset to the publication, enabling anyone who views the dataset to see the paper.
+
+7. **Keep the entry up to date**  
+   * If you add new files or refine the metadata, update the entry accordingly.  
+   * The persistent identifier remains the same, so the citation stays valid.
+
+**Result**  
+Your dataset will have a permanent, citable DOI in NOMAD, and the paper will reference that DOI, ensuring the data is discoverable and properly credited.",0.0,0.0,0.0,0.0,-0.03247866779565811,,
+fa3e9bdb-8234-4e1b-bd16-131215e928c7,unknown,Do I need to prepare my data before I upload?,,"Yes – it’s strongly recommended to organize and structure your data before you upload it.  
+The “Best Practices: preparing the data and folder structure” page explains how to arrange files in a directory tree so that NOMAD can match them to the correct schemas, create entries, and process everything reliably. Preparing the data in advance also lets you avoid re‑uploads or processing errors later.",0.0,0.0,0.0,0.0,0.004972077906131744,,
+861537ca-fd0c-4c66-bc0c-b192cf4609f7,unknown,Only some of my files are shown by NOMAD. Where are the others?,,"Only the files that NOMAD can recognise as a **mainfile** (i.e. the output of a supported code or a NeXus experiment) are turned into searchable *entries*.  
+All the other files you uploaded are still stored in NOMAD, but they are not parsed, so they don’t become entries.
+
+You can find them in the **Upload page** – there you’ll see the full list of files that belong to that upload.  
+If a file is in the same directory as a recognised mainfile, it will appear as an **auxiliary** file next to that entry. Files that have no parser are simply stored as part of the upload and can be downloaded or shared, but they won’t show up in the database or in search results.",0.0,0.0,0.0,0.0,-0.021130438894033432,,
+881c1b67-77af-4f45-9c00-7f0a40250a9e,unknown,Some data is marked 'not processed' or 'unavailable'. What does this mean?,,"**“Not processed” or “unavailable”** means that NOMAD has not been able to parse that part of the upload into *processed data*.
+
+- **Not processed** – the file (or quantity) has no built‑in parser, so NOMAD keeps the raw file in the upload but does not create a searchable entry or a JSON quantity for it.  
+- **Unavailable** – the data is expected to be present (e.g. a mainfile that should be parsed) but the required file is missing or incomplete, so the processed quantity cannot be produced.
+
+In either case the raw file is still stored in NOMAD and can be downloaded or previewed, but it does not appear in the processed‑data archive or in search results.",0.0,0.0,0.0,0.0,-0.01416422612965107,,
+2f68e6ab-b6f1-4a9d-b10a-2c312578cde5,unknown,Is my data visible to others?,,"Only if you’ve turned the upload “visible” in the *Edit visibility and access* section.  
+If you checked that box, anyone on NOMAD (even guests) can see the upload before it’s published.  
+If you haven’t enabled that setting, the upload remains private to you.",0.0,0.0,0.0,0.0,0.03483492136001587,,
+e9268c1d-cec1-480f-8942-600a29b48db7,unknown,How do I cite uploaded data in a paper?,,"**How to cite your NOMAD‑uploaded data in a paper**
+
+1. **Get the persistent identifier**  
+   * After you upload your files, NOMAD assigns a permanent ID (a DOI‑like string).  
+   * You can find it on the upload page under *Upload ID* or in the *Edit author metadata* section.
+
+2. **Add the ID to your manuscript**  
+   * In the text or in the bibliography, write something like:  
+     ```
+     Data are available at NOMAD ID: 10.1234/nomad.5678
+     ```  
+   * If you prefer a full DOI, use the format NOMAD DOI: `10.1234/nomad.5678`.
+
+3. **(Optional) Publish the dataset**  
+   * If you want the data to be discoverable as a single unit, create a **dataset** in NOMAD (see *Edit author metadata → datasets*).  
+   * When you publish the dataset, NOMAD issues a **dataset DOI** (e.g., `10.1234/nomad.dataset.9012`).  
+   * Include that DOI in the same place as the upload ID.
+
+4. **Cross‑reference the paper after acceptance**  
+   * Once your paper receives its own DOI, edit the upload’s metadata again.  
+   * In *Edit author metadata → references*, paste the paper DOI (or URL).  
+   * This creates a two‑way link: the paper points to the data, and the data points back to the paper.
+
+5. **Use a standard citation format**  
+   * Example (APA style):  
+     ```
+     Author(s). (Year). NOMAD dataset. DOI:10.1234/nomad.5678
+     ```
+   * Example (Nature style):  
+     ```
+     Data are available at NOMAD (DOI:10.1234/nomad.5678).
+     ```
+
+6. **Keep the citation stable**  
+   * The persistent ID never changes, even if you add more files or edit metadata.  
+   * If you publish the upload immediately (no embargo), the DOI is ready to use right away.  
+   * If you use an embargo, the DOI is still available; the data will become public after the embargo period.
+
+**Bottom line** – Use the NOMAD‑assigned persistent ID (or the dataset DOI) as the citation key in your paper. This guarantees that anyone reading your article can locate the exact data you used.",0.0,0.0,0.0,0.0,-0.06130373477935791,,
+8df4e006-af7c-4f9b-89a4-53e5433fa260,unknown,How can I create a dataset and assign a DOI?,,"**Creating a dataset and giving it a DOI**
+
+1. **Add entries to a new dataset**  
+   * In the upload that contains the data you want to bundle, open **Edit author metadata** (the third section of the upload page).  
+   * In the *datasets* tab you can  
+     * **Create a new dataset** – give it a name, description, and optionally a short “slug”.  
+     * **Add entries** – drag‑and‑drop or select the entries you want to lock into that dataset.  
+   * When you’re finished, the dataset is considered *complete* (its contents are now locked).
+
+2. **Lock the dataset (optional but recommended)**  
+   * Once you’re sure no more entries will be added, you can “finalise” the dataset.  
+   * This is usually done by clicking the **“Lock”** button that appears next to the dataset in the GUI.  
+   * Locking guarantees that the DOI will always point to the same set of entries.
+
+3. **Assign a DOI**  
+   * There is **no “publish” button for datasets** – the only thing you do is lock the contents and then give the dataset a DOI.  
+   * In the NOMAD GUI:  
+     1. Go to **PUBLISH > Datasets** (or the *Datasets* tab in the *Publish* section).  
+     2. Find the dataset you just created.  
+     3. Click the **“Assign a DOI”** banner icon (the little “+”/DOI icon) that appears to the right of the dataset entry.  
+   * The system will generate a NOMAD‑issued DOI (e.g., `10.1234/nomad.dataset.9012`) and the dataset becomes a citable, immutable unit.
+
+> **Tip** – Because there is no API call for DOI assignment in `nomad‑utility‑workflows`, you must perform the DOI assignment manually in the GUI of the deployment you’re using.
+
+That’s all you need: create the dataset, lock it, and click the DOI icon to receive a permanent, citable identifier.",0.0,0.0,0.0,0.0,-0.0007187053561210632,,
+5a8a462b-cb23-49cc-a382-a1fb69a87641,unknown,Can I change datasets after assigning a DOI?,,"No – once you’ve locked the dataset and given it a DOI, the contents are fixed.  
+After a DOI is assigned you can’t add or remove entries from that dataset; you would need to create a new dataset if you want to change the contents.",0.0,0.0,0.0,0.0,-0.011964689940214157,,
+db594353-6324-496b-b21a-edeaa8228ba0,unknown,How can I share data that is under embargo?,,"You can still make embargoed data available to a limited audience.  
+When you publish an upload with an embargo, the raw files and the full entries stay hidden from everyone except:
+
+* **You** (the uploader)  
+* **Any users you explicitly share the upload with**
+
+So to share the data:
+
+1. **Open the upload page** and go to the *Edit visibility and access* section.  
+2. **Add collaborators** – enter the e‑mail addresses or user IDs of the people you want to see the data.  
+3. **Save the changes**.  
+4. Those users will now be able to view the raw files and entries while the embargo is in place.  
+
+(You can also add the embargoed entries to a dataset and assign a DOI, but the DOI will still point to the embargoed content until the embargo is lifted.)",0.0,0.0,0.0,0.0,0.05937736853957176,,
+a6517f5a-d314-461a-a8b2-3446edabe160,unknown,How can I share credit with my co-authors?,,"You can give your collaborators “co‑author” status on the upload itself.  
+On the upload page click **EDIT UPLOAD MEMBERS**, type the user’s name, pick the correct account, and choose **Coauthor** from the role drop‑down.  
+Co‑authors are listed in the upload’s author metadata, so they receive credit and can edit or add files.  
+(If you want to record their names in the dataset’s author list, you can also add them in the *Edit author metadata* section.)",0.0,0.0,0.0,0.0,0.019491862505674362,,
+98b43b5f-6948-445b-9f49-0efe07eb3768,unknown,I want to upload data from a code that is not supported. What can I do?,,"[model error] ReadTimeout: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=30.0)",0.0,0.0,0.0,0.0,-0.011575590819120407,,
+55a884c3-e60e-48a5-938e-dc41b4fa6978,unknown,How can I publish data that NOMAD does not (yet) support?,,"[model error] ReadTimeout: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=30.0)",0.0,0.0,0.0,0.0,-0.011575590819120407,,
+2415d83a-b33c-41a6-aaf2-2e6276bb192e,unknown,How can I share my data via links or URLs?,,"[model error] ReadTimeout: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=30.0)",0.0,0.0,0.0,0.0,-0.011575590819120407,,
+d80977f9-d02a-4e51-a7c9-1453a8a8ed83,unknown,My co-authors can’t see my embargoed or unpublished data. Why?,,"[model error] ReadTimeout: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=30.0)",0.0,0.0,0.0,0.0,-0.011575590819120407,,
+ac810ce7-90f5-41bf-b610-fc5917507a8d,unknown,What APIs are available?,,"[model error] ReadTimeout: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=30.0)",0.0,0.0,0.0,0.0,-0.011575590819120407,,
+4d8f590c-4af9-4086-aa28-b59f532f3017,unknown,What are the options to access large amounts of NOMAD data?,,"[model error] ReadTimeout: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=30.0)",0.0,0.0,0.0,0.0,-0.011575590819120407,,
+225a15f2-6e7f-4302-bc55-4cce5e9cc136,unknown,I get a 503 “temporarily not available” error. What should I do?,,"[model error] ReadTimeout: HTTPConnectionPool(host='127.0.0.1', port=8000): Read timed out. (read timeout=30.0)",0.0,0.0,0.0,0.0,-0.011575590819120407,,

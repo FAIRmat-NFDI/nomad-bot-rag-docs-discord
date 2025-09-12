@@ -1,0 +1,70 @@
+<div class="nomad-title">
+    <div class="title-title">Getting started</div>
+    <div class="title-description">
+        Our short YouTube tutorials provide specific instructions
+        on how to use the core functionality of NOMAD.
+    </div>
+    <div class="title-content">
+        <%- video_tutorials %>
+    </div>
+</div>
+
+<!-- More video -->
+<div class="nomad-section">
+    <div class="nomad-banner nomad-banner--fairmat">
+        <div>
+            <div class="banner-title">
+                FAIRmat tutorial events
+            </div>
+            <div class="banner-description">
+                FAIRmat conducts a regular online tutorial series and
+                more events. Watch video presentation from
+                past events or register for up-coming events.
+            </div>
+            <div class="action action--filled">
+                <a href="<%= urls.fairmat_tutorials %>">
+                    <button>
+                        <span class="mdc-button__ripple"></span>
+                        <span class="mdc-button__label">FAIRmat tutorial series</span>
+                        <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                    </button>
+                </a>
+            </div>
+        </div>
+        <img src="./assets/FAIRmat.png" alt="fairmat logo"/>
+    </div>
+</div>
+
+<div class="nomad-section">
+    <div class="section-subheading">Instructions</div>
+    <div class="section-title">More advanced topics</div>
+    <div class="section-description">
+        These step-by-step instructions guide you through more advanced topics
+        of using, installing, customizing, and developing NOMAD.
+    </div>
+    <div>
+        <% for (doc of docsData) { %>
+            <div class="nomad-table nomad-table--tutorial">
+                <div class="table-action">
+                    <a href="<%= urls.documentation %>/<%= doc.url %>">
+                        <button class="nomad-button">
+                            <span class="mdc-button__ripple"></span>
+                            <span class="mdc-button__label"><%= doc.title %></span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+                        </button>
+                    </a>
+                </div>
+                <div><%= doc.description %></div>
+            </div>
+        <% } %>
+    </div>
+    <div class="section-action" style="margin-top: 3em; text-align: center;">
+        <a href="<%= urls.documentation %>">
+            <button class="nomad-button nomad-button--filled">
+                <span class="mdc-button__ripple"></span>
+                <span class="mdc-button__label">Open the documentation</span>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+            </button>
+        </a>
+    </div>
+</div>

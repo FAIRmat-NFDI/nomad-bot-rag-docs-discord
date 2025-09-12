@@ -1,0 +1,36 @@
+<div class="nomad-inset">
+    <div class="nomad-title">
+
+        <!-- FAQs -->
+        <div class="nomad-section" style="margin-top: 0;">
+            <a name="faq"></a>
+            <div class="section-title">FAQs</div>
+            <div class="section-description">
+                Find answers to the most frequently asked questions.
+            </div>
+            <div class="section-content nomad-faqs">
+                <% for (category of Object.keys(faqData)) {
+                    const categoryData = faqData[category]
+                %>
+                    <div><%= category%></div>
+                    <div>
+                        <% for (faq of categoryData) { %>
+                            <div class="nomad-accordion">
+                                <div class="accordion-title">
+                                    <i class="material-icons">expand_more</i>
+                                    <div><%= faq.title %></div>
+                                </div>
+                                <div class="accordion-content">
+                                    <div>
+                                        <%- faq.description %>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+    </div>
+</div>

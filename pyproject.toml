@@ -17,7 +17,8 @@ dependencies = [
     "fastapi>=0.116.1",
     "uvicorn>=0.35.0",
     "markdown>=3.9",
-    "sentence_transformers"
+    "sentence_transformers",
+    "pyarrow>=21.0.0",
 ]
 
 [project.optional-dependencies]
@@ -33,4 +34,5 @@ eval = [
 
 [project.scripts]
 ragbot-eval = "nomad_ragbot.eval.pipeline:main"
-ragbot-eval-dash = "nomad_ragbot.dash.streamlit_app:main"
+ragbot-eval-dash = "nomad_ragbot.dash.__main__:main"
+
