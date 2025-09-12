@@ -208,3 +208,7 @@ __marimo__/
 
 # External Data
 external/
+
+# chroma store
+scripts/chroma_store
+
