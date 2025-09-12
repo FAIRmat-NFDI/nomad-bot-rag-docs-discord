@@ -193,12 +193,13 @@ def startup():
 # === Ask endpoint ===
 @app.post("/ask", response_model=AnswerResponse)
 async def ask(req: QuestionRequest):
+    ## ADDED: Declare that we're using the global history variable
+    global chat_history 
+    
     if not collection:
-        # collection should be set in startup; guard just in case
         return {"error": "Collection not initialized. Please wait for the server to start fully."}
 
     try:
-        # Configure your RAGQueryEngine with the live collection
         config = {
             "collection": collection,
             "openai_base_url": "http://172.28.105.142:11434/v1",
@@ -209,14 +210,22 @@ async def ask(req: QuestionRequest):
         }
 
         engine = RAGQueryEngine(**config)
+        
+        ## ADDED: Pass the current chat_history to the engine
         answer, citations, _ = engine.query(
             req.question,
+            history=chat_history, # This gives the engine context
             top_k=req.top_k,
             rerank_top_n=req.rerank_top_n
         )
+        
+        ## ADDED: Update the history for the next turn
+        chat_history.append({"role": "user", "content": req.question})
+        chat_history.append({"role": "assistant", "content": answer})
 
         return AnswerResponse(answer=answer, citations=citations)
 
     except Exception as e:
         print(f"An error occurred: {e}")
-        return {"error": str(e)}
+        # It's better to raise an HTTPException for a cleaner API response
+        #raise HTTPException(status_code=500, detail=str(e))
