@@ -49,6 +49,13 @@ uv add package-name
 └── pyproject.toml       # Dependencies
 ```
 
+## Running the bot
+
+cd scripts
+uv run -- uvicorn server:app --reload
+
+uv run nomad-ragbot-ui --port 8888
+
 ## Using the evaluation dashboard
 
 pip install -e ".[eval]"
