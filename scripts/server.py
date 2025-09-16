@@ -5,6 +5,7 @@ from typing import List, Dict, Optional
 import os
 import json
 import requests
+import time
 
 from openai import OpenAI
 import chromadb
@@ -16,35 +17,67 @@ from query import RAGQueryEngine
 CHROMA_DIR = "./chroma_store"
 JSONL_PATH = "../data/chunks/docs.dynamic.jsonl"
 
-# ==== EMBEDDING FUNCTION ====
 class LocalEmbeddingFunction(EmbeddingFunction):
-    def __init__(self, model_name="nomic-embed-text"):
-        self.model_name = model_name
-        self.base_url = os.getenv("EMBED_BASE_URL", "http://172.28.105.142:11434")
+    """
+    Calls an OpenAI-compatible /v1/embeddings endpoint with batching and retry/backoff.
+    Env:
+      OPENAI_API_KEY   (required)
+      EMBED_BASE_URL   (default https://api.openai.com)
+      EMBED_MODEL      (default text-embedding-3-small)
+      EMBED_TIMEOUT    (default 20)
+      EMBED_BATCH_SIZE (default 64)
+      EMBED_MAX_RETRIES(default 6)
+    """
+    def __init__(self, model_name: str | None = None):
+        self.model_name = model_name or os.getenv("EMBED_MODEL", "text-embedding-3-small")
+        self.base_url = os.getenv("EMBED_BASE_URL", "https://api.openai.com").rstrip("/")
+        self.api_key = os.getenv("OPENAI_API_KEY")
         self.timeout = int(os.getenv("EMBED_TIMEOUT", "20"))
+        self.batch_size = int(os.getenv("EMBED_BATCH_SIZE", "64"))
+        self.max_retries = int(os.getenv("EMBED_MAX_RETRIES", "6"))
         self._session = requests.Session()
+        if not self.api_key:
+            raise RuntimeError("OPENAI_API_KEY is not set for embeddings.")
+
+    def _embed_batch(self, texts: List[str]) -> List[List[float]]:
+        url = f"{self.base_url}/v1/embeddings"
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+        payload = {"model": self.model_name, "input": texts}
+
+        # simple exponential backoff with respect for Retry-After
+        delay = 1.0
+        for attempt in range(self.max_retries):
+            resp = self._session.post(url, headers=headers, json=payload, timeout=self.timeout)
+            if resp.status_code == 200:
+                data = resp.json()
+                items = sorted(data["data"], key=lambda x: x.get("index", 0))
+                return [it["embedding"] for it in items]
+            elif resp.status_code in (429, 500, 502, 503, 504):
+                retry_after = resp.headers.get("Retry-After")
+                sleep_s = float(retry_after) if retry_after else delay
+                time.sleep(sleep_s)
+                delay = min(delay * 2.0, 20.0)  # cap backoff
+            else:
+                resp.raise_for_status()
+        # last try: raise with body for debugging
+        resp.raise_for_status()
 
     def __call__(self, input: List[str]) -> List[List[float]]:
-        embs = []
-        for text in input:
-            r = self._session.post(
-                f"{self.base_url}/api/embed",
-                json={"model": self.model_name, "input": text},
-                timeout=self.timeout,
-            )
-            r.raise_for_status()
-            data = r.json()
-            # supports {"embeddings":[[...]]} or {"embedding":[...]}
-            if "embeddings" in data and data["embeddings"]:
-                embs.append(data["embeddings"][0])
-            elif "embedding" in data:
-                embs.append(data["embedding"])
-            else:
-                raise RuntimeError(f"Unexpected embed response: {data}")
+        embs: List[List[float]] = []
+        n = len(input)
+        if n == 0:
+            return embs
+        for i in range(0, n, self.batch_size):
+            chunk = input[i:i + self.batch_size]
+            embs.extend(self._embed_batch(chunk))
         return embs
 
     def name(self) -> str:
-        return f"sentence-transformers-{self.model_name}"
+        return f"openai-{self.model_name}"
+
 
 # ==== HELPERS (restored) ====
 
@@ -269,7 +302,8 @@ def startup():
     # Use PersistentClient for guaranteed on-disk reuse
     chroma_client = chromadb.PersistentClient(path=CHROMA_DIR)
 
-    embed_fn = LocalEmbeddingFunction(model_name="nomic-embed-text")
+    #embed_fn = LocalEmbeddingFunction(model_name="nomic-embed-text")
+    embed_fn = embed_fn = LocalEmbeddingFunction()  # picks EMBED_MODEL / EMBED_BASE_URL from .env
     embed_base = embed_fn.base_url
     embed_model = embed_fn.model_name
 
@@ -295,11 +329,11 @@ async def ask(req: QuestionRequest):
         # Configure your RAGQueryEngine with the live collection
         config = {
             "collection": collection,
-            "openai_base_url": "http://172.28.105.142:11434/v1",
-            "embedding_url": "http://172.28.105.142:11434/api/embed",
-            "embedding_model": "nomic-embed-text",
-            "generator_model": "gpt-oss:20b",
-            "reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+            #"openai_base_url": "http://172.28.105.142:11434/v1",
+            #"embedding_url": "http://172.28.105.142:11434/api/embed",
+            #"embedding_model": "nomic-embed-text",
+            #"generator_model": "gpt-oss:20b",
+            #"reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
         }
 
         engine = RAGQueryEngine(**config)

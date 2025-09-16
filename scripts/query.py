@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import List, Dict, Tuple, Set
+from typing import List, Dict, Tuple, Set, Optional
 
 import openai
 import requests
@@ -37,170 +37,159 @@ class ChromaDBRetriever:
         ]
         return retrieved_chunks
 
-
 class RAGQueryEngine:
     """
-    A RAG engine using a local OpenAI-compatible API for chat and a custom endpoint for embeddings.
+    RAG engine using OpenAI chat (Completions) and OpenAI-compatible embeddings.
+    All network settings can be overridden via environment variables.
     """
-    def __init__(self,
-                 collection,  # This is the key change!
-                 openai_api_key: str = "not-needed",
-                 openai_base_url: str = "http://127.0.0.1:11434/v1",
-                 embedding_url: str = "http://127.0.0.1:11434/api/embed",
-                 embedding_model: str = "nomic-embed-text",
-                 generator_model: str = "gpt-oss:20b",
-                 reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"):
-        """
-        Initializes the RAGQueryEngine.
-        """
+
+    def __init__(
+        self,
+        *,
+        collection,                                   # REQUIRED: the Chroma collection
+        openai_api_key: Optional[str] = None,
+        openai_base_url: Optional[str] = None,        # default: https://api.openai.com/v1
+        embedding_url: Optional[str] = None,          # default: <EMBED_BASE_URL>/v1/embeddings
+        embedding_model: Optional[str] = None,        # default: text-embedding-3-large
+        generator_model: Optional[str] = None,        # default: gpt-4o-mini
+        reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    ):
         logger.info("Initializing RAG Query Engine with provided collection...")
 
+        # --- Settings with sensible defaults (env overridable) ---
+        self.openai_base_url = openai_base_url or os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
+        self.openai_api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
+
+        embed_base_url = os.getenv("EMBED_BASE_URL", "https://api.openai.com").rstrip("/")
+        self.embedding_url = embedding_url or f"{embed_base_url}/v1/embeddings"
+        self.embedding_model_name = embedding_model or os.getenv("EMBED_MODEL", "text-embedding-3-large")
+
+        self.generator_model_name = generator_model or os.getenv("GENERATOR_MODEL", "gpt-4o-mini")
+
+        # --- Components ---
         self.retriever = ChromaDBRetriever(collection=collection)
 
         try:
-            self.client = openai.OpenAI(api_key=openai_api_key, base_url=openai_base_url)
-            self.generator_model_name = generator_model
-            logger.info(f"OpenAI chat client configured for base URL: {openai_base_url}")
+            self.client = OpenAI(api_key=self.openai_api_key, base_url=self.openai_base_url)
+            logger.info(f"OpenAI client configured | base_url={self.openai_base_url}")
         except Exception as e:
             logger.error(f"Failed to initialize OpenAI client. Error: {e}")
             raise
-
-        self.embedding_url = embedding_url
-        self.embedding_model_name = embedding_model
-        logger.info(f"Custom embedding endpoint configured for URL: {self.embedding_url}")
 
         try:
             self.reranker = CrossEncoder(reranker_model)
             logger.info(f"Reranker model '{reranker_model}' loaded successfully.")
         except Exception as e:
-            logger.error(f"Failed to load reranker model. Please run 'pip install sentence-transformers'. Error: {e}")
+            logger.error(
+                "Failed to load reranker model. Install sentence-transformers, "
+                "or continue without reranking. Error: %s", e
+            )
             self.reranker = None
 
+    # -------- Embeddings (OpenAI-compatible /v1/embeddings) --------
     def _get_local_embedding(self, text: str) -> List[float]:
         """
-        Gets a vector embedding from a local, custom model server.
+        Gets a vector embedding via an OpenAI-compatible /v1/embeddings endpoint.
+        Supports OpenAI cloud, LM Studio, vLLM, etc.
         """
         try:
-            response = requests.post(
-                self.embedding_url,
-                json={"model": self.embedding_model_name, "input": text},
-                headers={"Content-Type": "application/json"}
-            )
+            headers = {"Content-Type": "application/json"}
+            if self.openai_api_key:
+                headers["Authorization"] = f"Bearer {self.openai_api_key}"
+
+            payload = {"model": self.embedding_model_name, "input": text}
+            response = requests.post(self.embedding_url, headers=headers, json=payload, timeout=30)
             response.raise_for_status()
             data = response.json()
-            if 'embedding' in data:
-                 return data['embedding']
-            elif 'embeddings' in data:
-                 return data['embeddings'][0]
-            else:
-                 raise KeyError("Embedding not found in response from server.")
+
+            # OpenAI format: {"data":[{"embedding":[...], "index":0, ...}], ...}
+            if "data" in data and data["data"]:
+                # sort to respect 'index' if batch was used
+                items = sorted(data["data"], key=lambda x: x.get("index", 0))
+                return items[0]["embedding"]
+
+            # Some proxies might return {"embedding":[...]} or {"embeddings":[[...]]}
+            if "embedding" in data:
+                return data["embedding"]
+            if "embeddings" in data and data["embeddings"]:
+                return data["embeddings"][0]
+
+            raise KeyError(f"Embedding not found in response. Got keys: {list(data.keys())}")
+
         except requests.exceptions.RequestException as e:
-            logger.error(f"Error calling embedding endpoint: {e}")
+            logger.error(f"Error calling embeddings endpoint {self.embedding_url}: {e}")
             raise
         except (KeyError, IndexError) as e:
-            logger.error(f"Unexpected response structure from embedding endpoint: {e}. Response: {response.text}")
+            logger.error(f"Unexpected embeddings response: {e}. Body: {response.text[:500]}")
             raise
 
+    # -------- Reranking --------
     def _rerank_chunks(self, query: str, chunks: List[Dict]) -> List[Dict]:
-        """Reranks retrieved chunks for better relevance using a cross-encoder."""
         if not self.reranker or not chunks:
             return chunks
-
         logger.info(f"Reranking {len(chunks)} chunks for relevance...")
-        # Create pairs of [query, chunk_content] for the cross-encoder to score.
-        pairs = [[query, chunk['content']] for chunk in chunks]
-        
-        # Predict the relevance scores.
+        pairs = [[query, chunk["content"]] for chunk in chunks]
         scores = self.reranker.predict(pairs)
-        
-        # Add the scores to the chunks and sort them.
         for i in range(len(chunks)):
-            chunks[i]['rerank_score'] = scores[i]
-            
-        # Sort chunks by the new rerank score in descending order (higher is better).
-        sorted_chunks = sorted(chunks, key=lambda x: x['rerank_score'], reverse=True)
-        
-        return sorted_chunks
+            chunks[i]["rerank_score"] = float(scores[i])
+        return sorted(chunks, key=lambda x: x["rerank_score"], reverse=True)
 
+    # -------- Prompting --------
     def _prepare_messages(self, query: str, context_chunks: List[Dict]) -> List[Dict[str, str]]:
-        """Creates the message structure for the OpenAI Chat Completions API."""
-        context_str = "\n\n".join(f"Context {i+1}:\n{chunk['content']}" for i, chunk in enumerate(context_chunks))
-        system_prompt = """You are a helpful and friendly assistant specializing in NOMAD, a platform for managing and sharing materials science data. Your goal is to provide clear, accurate, and concise answers based on the provided context.
-
-IMPORTANT GUIDELINES:
-1. Always provide confident, friendly, and helpful responses, making sure to avoid sounding overly authoritative.
-2. Be conversational in tone, and respond warmly to greetings or small talk.
-3. When addressing technical concepts, explain them clearly for users of all experience levels, using context to define unfamiliar terms.
-4. If a question is about a concept like "data model" or "what is NOMAD," provide a comprehensive but simple explanation, drawing on related information when needed.
-5. If information isn’t directly available, use your understanding of NOMAD to give a helpful and reasonable response.
-6. Avoid referring to external sources, documentation, or phrasing like “it appears” or “it seems”—be confident in your answers.
-7. If you truly don’t have enough information to answer a question, only then say "I don't have information about that."
-8. For step-by-step instructions, ensure the process is clear and in the correct order, noting any specific UI elements or actions.
-9. Maintain consistency in your responses—once you’ve learned something, keep it in mind for future answers.
-"""
+        context_str = "\n\n".join(
+            f"Context {i+1}:\n{chunk['content']}" for i, chunk in enumerate(context_chunks)
+        )
+        system_prompt = """You are a helpful and friendly assistant specializing in NOMAD.
+Answer based only on the provided context. Be clear, concise, and confident. If the
+answer is not in the context, say you don't have that information."""
         user_prompt = f"""Here is the context retrieved from the knowledge base:
 <context>
 {context_str}
 </context>
 
-Based *only* on the context above, please answer the following question.
+Based only on the context above, answer the following question:
 
 Question: {query}
 """
         return [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}]
 
     def _format_citations(self, chunks: List[Dict]) -> str:
-        """Formats the citation string from the metadata of retrieved chunks."""
         citation_set: Set[str] = set()
         for chunk in chunks:
-            meta = chunk.get('metadata', {})
-            source_path = meta.get('source', 'Unknown Source')
-            citation_set.add(f"Source file: `{source_path}`")
-        return "\n".join(f"- {citation}" for citation in sorted(list(citation_set))) or "No sources found."
+            meta = chunk.get("metadata", {})
+            src = meta.get("source", "Unknown Source")
+            citation_set.add(f"Source file: `{src}`")
+        return "\n".join(f"- {c}" for c in sorted(citation_set)) or "No sources found."
 
+    # -------- Generation --------
     def generate_answer(self, query: str, context_chunks: List[Dict]) -> str:
-        """Generates an answer using the OpenAI Chat Completions API."""
         messages = self._prepare_messages(query, context_chunks)
         try:
-            logger.info("Generating answer via local chat model...")
+            logger.info("Generating answer via OpenAI chat...")
             response = self.client.chat.completions.create(
                 model=self.generator_model_name,
                 messages=messages,
                 temperature=0.0,
             )
-            return response.choices[0].message.content.strip()
+            return (response.choices[0].message.content or "").strip()
         except Exception as e:
-            logger.error(f"Error during answer generation with local chat model: {e}")
+            logger.error(f"Error during answer generation: {e}")
             return "Sorry, I encountered an error while generating the answer."
 
+    # -------- End-to-end query --------
     def query(self, query: str, top_k: int = 5, rerank_top_n: int = 20) -> Tuple[str, str, List[Dict]]:
-        """
-        Performs a full RAG query: embed, retrieve, rerank, and generate.
-
-        Args:
-            query: The user's question.
-            top_k: The final number of chunks to use for the answer.
-            rerank_top_n: The number of chunks to retrieve initially for reranking.
-        """
         logger.info(f"Received query: '{query}'")
         query_embedding = self._get_local_embedding(query)
-        
-        # STEP 1: Retrieve a larger number of chunks for the reranker.
+
         logger.info(f"Retrieving top {rerank_top_n} chunks for reranking...")
         retrieved_chunks = self.retriever.retrieve(query_embedding, top_k=rerank_top_n)
-        
-        # STEP 2: Rerank the retrieved chunks to find the most relevant ones.
+
         reranked_chunks = self._rerank_chunks(query, retrieved_chunks)
-        
-        # STEP 3: Select the final top_k chunks to be used as context.
         final_chunks = reranked_chunks[:top_k]
         logger.info(f"Selected top {len(final_chunks)} chunks after reranking.")
-        
-        # The rest of the process uses the higher-quality, reranked context.
+
         answer = self.generate_answer(query, final_chunks)
-        
-        logger.info("Formatting citations...")
         citations = self._format_citations(final_chunks)
-        
-        logger.info(f"Generated answer: '{answer}'")
+
+        logger.info(f"Generated answer length: {len(answer)} chars")
         return answer, citations, final_chunks

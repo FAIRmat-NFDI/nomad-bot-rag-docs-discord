@@ -212,3 +212,5 @@ external/
 # chroma store
 scripts/chroma_store
 
+
+.env
