@@ -118,7 +118,7 @@ pip install -e ".[eval]"
 ### **2. Run Evaluation**
 Execute the evaluation script against a "golden dataset" of questions and answers.
 ```bash
-ragbot-eval --data_path data/gold_all.jsonl --out_dir runs/your-run-name --use_llm_judge
+ragbot-eval --data_path data/evaluation/gold_all.jsonl --out_dir runs/your-run-name --use_llm_judge
 ```
 
 ### **3. View the Dashboard**
