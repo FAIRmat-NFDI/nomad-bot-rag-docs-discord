@@ -210,5 +210,5 @@ __marimo__/
 external/
 
 # chroma store
-scripts/chroma_store
+chroma_store
 
