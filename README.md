@@ -100,7 +100,7 @@ The API will be available at `http://127.0.0.1:8000`.
 This command launches the user-friendly web interface for asking questions.
 
 ```bash
-uv run python -m src.nomad_ragbot.gradio_app
+nomad-ragbot-ui
 ```
 You can now open your browser and navigate to **`http://127.0.0.1:7860`** to interact with the chatbot!
 
