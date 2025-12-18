@@ -19,14 +19,6 @@ def _load_jsonl_chunks(filepath: str):
             if line := line.strip():
                 yield json.loads(line)
 
-def _count_jsonl_records(filepath: str) -> int:
-    total = 0
-    with open(filepath, "r", encoding="utf-8") as f:
-        for line in f:
-            if line.strip():
-                total += 1
-    return total
-
 def _sanitize_metadata(d: dict) -> dict:
     out = {}
     for k, v in d.items():
@@ -96,9 +88,6 @@ def _build_collection_from_jsonl(chroma_client, embed_fn):
         embedding_function=embed_fn
     )
 
-    total_chunks = _count_jsonl_records(config.JSONL_PATH)
-    print(f"📦 Preparing {total_chunks} JSONL chunks for indexing...")
-
     ids, documents, metadatas = [], [], []
     seen_ids: Set[str] = set()
     count = 0
@@ -125,13 +114,9 @@ def _build_collection_from_jsonl(chroma_client, embed_fn):
         metadatas.append(meta)
         count += 1
 
-        if config.EMBED_PROGRESS_INTERVAL > 0 and count % config.EMBED_PROGRESS_INTERVAL == 0:
-            print(f"… prepared {count}/{total_chunks} chunks")
-
     if not ids:
         raise RuntimeError(f"No valid records found in {config.JSONL_PATH}")
 
-    print("🚀 Uploading documents to Chroma and generating embeddings...")
     collection.add(ids=ids, documents=documents, metadatas=metadatas)
     print(f"✅ Indexed {count} chunks from JSONL.")
     return collection
