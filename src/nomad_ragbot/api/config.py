@@ -8,6 +8,8 @@ JSONL_PATH = os.getenv("JSONL_PATH", "data/chunks/docs.dynamic.jsonl")
 EMBED_BASE_URL = os.getenv("EMBED_BASE_URL", "http://172.28.105.142:11434")
 EMBED_MODEL_NAME = os.getenv("EMBED_MODEL_NAME", "nomic-embed-text")
 EMBED_TIMEOUT = int(os.getenv("EMBED_TIMEOUT", "20"))
+EMBED_BATCH_SIZE = int(os.getenv("EMBED_BATCH_SIZE", "8"))
+EMBED_PROGRESS_INTERVAL = int(os.getenv("EMBED_PROGRESS_INTERVAL", "200"))
 
 # --- OpenAI-Compatible API Configuration ---
 GENERATOR_BASE_URL = os.getenv("GENERATOR_BASE_URL", "http://172.28.105.142:11434/v1")
@@ -18,4 +20,3 @@ RERANKER_MODEL = os.getenv("RERANKER_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-
 
 # --- ChromaDB Collection Name ---
 COLLECTION_NAME = "mkdocs"
-
