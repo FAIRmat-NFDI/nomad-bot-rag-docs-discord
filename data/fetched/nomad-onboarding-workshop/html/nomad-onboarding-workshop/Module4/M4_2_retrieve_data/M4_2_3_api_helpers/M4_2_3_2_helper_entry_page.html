@@ -1,0 +1,1725 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="NOMAD onboarding workshop materials
+">
+      
+      
+        <meta name="author" content="FAIRmat Area F">
+      
+      
+      <link rel="icon" href="../../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-8.1.1">
+    
+    
+      
+        <title>In Entry Page - NOMAD Onboarding Workshop</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.23b6d78a.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.e6a45f82.min.css">
+        
+          
+          
+          <meta name="theme-color" content="">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web:300,400,400i,700%7C&display=fallback">
+        <style>:root{--md-text-font:"Titillium Web";--md-code-font:""}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="#2a4cdf" data-md-color-accent="#008a67">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#using-the-api-helper-on-entry-pages" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="https://www.fairmat-nfdi.eu/fairmat/" title="NOMAD Onboarding Workshop" class="md-header__button md-logo" aria-label="NOMAD Onboarding Workshop" data-md-component="logo">
+      
+  <img src="../../../assets/fairmat-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            NOMAD Onboarding Workshop
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              In Entry Page
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://fairmat-nfdi.github.io/nomad-onboarding-workshop/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Fairmat-Nfdi
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://www.fairmat-nfdi.eu/fairmat/" title="NOMAD Onboarding Workshop" class="md-nav__button md-logo" aria-label="NOMAD Onboarding Workshop" data-md-component="logo">
+      
+  <img src="../../../assets/fairmat-logo.png" alt="logo">
+
+    </a>
+    NOMAD Onboarding Workshop
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://fairmat-nfdi.github.io/nomad-onboarding-workshop/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Fairmat-Nfdi
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          RDM with NOMAD
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="RDM with NOMAD" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          RDM with NOMAD
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module1/M1_1_RDM_with_NOMAD.html" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module1/M1_2_NOMAD_workflow.html" class="md-nav__link">
+        From Raw Files to FAIR Data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module1/M1_3_NOMAD_datamodel.html" class="md-nav__link">
+        NOMAD Data Model
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module1/M1_4_NOMAD_users.html" class="md-nav__link">
+        Levels of NOMAD Users
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module1/M1_5_getting_support.html" class="md-nav__link">
+        Getting Support
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          First touches with NOMAD
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="First touches with NOMAD" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          First touches with NOMAD
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module2/M2_x_NOMAD_GUI.html" class="md-nav__link">
+        NOMAD GUI
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module2/M2_x_create_account.html" class="md-nav__link">
+        Create Account
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module2/M2_x_upload_data.html" class="md-nav__link">
+        Upload Data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module2/M2_x_explore_tab.html" class="md-nav__link">
+        Explore Menu
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module2/M2_x_inspecting_entry_pages.html" class="md-nav__link">
+        Entry Pages
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module2/M2_x_customized_search_dashboard.html" class="md-nav__link">
+        Customized Dashboards
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module2/M2_x_explore_use_cases.html" class="md-nav__link">
+        Use Cases
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Using NOMAD as an ELN
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Using NOMAD as an ELN" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Using NOMAD as an ELN
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1">
+          Introduction
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Introduction" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Introduction
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_1_0_ELN_overview_combined_concise.html" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_2_0_getting_started_combined_concise.html" class="md-nav__link">
+        ELN entries in NOMAD
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Build your ELN
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Build your ELN" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Build your ELN
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_2_1_creating_entries_built-in_schema.html" class="md-nav__link">
+        Getting started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_2" type="checkbox" id="__nav_3_2_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_2">
+          Creating Entities
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Creating Entities" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Creating Entities
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_2_2_creating_entities.html" class="md-nav__link">
+        Entities of the Experiment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_2_3_substance_entities.html" class="md-nav__link">
+        Substances
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_2_4_sample_entites.html" class="md-nav__link">
+        Samples
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_2_5_instrument_entities.html" class="md-nav__link">
+        Instruments
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_3" type="checkbox" id="__nav_3_2_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_3">
+          Creating Activities
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Creating Activities" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Creating Activities
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_2_6_creating_activities.html" class="md-nav__link">
+        Activities of the Experiment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_2_7_materials_processing_activitiy.html" class="md-nav__link">
+        Processes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_2_8_measurement_activity.html" class="md-nav__link">
+        Measurements
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_4" type="checkbox" id="__nav_3_2_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2_4">
+          Managing Experiments
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Managing Experiments" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Managing Experiments
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_3_0_managing_experiments.html" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_3_1_integrating_your_experiment.html" class="md-nav__link">
+        Integrating Activities
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_3_2_organizing_your_upload.html" class="md-nav__link">
+        Organizing the Upload
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/5_ELN_using_built-in_schema/M3_4_0_sharing_your_eln.html" class="md-nav__link">
+        Sharing and Collaboration
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_3" type="checkbox" id="__nav_3_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_3">
+          Customize your ELN
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Customize your ELN" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          Customize your ELN
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/6_ELN_using_custom_schema/M3_4_1_ground_guidelines.html" class="md-nav__link">
+        Getting started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/6_ELN_using_custom_schema/M3_4_2_basic_eln.html" class="md-nav__link">
+        Building a Custom ELN
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Module3/6_ELN_using_custom_schema/M3_4_3_measurement_data.html" class="md-nav__link">
+        Using the Tabular Parser
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Using NOMAD's API
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Using NOMAD's API" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Using NOMAD's API
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../M4_0_overview.html" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2">
+          Getting Started
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Getting Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../M4_1_getting_started/M4_1_0_getting_started.html" class="md-nav__link">
+        Programming Environments
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../M4_1_getting_started/M4_1_1_preparing_local.html" class="md-nav__link">
+        Local Installation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../M4_1_getting_started/M4_1_2_preparing_north.html" class="md-nav__link">
+        Cloud-based (NORTH)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../M4_1_getting_started/M4_1_3_api_basics.html" class="md-nav__link">
+        API Basics
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3" type="checkbox" id="__nav_4_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_3">
+          Retrieving Data
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Retrieving Data" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_3">
+          <span class="md-nav__icon md-icon"></span>
+          Retrieving Data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../M4_2_1_example_api_explained.html" class="md-nav__link">
+        Your First API Call
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../M4_2_2_leveraging_pagination.html" class="md-nav__link">
+        Retrieving Multiple Entries
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_3_3" type="checkbox" id="__nav_4_3_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_3_3">
+          Using API Helpers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Using API Helpers" data-md-level="3">
+        <label class="md-nav__title" for="__nav_4_3_3">
+          <span class="md-nav__icon md-icon"></span>
+          Using API Helpers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="M4_2_3_0_nomad_api_helpers.html" class="md-nav__link">
+        NOMAD API Helpers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="M4_2_3_1_helper_explore.html" class="md-nav__link">
+        In Explore Page
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          In Entry Page
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="M4_2_3_2_helper_entry_page.html" class="md-nav__link md-nav__link--active">
+        In Entry Page
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-using-the-gui-to-apply-filters" class="md-nav__link">
+    Step 1: Using the GUI to apply filters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-find-the-relevant-endpoing-from-api-helper" class="md-nav__link">
+    Step 2: Find the relevant endpoing from API helper.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-using-the-api-dashboard" class="md-nav__link">
+    Step 3: Using the API Dashboard
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-locating-the-desired-data" class="md-nav__link">
+    Step 4: Locating the desired data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-constructing-the-required-and-executing-the-query" class="md-nav__link">
+    Step 5: Constructing the required and executing the query
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_4" type="checkbox" id="__nav_4_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_4">
+          Uploading Data
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Uploading Data" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_4">
+          <span class="md-nav__icon md-icon"></span>
+          Uploading Data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../M4_3_upload_data/M4_3_1_authentication.html" class="md-nav__link">
+        Authentication
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../M4_3_upload_data/M4_3_2_upload.html" class="md-nav__link">
+        Creating Datasets
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_5" type="checkbox" id="__nav_4_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_5">
+          Scientific Case Studies
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Scientific Case Studies" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_5">
+          <span class="md-nav__icon md-icon"></span>
+          Scientific Case Studies
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../M4_x_examples/M4_x_0_overview.html" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_5_2" type="checkbox" id="__nav_4_5_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_5_2">
+          ML Using NOMAD's data
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ML Using NOMAD's data" data-md-level="3">
+        <label class="md-nav__title" for="__nav_4_5_2">
+          <span class="md-nav__icon md-icon"></span>
+          ML Using NOMAD's data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../M4_x_examples/M4_x_1_perovskites_crabnet_ml/M4_x_0_perovskites_crabnet_overview.html" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../M4_x_examples/M4_x_1_perovskites_crabnet_ml/M4_x_1_perovskites_crabnet_retrieve_data_api.html" class="md-nav__link">
+        Retrieve Data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../M4_x_examples/M4_x_1_perovskites_crabnet_ml/M4_x_2_perovskites_crabnet_load_and_clean_data.html" class="md-nav__link">
+        Clean Data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../M4_x_examples/M4_x_1_perovskites_crabnet_ml/M4_x_3_perovskites_crabnet_ml.html" class="md-nav__link">
+        Bandgap Prediction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Misc/Miscx_x_glossary.html" class="md-nav__link">
+        NOMAD Glossary
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-using-the-gui-to-apply-filters" class="md-nav__link">
+    Step 1: Using the GUI to apply filters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-find-the-relevant-endpoing-from-api-helper" class="md-nav__link">
+    Step 2: Find the relevant endpoing from API helper.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-using-the-api-dashboard" class="md-nav__link">
+    Step 3: Using the API Dashboard
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-locating-the-desired-data" class="md-nav__link">
+    Step 4: Locating the desired data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-constructing-the-required-and-executing-the-query" class="md-nav__link">
+    Step 5: Constructing the required and executing the query
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+<h1 id="using-the-api-helper-on-entry-pages">Using the API helper on Entry Pages<a class="headerlink" href="#using-the-api-helper-on-entry-pages" title="Permanent link">&para;</a></h1>
+<p>In our <a href="M4_2_3_1_helper_explore.html">previous example</a>, you learned how to locate and download the <code>entry_id</code> of multiple entries using the API helper in the Explore page. </p>
+<p>In this example, you will learn how to:
+- Use the API Helper on entry pages to find specific data paths and access referenced data.
+- Navigate through NOMAD’s data structure to locate desired fields such as density of states (dos).
+- Construct API queries for retrieving specific fields from NOMAD's archive data.
+- Execute API queries using the API Dashboard.</p>
+<p>Let's consider a more specific scenario: suppose our task is to access the density of states (dos) of a single entry that contain both Ti and O, and simultaneously include calculations for both dos and electronic band structure. Follow the steps below to achieve this:</p>
+<h2 id="step-1-using-the-gui-to-apply-filters">Step 1: Using the GUI to apply filters<a class="headerlink" href="#step-1-using-the-gui-to-apply-filters" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Open the NOMAD GUI and navigate to the Explore page.</li>
+<li>On the left sidebar under <strong>FILTERS</strong>, <strong>Material</strong>, click <strong>Elements / Formula</strong> and select Ti and O from the periodic table.</li>
+<li>On the left sidebar under <strong>FILTERS</strong>, <strong>Properties</strong>, <strong>Electronic</strong> select both <strong>Density of states</strong> and <strong>Band structure</strong>.</li>
+<li>The GUI will now display materials that contain both Ti and O, and have the selected electronic properties, namely dos and electronic band structure. </li>
+</ol>
+<h2 id="step-2-find-the-relevant-endpoing-from-api-helper">Step 2: Find the relevant endpoing from API helper.<a class="headerlink" href="#step-2-find-the-relevant-endpoing-from-api-helper" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Now we should go to an entry page. Let's choose the first entry that appears in the filtered results. The principle is similar for all the entries, but if you would prefer to look at the same entry of this example, you can access the entry with the <code>entry_id</code> "kAarJxUt4bGajfLZFyqEPnxRK59_". To do this, you can copy <code>entry_id = kAarJxUt4bGajfLZFyqEPnxRK59_</code> and paste it in the search bar in the Explore page.</li>
+<li>On the entry page, locate and click the <strong>API</strong> button at the bottom of the sidebar.</li>
+<li>A new page opens. Scroll down to locate the POST request.</li>
+<li>Once you found the POST request, let's have a closer look to the URL in front of it: "https://nomad-lab.eu/prod/v1/api/v1/entries/kAarJxUt4bGajfLZFyqEPnxRK59_/archive/query". You can see that there is a key which looks like an <code>entry_id</code> (we know in our case it is "kAarJxUt4bGajfLZFyqEPnxRK59_"). Also, you can distinguish the API endpoint <code>entries/{entry_id}/archive/query</code> implying that this endpoint allows you to query the <strong>archive</strong> data, i.e., <strong>processed data</strong>, given you have its <code>entry_id</code>. Great, we achieved the objective of this step, which was finding the relevant endpoint. For our next step, we would need the <code>entry_id</code> of this entry, so let's copy it to the clipboard.</li>
+</ol>
+<h2 id="step-3-using-the-api-dashboard">Step 3: Using the API Dashboard<a class="headerlink" href="#step-3-using-the-api-dashboard" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Open the <a href="https://nomad-lab.eu/prod/v1/api/v1/extensions/docs" target="_blank">API dashboard</a> in a new browser tab.</li>
+<li>Navigate to the endpoint <code>entries/{entry_id}/archive/query</code> and expand it. The description says "Returns a partial archive for the given entry_id based on the required specified in the body." It seems like what we are interested in. It just needs an <code>entry_id</code> and <code>required</code> part. There is no need for a <code>pagination</code>, <code>owner</code> etc.</li>
+<li>Click on 'Try it out'.</li>
+<li>The <code>entry_id</code> can be copied from entry page or the URL of the POST request. In our example it is "kAarJxUt4bGajfLZFyqEPnxRK59_". In order to write the <code>required</code> part, we should first locate the desired data.</li>
+</ol>
+<h2 id="step-4-locating-the-desired-data">Step 4: Locating the desired data<a class="headerlink" href="#step-4-locating-the-desired-data" title="Permanent link">&para;</a></h2>
+<p>Since we are only interested in the density of states (dos), we need to specify this in the <code>required</code> field. Intuitively, we look for the dos data in the <code>data</code> section of the response:</p>
+<ol>
+<li>Go back to the API Helper on the entry page.</li>
+<li>Scroll down to see the RESPONSE under the POST request.</li>
+<li>Expand the 'data' section.</li>
+<li>Expand the 'archive' section.</li>
+<li>Expand the 'results' section.</li>
+<li>Expand the 'properties' section.</li>
+<li>Expand the 'electronic' section.</li>
+<li>Expand the 'dos_electronic' section.</li>
+<li>Expand the '0' section.</li>
+<li>Here you will find "energies", "total", "spin_polarized", "energy_fermi", and "band_gap". If you are looking at a different entry, you might see other sections. However, it does not matter. The key point is that we are able to locate the desired data that we would like to access via API.</li>
+<li>Note the path to "energies", which is <code>/run/0/calculation/0/dos_electronic/0/energies</code>. The data of interest are <strong>not</strong> here, but are actually <strong>referenced</strong> here with their <strong>path</strong>. </li>
+</ol>
+<p>Now let's quickly verify if the dos data are in <code>/run/0/calculation/0/dos_electronic/0/energies</code>. </p>
+<ol>
+<li>Go back to the <code>Response</code> under the POST request in the API Helper of the entry page.</li>
+<li>Expand the 'data' section.</li>
+<li>Expand the 'archive' section.</li>
+<li>Expand the 'run' section.</li>
+<li>Expand the first element (<code>0</code>) of the 'run' section.</li>
+<li>Expand the 'calculation' section.</li>
+<li>Expand the first element (<code>0</code>) of the 'calculation' section.</li>
+<li>Expand the 'dos_electronic' section.</li>
+<li>Expand the first element (<code>0</code>) of the 'dos_electronic' section.</li>
+<li>Expand the 'energies' section to verify that the actual data is present.</li>
+</ol>
+<h2 id="step-5-constructing-the-required-and-executing-the-query">Step 5: Constructing the <code>required</code> and executing the query<a class="headerlink" href="#step-5-constructing-the-required-and-executing-the-query" title="Permanent link">&para;</a></h2>
+<p>Switch to the API dashboard and under the endpoint <code>entries/{entry_id}/archive/query</code> click on <strong>Try it out</strong>. Paste the <code>entry_id</code> to its place, if you havn't done it yet.</p>
+<p>Remember, the path to the data is <code>/run/0/calculation/0/dos_electronic/0/energies</code>. We need to construct the <code>required</code> field to reflect this path to be able to retrieve dos data. This is how it is done:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;run[0]&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">&quot;calculation[0]&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">        </span><span class="nt">&quot;dos_electronic[0]&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">          </span><span class="nt">&quot;energies&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">}</span>
+</code></pre></div>
+<p>This structure tells the NOMAD backend to </p>
+<ul>
+<li>
+<p>go to the first element of the <code>run</code> section (consider <code>run</code> as a python list, then its first element will be <code>"run[0]"</code>).</p>
+</li>
+<li>
+<p>From there, go to the first element of the <code>calculation</code> section (<code>"calculation[0]"</code>). </p>
+</li>
+<li>
+<p>Then go to the first element of the <code>dos_electronic</code> section (<code>"dos_electronic[0]"</code>).</p>
+</li>
+<li>
+<p>Finally, retrieve everything in the <code>energies</code> section (<code>"energies": "*"</code>).</p>
+</li>
+</ul>
+<p>After clicking on <strong>Execute</strong>, the response is back via code 200 and can be downloaded as a JSON file.</p>
+<p>Well done! You could retrieve data from data containers (sections) deep in NOMAD data architecture.</p>
+<details class="info">
+<summary>Formatting JSON</summary>
+<p>When writing in JSON format (e.g., writing the <code>required</code> part), indentation is not essential. One could write the same <code>required</code> as following:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;run[0]&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;calculation[0]&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;dos_electronic[0]&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;energies&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span><span class="p">}}}}}</span><span class="w"> </span>
+</code></pre></div>
+Indentation just helps to easily identify the structure and hierarchy of the JSON data. A common practice is to use two or four spaces for each level of indentation you can write it. You could write everything in 1 line, or alternatively get your JSON formatted using one of several available online tools, e.g., <a href="https://jsonformatter.org/" target="_blank">this one</a>. These tools often allow checking the correctness of JSON format, e.g., missing curled brackets etc.</p>
+</details>
+<p><img alt="Example to use the API Dashboard" src="../../images/TiO_dos_complete.gif" /></p>
+<details class="question">
+<summary>How do you retrieve dos data for 10 entries?</summary>
+<p>What would you do if you want to do the same procedure for 10 entries programmatically?</p>
+</details>
+<details class="tip">
+<summary>Hint</summary>
+<ul>
+<li>The API dashboard also shows the <strong>curl</strong> request that can be sent to retrieve this data.</li>
+<li>You already learned how to use API via the <strong>curl</strong> <a href="../M4_2_1_example_api_explained.html">here</a> </li>
+<li>You have also learned how to extract the <code>entry_id</code> of the entries which match your search criteria in a <a href="../M4_2_2_leveraging_pagination.html">former example</a> </li>
+</ul>
+</details>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="M4_2_3_1_helper_explore.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: In Explore Page" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              In Explore Page
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../../M4_3_upload_data/M4_3_1_authentication.html" class="md-footer__link md-footer__link--next" aria-label="Next: Authentication" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Authentication
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.c7dec7e7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.da79ceb7.min.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
