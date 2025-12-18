@@ -16,7 +16,13 @@ nomad-bot-rag-docs-discord/
 ├── pyproject.toml        # Project metadata and dependencies
 ├── uv.lock               # Pinned versions for reproducible builds
 ├── data/                 # Holds the input data for the knowledge base
+│   ├── chunks/           # Processed document chunks (JSONL)
+│   ├── evaluation/       # Gold standard Q&A datasets
+│   └── fetched/          # Raw documentation from repositories
 ├── chroma_store/         # Local vector database storage (ignored by Git)
+├── dev-notes/            # Development documentation and workflow notes
+├── utils/                # Utility scripts for data processing
+│   └── gold/             # Gold dataset generation tools
 └── src/
     └── nomad_ragbot/
         ├── api/          # FastAPI Backend
