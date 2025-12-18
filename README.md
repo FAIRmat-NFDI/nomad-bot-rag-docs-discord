@@ -52,7 +52,7 @@ Follow these steps to set up your local environment. This project uses [`uv`](ht
 ### **1. Clone and Set Up the Environment**
 First, clone the repository to your local machine.
 ```bash
-git clone [https://github.com/FAIRmat-NFDI/nomad-bot-rag-docs-discord.git](https://github.com/FAIRmat-NFDI/nomad-bot-rag-docs-discord.git)
+git clone https://github.com/FAIRmat-NFDI/nomad-bot-rag-docs-discord.git
 cd nomad-bot-rag-docs-discord
 ```
 Next, create a virtual environment and install all necessary dependencies using `uv`.
@@ -67,29 +67,32 @@ source .venv/bin/activate
 uv sync
 ```
 
-### **2. Configure Environment Variables**
-Copy the example environment file and edit it with your local settings.
-```bash
-cp .env.example .env
-```
-Now, open the `.env` file and configure the paths and model endpoints. The defaults should work for a local setup.
-```env
-# .env file
+### **2. Configure Environment Variables (optional)**
+Open the `.env` file and configure the paths and model endpoints if necessary.
 
-# --- Paths ---
+
+```
 JSONL_PATH="data/chunks/docs.dynamic.jsonl"
 CHROMA_DIR="chroma_store"
 
-# --- Model Endpoints ---
-EMBED_BASE_URL="[http://127.0.0.1:11434](http://127.0.0.1:11434)"
-GENERATOR_BASE_URL="[http://127.0.0.1:11434/v1](http://127.0.0.1:11434/v1)"
+# If you run Ollama locally:
+# EMBED_BASE_URL="http://127.0.0.1:11434"
+# GENERATOR_BASE_URL="http://127.0.0.1:11434/v1"
 
-# You can also customize the models used by the RAG engine here
-# EMBED_MODEL_NAME="nomic-embed-text"
-# GENERATOR_MODEL="gpt-oss:20b"
+# If you want to use the defaults from config.py, do not set these two variables at all.
+# (The defaults currently point to a non-local host behind HU VPN.)
+
+# --- Models ---
+EMBED_MODEL_NAME="nomic-embed-text"
+GENERATOR_MODEL="gpt-oss:20b"
 ```
 
+Note:
+- `src/nomad_ragbot/api/config.py` provides defaults.
+- Any variables you set in `.env` override those defaults.
+
 ---
+
 ## Running the Application ▶️
 
 The API server and the Gradio UI are two separate applications. You must run them in **two separate terminals**.
